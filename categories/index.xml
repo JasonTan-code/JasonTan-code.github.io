@@ -1,7 +1,14 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Categories - Category - Taotao Tan&#39;s blogs</title>
-        <link>https://jasontan-code.github.io/categories/</link>
-        <description>Categories - Category - Taotao Tan&#39;s blogs</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><atom:link href="https://jasontan-code.github.io/categories/" rel="self" type="application/rss+xml" /></channel>
+        <title>Categories - Category - Taotao&#39;s Blog Posts</title>
+        <link>http://example.org/categories/</link>
+        <description>Categories - Category - Taotao&#39;s Blog Posts</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 25 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="http://example.org/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>Random</title>
+    <link>http://example.org/categories/random/</link>
+    <pubDate>Thu, 25 Nov 2021 15:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/categories/random/</guid>
+    <description><![CDATA[]]></description>
+</item></channel>
 </rss>

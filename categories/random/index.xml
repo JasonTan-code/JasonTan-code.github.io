@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Random - Category - Taotao&#39;s Blog Posts</title>
+        <link>http://example.org/categories/random/</link>
+        <description>Random - Category - Taotao&#39;s Blog Posts</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 25 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="http://example.org/categories/random/" rel="self" type="application/rss+xml" /><item>
+    <title>First_post</title>
+    <link>http://example.org/posts/first_post/</link>
+    <pubDate>Thu, 25 Nov 2021 15:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>http://example.org/posts/first_post/</guid>
+    <description><![CDATA[Whatever is here
+$\sum i$]]></description>
+</item></channel>
+</rss>

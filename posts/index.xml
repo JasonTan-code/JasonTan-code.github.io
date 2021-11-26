@@ -1,14 +1,15 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>All Posts - Taotao Tan&#39;s blogs</title>
-        <link>https://jasontan-code.github.io/posts/</link>
-        <description>All Posts | Taotao Tan&#39;s blogs</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 25 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+        <title>All Posts - Taotao&#39;s Blog Posts</title>
+        <link>http://example.org/posts/</link>
+        <description>All Posts | Taotao&#39;s Blog Posts</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 25 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="http://example.org/posts/" rel="self" type="application/rss+xml" /><item>
     <title>First_post</title>
-    <link>https://jasontan-code.github.io/posts/first_post/</link>
+    <link>http://example.org/posts/first_post/</link>
     <pubDate>Thu, 25 Nov 2021 15:18:26 -0600</pubDate>
     <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/first_post/</guid>
-    <description><![CDATA[Whatever is here]]></description>
+    <guid>http://example.org/posts/first_post/</guid>
+    <description><![CDATA[Whatever is here
+$\sum i$]]></description>
 </item></channel>
 </rss>
