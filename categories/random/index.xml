@@ -10,8 +10,10 @@
     <author>Author</author>
     <guid>https://jasontan-code.github.io/posts/first_post/</guid>
     <description><![CDATA[Whatever is here
-$\sum i$
+$ \sum i $ $ c = \pm\sqrt{a^3 + b^2} $
 $$ s^2 = \frac{\sum(x_i - \bar x)^2}{n - 1} $$
-1 +1 = 2 ]]></description>
+$$ c = \pm\sqrt{a^2 + b^2} $$
+\[ f(x)=\int_{-\infty}^{\infty} \hat{f}(\xi) e^{2 \pi i \xi x} d \xi \]
+1 +1 = 2 1 +1 = 2 1 +1 = 2 1 +1 = 2 1 +1 = 21 +1 = 2 1 +1 = 2 1 +1 = 2 1 +1 = 2 1 +1 = 2 1 +1 = 2 1 +1 = 21 +1 = 2 1 +1 = 2 ]]></description>
 </item></channel>
 </rss>
