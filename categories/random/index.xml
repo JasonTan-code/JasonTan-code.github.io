@@ -1,8 +1,8 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>Random - Category - Taotao&#39;s Blog Posts</title>
+        <title>Random - Category - Taotao Tan</title>
         <link>https://jasontan-code.github.io/categories/random/</link>
-        <description>Random - Category - Taotao&#39;s Blog Posts</description>
+        <description>Random - Category - Taotao Tan</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Thu, 25 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/random/" rel="self" type="application/rss+xml" /><item>
     <title>First_post</title>
     <link>https://jasontan-code.github.io/posts/first_post/</link>
