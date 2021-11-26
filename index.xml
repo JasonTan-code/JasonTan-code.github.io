@@ -12,6 +12,8 @@
     <author>Author</author>
     <guid>http://example.org/posts/first_post/</guid>
     <description><![CDATA[Whatever is here
-$\sum i$]]></description>
+$\sum i$
+$$ s^2 = \frac{\sum(x_i - \bar x)^2}{n - 1} $$
+1 +1 = 2 ]]></description>
 </item></channel>
 </rss>
