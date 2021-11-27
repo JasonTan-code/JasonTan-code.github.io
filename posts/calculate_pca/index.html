@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>Calculate PCA by hand - Taotao Tan</title><meta name="Description" content="Taotao&#39;s Blog Posts"><meta property="og:title" content="Calculate PCA by hand" />
+<meta property="og:description" content="Here I am going to show you how to calculate PCA by hand!
+But before we dive deep into PCA, there are two prerequisite concepts we need to understand:
+ Variance/Covariance Find eigenvectors and eigenvalues  If you already understand those two concepts, you can skip this part.
+ Prerequisite 1: Variance/Covariance  Variance Variance measures how far a set of numbers is spread out from their average value. The sample variance is defined as $$ s^2 = \frac{\sum(x_i - \bar x)^2}{n - 1} $$" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jasontan-code.github.io/posts/calculate_pca/" />
+<meta property="og:image" content="https://jasontan-code.github.io/images/avatar.png"/>
+<meta property="article:published_time" content="2021-11-21T15:18:26-06:00" />
+<meta property="article:modified_time" content="2021-11-21T15:18:26-06:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://jasontan-code.github.io/images/avatar.png"/>
+
+<meta name="twitter:title" content="Calculate PCA by hand"/>
+<meta name="twitter:description" content="Here I am going to show you how to calculate PCA by hand!
+But before we dive deep into PCA, there are two prerequisite concepts we need to understand:
+ Variance/Covariance Find eigenvectors and eigenvalues  If you already understand those two concepts, you can skip this part.
+ Prerequisite 1: Variance/Covariance  Variance Variance measures how far a set of numbers is spread out from their average value. The sample variance is defined as $$ s^2 = \frac{\sum(x_i - \bar x)^2}{n - 1} $$"/>
+<meta name="application-name" content="Taotao&#39;s Blog Posts">
+<meta name="apple-mobile-web-app-title" content="Taotao&#39;s Blog Posts"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://jasontan-code.github.io/posts/calculate_pca/" /><link rel="next" href="https://jasontan-code.github.io/posts/mle/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Calculate PCA by hand",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/jasontan-code.github.io\/posts\/calculate_pca\/"
+        },"genre": "posts","keywords": "Linear Algebra","wordcount":  1331 ,
+        "url": "https:\/\/jasontan-code.github.io\/posts\/calculate_pca\/","datePublished": "2021-11-21T15:18:26-06:00","dateModified": "2021-11-21T15:18:26-06:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Taotao"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Taotao Tan">Taotao Tan</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Taotao Tan">Taotao Tan</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">Calculate PCA by hand</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-category">included in <a href="/categories/linear-algebra/"><i class="far fa-folder fa-fw"></i>Linear Algebra</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-11-21">2021-11-21</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1331 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;7 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="true">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#prerequisite-1-variancecovariance">Prerequisite 1: Variance/Covariance</a>
+      <ul>
+        <li><a href="#variance">Variance</a></li>
+        <li><a href="#covariance">Covariance</a></li>
+      </ul>
+    </li>
+    <li><a href="#prerequisite-2-find-eigenvectors-and-eigenvalues">Prerequisite 2: Find eigenvectors and eigenvalues</a></li>
+    <li><a href="#main-course-pca">Main course: PCA</a>
+      <ul>
+        <li><a href="#step-1">Step 1</a></li>
+        <li><a href="#step-2">Step 2</a></li>
+        <li><a href="#step3">Step3</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>Here I am going to show you how to calculate PCA by hand!</p>
+<p>But before we dive deep into PCA, there are two prerequisite concepts we need to understand:</p>
+<ul>
+<li><strong>Variance/Covariance</strong></li>
+<li><strong>Find eigenvectors and eigenvalues</strong></li>
+</ul>
+<p>If you already understand those two concepts, you can skip this part.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="prerequisite-1-variancecovariance">Prerequisite 1: Variance/Covariance</h2>
+<blockquote>
+<h3 id="variance">Variance</h3>
+<p>Variance measures how far a set of numbers is spread out from their average value. The sample variance is defined as
+$$
+s^2 = \frac{\sum(x_i - \bar x)^2}{n - 1}
+$$</p>
+<p>Let&rsquo;s say you have a vector $\vec{v} =  [1, 2,3 ]$. To calculate the variance, there are two steps:</p>
+<ul>
+<li>Calculate mean: $\bar v = \frac{(1 + 2 + 3)}{3 } = 2$</li>
+<li>Calculate variance: $s^2 = \frac{(1 - 2)^2 + (2 - 2)^2 + (3 - 2)^2}{3 -1} = 1$</li>
+</ul>
+</blockquote>
+<p> <br>
+ </p>
+<blockquote>
+<h3 id="covariance">Covariance</h3>
+<p>The covariance of two vector $\vec{x}, \vec{y}$ is defined as
+$$
+cov_{x,y} = \frac{\sum{(x_i - \bar x)(y_i - \bar y)}}{n - 1}
+$$
+If the $Cov_{x, y} &gt; 0$, that means $\vec{x}, \vec{y}$ have the same trend (they co-increase or co-decrease).<br>
+If the $Cov_{x, y} &lt; 0$, that means $\vec{x}, \vec{y}$ have the opposite trend ($\vec{x}$ increase, $\vec{y}$ decrease).</p>
+<p>Let&rsquo;s give an example here.
+$$
+\vec{x} = [1,2,3],  \vec{y} = [3,2,7]
+$$</p>
+<p>To calculate the covariance, we have two steps as well:</p>
+<ul>
+<li>Calculate the mean of $\vec{x}, \vec{y}$. We have $\bar x = 2$, $\bar y = 4$</li>
+<li>Calculate the covariance $Cov_{x, y} = \frac{(1 - 2) \cdot (3 - 4) + (2 - 2) \cdot (2 - 4) + (3 - 2) \cdot (7 - 4)}{3 - 1} = 2$.</li>
+</ul>
+<p>Since the $Cov_{x, y} = 2 &gt; 0$, we know that $\vec{x}, \vec{y}$ co-vary.</p>
+<p>If we plot those three points in a x-y coordinate plane, we get:<br>
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/PCA_by_hand/covariance.png"
+        data-srcset="/images/PCA_by_hand/covariance.png, /images/PCA_by_hand/covariance.png 1.5x, /images/PCA_by_hand/covariance.png 2x"
+        data-sizes="auto"
+        alt="/images/PCA_by_hand/covariance.png"
+        title="covariance" />.
+It is obvious that $\vec{x}, \vec{y}$ co-vary.</p>
+</blockquote>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="prerequisite-2-find-eigenvectors-and-eigenvalues">Prerequisite 2: Find eigenvectors and eigenvalues</h2>
+<p>The word &ldquo;eigen&rdquo; sounds scary, at least to me when I first learned linear algebra. But it is not that complicated. I am going to walk you through the calculation of eigenvalue and eigenvectors.</p>
+<p>Assume you have a matrix $\mathbf{A}$, all eigen-decomposition does is that it finds a set of vectors $\vec{v}$ and $\lambda$, so that $$\mathbf{A } \cdot \vec{v} = \lambda \vec{v}$$</p>
+<p>This means applying a linear transformation $\mathbf{A}$ to the vector $\vec{v}$, is the same as scaling $\vec{v}$ by a factor $\lambda$. In other word, the linear transformation(a.k.a matrix) $\mathbf{A}$ doesn&rsquo;t rotate $\vec{v}$.</p>
+<p> </p>
+<p>Here I provide a solid example. Let&rsquo;s say our matrix $\mathbf{A}$ is.
+$$
+\begin{bmatrix}
+0 &amp; -1 \\
+2 &amp; 3
+\end{bmatrix}
+$$</p>
+<p>By definition, we want to find $\vec{v}, \lambda$ so that
+$$
+\begin{bmatrix}
+0 &amp; -1 \\
+2 &amp; 3
+\end{bmatrix} \cdot \vec{v} = \lambda \vec{v}
+$$</p>
+<p>We find $\lambda$ first. Let the right side of the equation times the identity matrix $\mathbf{I}$,</p>
+<p>$$
+\begin{bmatrix}
+0 &amp; -1 \\
+2 &amp; 3
+\end{bmatrix} \cdot \vec{v} = \lambda \cdot \begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1
+\end{bmatrix} \cdot \vec{v}$$</p>
+<p> </p>
+<p>$$
+\begin{bmatrix}
+0 &amp; -1 \\
+2 &amp; 3
+\end{bmatrix} \cdot \vec{v} =   \begin{bmatrix}
+\lambda &amp; 0 \\
+0 &amp; \lambda
+\end{bmatrix} \cdot \vec{v}$$</p>
+<p> </p>
+<p>$$\begin{bmatrix}
+0 - \lambda &amp; -1 \\
+2 &amp; 3 - \lambda
+\end{bmatrix} \cdot \vec{v} =   \vec{0}$$</p>
+<p> </p>
+<p>$$det ( \begin{bmatrix}
+0 - \lambda &amp; -1 \\
+2 &amp; 3 - \lambda
+\end{bmatrix}  )=   0$$</p>
+<p> </p>
+<p>$$
+-\lambda \cdot (3 - \lambda) + 2  = 0
+$$</p>
+<p>We have: $\lambda_1 = 2 $,  $\lambda_2 = 1 $.<br>
+ </p>
+<p>So far we found our $\lambda$. The next step is to find our eigenvectors. As you would expect, we should have $\vec{v_1}, \vec{v_2}$, each of them is paired with an eigenvalue. Also, notice that there are infinite amount of eigenvectors and they all point to the same direction. We want to find the one with length equal to 1.</p>
+<p> <br>
+To calculate eigenvectors, we simply plug $\lambda_1, \lambda_2$ into the following equation, which is obtained when we are trying to figure out eigenvalues:</p>
+<p>$$\begin{bmatrix}
+0 - \lambda &amp; -1 \\
+2 &amp; 3 - \lambda
+\end{bmatrix} \cdot \vec{v} =   \vec{0}$$</p>
+<p>We plug in $\lambda_1 = 2$, and get</p>
+<p>$$\begin{bmatrix}
+-2 &amp; -1 \\
+2 &amp; 1
+\end{bmatrix} \cdot \vec{v_1} =   \vec{0}$$</p>
+<p>This is essentially finding the <a href="https://en.wikipedia.org/wiki/Kernel_%28linear_algebra%29" target="_blank" rel="noopener noreffer">null space</a> of the matrix on the left side. I will skip this part for now, but you can find plenty of resources online. But here is the result: $\vec{v_1} = [0.447, -0.894]$.</p>
+<p> </p>
+<p>We can apply the same technique to find the second pair of eigenvalue &amp; eigenvector:</p>
+<p>$\lambda_2 = 1, \vec{v_2} = [-0.707, 0.707]$</p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="main-course-pca">Main course: PCA</h2>
+<p>If you are still with me, you are 80% done. The rest of this post is simply combine the two techniques I discussed above.</p>
+<p>Let&rsquo;s say we have a matrix
+$$\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1
+\end{bmatrix}$$</p>
+<p>Generally, the row represents our observations, and the column represent features we measured. After applying PCA, we are expect to reduce the dimensionality of the matrix, while still retain most of the information.</p>
+<p>Keep in mind, the high level intuition of PCA is that you rotate the coordinate system, so that your first coordinate (PC1) capture most of the variation, and second coordinate (PC2) capture the second most of the variation, etc&hellip;</p>
+<p>Okay, let&rsquo;s first take a look of our data
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/PCA_by_hand/PCA1.png"
+        data-srcset="/images/PCA_by_hand/PCA1.png, /images/PCA_by_hand/PCA1.png 1.5x, /images/PCA_by_hand/PCA1.png 2x"
+        data-sizes="auto"
+        alt="/images/PCA_by_hand/PCA1.png"
+        title="PCA1" />.</p>
+<p>Imagine you fix the origin, and counterclockwise spin the coordinate system, until the x-axis capture the most of the variation. Here is a visual demonstration
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/PCA_by_hand/PCA2.png"
+        data-srcset="/images/PCA_by_hand/PCA2.png, /images/PCA_by_hand/PCA2.png 1.5x, /images/PCA_by_hand/PCA2.png 2x"
+        data-sizes="auto"
+        alt="/images/PCA_by_hand/PCA2.png"
+        title="PCA1" />.</p>
+<p>Now we can visually tell we should rotate 45 degree, so that our PC1 can capture most of the variation. But how can I calculate this mathematically?</p>
+<p> <br>
+ <br>
+ </p>
+<p>Ready?</p>
+<p> </p>
+<h3 id="step-1">Step 1</h3>
+<p>We have two features/columns $C1 = [1, 0, -1]$, $C2 = [0, 1, -1]$. Now we need to construct a matrix, where the diagonal entries are the variance, and off-diagonal entries are covariance. In our case, we should construct a matrix like this:</p>
+<p>$$\begin{bmatrix}
+Var_{C1} &amp; Cov_{C1, C2} \\
+Cov_{C2, C1} &amp; Var_{C2}
+\end{bmatrix}$$</p>
+<p>Use the technique (section 1) I described above, we have $$Var_{C1} = 1$$ $$Var_{C2} = 1$$ $$Cov_{C1, C2}  = Cov_{C2, C1}= 0.5$$</p>
+<p>Plug in the result, we have our covariance matrix:
+$$\begin{bmatrix}
+1 &amp; 0.5 \\
+0.5 &amp; 1
+\end{bmatrix}$$</p>
+<p> </p>
+<h3 id="step-2">Step 2</h3>
+<p>Find the eigenvalues and eigenvectors of our covariance matrix. We have</p>
+<p>$$
+\lambda_1 = 1.5, \vec{v_1} = [0.707, 0.707]
+$$</p>
+<p>$$
+\lambda_2 = 0.5, \vec{v_2} = [-0.707, 0.707]
+$$</p>
+<p>Notice $\vec{v_1}$ is pointing to 45 degree upward,  $\vec{v_2}$ is pointing to 135 degree upward, which is exactly what we expected.</p>
+<p><strong>Therefore, we find our $PC1$ and $PC2$, which is  $\vec{v_1}$ and  $\vec{v_2}$! Isn&rsquo;t it magical?</strong></p>
+<p> </p>
+<h3 id="step3">Step3</h3>
+<p>Here we can combine the eigenvectors into a matrix, with the first column to be $\vec{v_1}$, and second column to be $\vec{v_2}$. This is often called loading matrix (<a href="https://stats.stackexchange.com/questions/143905/loadings-vs-eigenvectors-in-pca-when-to-use-one-or-another" target="_blank" rel="noopener noreffer">although the word &ldquo;loading&rdquo; is somewhat ambiguous</a>)
+$$\begin{bmatrix}
+0.707 &amp; -0.707 \\
+0.707 &amp; 0.707
+\end{bmatrix}$$</p>
+<p><strong>If we multiply the loading matrix and our dataset, we should get our scores matrix, which is the projection of the data on the PCs.</strong></p>
+<p>$$
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1
+\end{bmatrix}
+\begin{bmatrix}
+0.707 &amp; -0.707 \\
+0.707 &amp; 0.707
+\end{bmatrix} = \begin{bmatrix}
+0.707 &amp; -0.707 \\
+0.707 &amp; 0.707 \\
+-1.414 &amp; 0
+\end{bmatrix}$$</p>
+<p> </p>
+<p>Now we have our <strong>transformed data</strong>:
+$$ \begin{bmatrix}
+0.707 &amp; -0.707 \\
+0.707 &amp; 0.707 \\
+-1.414 &amp; 0
+\end{bmatrix}$$</p>
+<p>Let&rsquo;s plot our transformed data, with PCs be the coordinate system:
+<img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/PCA_by_hand/PCA3.png"
+        data-srcset="/images/PCA_by_hand/PCA3.png, /images/PCA_by_hand/PCA3.png 1.5x, /images/PCA_by_hand/PCA3.png 2x"
+        data-sizes="auto"
+        alt="/images/PCA_by_hand/PCA3.png"
+        title="PCA3" />.</p>
+<p>The last point here:</p>
+<p>In the scores matrix, if you calculate the variance of the first column, you will get $Var_{pc1} = 1.5$. For the second column, you will get $Var_{pc2} = 0.5$.</p>
+<p>Does the number look familiar? In fact, $$Var_{pc1} = 1.5 = \lambda_1$$ $$Var_{pc2} = 0.5 = \lambda_1$$</p>
+<p>For this dataset, $\lambda_1$ explains 75% of the variance since $\frac{1.5}{1.5 + 0.5} =0.75$; Likewise, $\lambda_2$ explains 25% of the variance since $\frac{0.5}{1.5 + 0.5} =0.25$</p>
+<p>In summary, eigenvalue tells you how much variance captured by its associated PC</p>
+<p> <br>
+ <br>
+ </p>
+<p>That&rsquo;s the end of this post. Thanks for reading!</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-11-21</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://jasontan-code.github.io/posts/calculate_pca/" data-title="Calculate PCA by hand" data-via="doubleTaoTan" data-hashtags="Linear Algebra"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://jasontan-code.github.io/posts/calculate_pca/" data-hashtag="Linear Algebra"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://jasontan-code.github.io/posts/calculate_pca/" data-title="Calculate PCA by hand" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://jasontan-code.github.io/posts/calculate_pca/" data-title="Calculate PCA by hand"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://jasontan-code.github.io/posts/calculate_pca/" data-title="Calculate PCA by hand"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://jasontan-code.github.io/posts/calculate_pca/" data-title="Calculate PCA by hand" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://jasontan-code.github.io/posts/calculate_pca/" data-title="Calculate PCA by hand" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://jasontan-code.github.io/posts/calculate_pca/" data-title="Calculate PCA by hand"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linear-algebra/">Linear Algebra</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+            <a href="/posts/mle/" class="next" rel="next" title="Maximum likelihood estimation">Maximum likelihood estimation<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+<div id="comments"><div id="fb-root" class="comment"></div>
+            <div
+                class="fb-comments"
+                data-href="https://jasontan-code.github.io/posts/calculate_pca/"
+                data-width="100%"
+                data-numposts="10"
+            ></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://developers.facebook.com/docs/plugins/comments/"></a>Facebook</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.80.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script type="text/javascript" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&amp;version=v5.0&amp;appId=2162149760591137&amp;autoLogAppEvents=1" defer></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/lib/cookieconsent/cookieconsent.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript">
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'G-C4MZRQHWVE', { 'anonymize_ip': true });
+        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-C4MZRQHWVE" async></script></body>
+</html>

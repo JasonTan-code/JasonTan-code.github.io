@@ -1,0 +1,16 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Statistics - Category - Taotao Tan</title>
+        <link>https://jasontan-code.github.io/categories/statistics/</link>
+        <description>Statistics - Category - Taotao Tan</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/statistics/" rel="self" type="application/rss+xml" /><item>
+    <title>Maximum likelihood estimation</title>
+    <link>https://jasontan-code.github.io/posts/mle/</link>
+    <pubDate>Mon, 22 Nov 2021 15:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/mle/</guid>
+    <description><![CDATA[In this post, I will show you THE most important technique in inferential statistics: Maximum Likelihood Estimation (MLE).
+ 1. Some data to work with Before we get started, let&rsquo;s see what type of problem could be solved using MLE.
+For example, I record the number of visitors of this website each hour from 8:00 am - 12:00 am (p.s. off course this is fake data, and I am probably too optimistic).]]></description>
+</item></channel>
+</rss>
