@@ -3,7 +3,16 @@
         <title>Linear Algebra - Category - Taotao Tan</title>
         <link>https://jasontan-code.github.io/categories/linear-algebra/</link>
         <description>Linear Algebra - Category - Taotao Tan</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sun, 21 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/linear-algebra/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Nov 2021 21:18:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/linear-algebra/" rel="self" type="application/rss+xml" /><item>
+    <title>Calculate SVD by hand (and decompose Spongebob)</title>
+    <link>https://jasontan-code.github.io/posts/calculate_svd/</link>
+    <pubDate>Mon, 22 Nov 2021 21:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/calculate_svd/</guid>
+    <description><![CDATA[In my previous post, I have manually implemented PCA by finding the eigenvectors and eigenvalues of a covariance matrix. Today, let&rsquo;s try to perform PCA using a different approach called Singular Value Decomposition. Then we are going to decompose SPONGEBOB!
+Note: you might find this post to be useful, if you are new to PCA.
+ Algorithm Again, we are going to use the same dataset we have used before.]]></description>
+</item><item>
     <title>Calculate PCA by hand</title>
     <link>https://jasontan-code.github.io/posts/calculate_pca/</link>
     <pubDate>Sun, 21 Nov 2021 15:18:26 -0600</pubDate>

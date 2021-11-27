@@ -3,19 +3,26 @@
         <title>Categories - Category - Taotao Tan</title>
         <link>https://jasontan-code.github.io/categories/</link>
         <description>Categories - Category - Taotao Tan</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/" rel="self" type="application/rss+xml" /><item>
-    <title>Statistics</title>
-    <link>https://jasontan-code.github.io/categories/statistics/</link>
-    <pubDate>Mon, 22 Nov 2021 15:18:26 -0600</pubDate>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 23 Nov 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/" rel="self" type="application/rss+xml" /><item>
+    <title>Genetics</title>
+    <link>https://jasontan-code.github.io/categories/genetics/</link>
+    <pubDate>Tue, 23 Nov 2021 15:19:26 -0600</pubDate>
     <author>Author</author>
-    <guid>https://jasontan-code.github.io/categories/statistics/</guid>
+    <guid>https://jasontan-code.github.io/categories/genetics/</guid>
     <description><![CDATA[]]></description>
 </item><item>
     <title>Linear Algebra</title>
     <link>https://jasontan-code.github.io/categories/linear-algebra/</link>
-    <pubDate>Sun, 21 Nov 2021 15:18:26 -0600</pubDate>
+    <pubDate>Mon, 22 Nov 2021 21:18:26 -0600</pubDate>
     <author>Author</author>
     <guid>https://jasontan-code.github.io/categories/linear-algebra/</guid>
+    <description><![CDATA[]]></description>
+</item><item>
+    <title>Statistics</title>
+    <link>https://jasontan-code.github.io/categories/statistics/</link>
+    <pubDate>Mon, 22 Nov 2021 20:19:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/categories/statistics/</guid>
     <description><![CDATA[]]></description>
 </item></channel>
 </rss>

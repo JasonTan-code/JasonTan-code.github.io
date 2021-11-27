@@ -3,7 +3,59 @@
         <title>Statistics - Category - Taotao Tan</title>
         <link>https://jasontan-code.github.io/categories/statistics/</link>
         <description>Statistics - Category - Taotao Tan</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Nov 2021 15:18:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/statistics/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 22 Nov 2021 20:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/statistics/" rel="self" type="application/rss+xml" /><item>
+    <title>Dive into Bayesian statistics (5): Intro to PyMC3</title>
+    <link>https://jasontan-code.github.io/posts/bayesian-5/</link>
+    <pubDate>Mon, 22 Nov 2021 20:19:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/bayesian-5/</guid>
+    <description><![CDATA[In our previous post, we have manually implemented the Markov Chain Monte Carlo algorithm (specially, Metropolis Hastings), and drew samples from the posterior distribution. The code isn&rsquo;t particularly difficult to understand, but it&rsquo;s not intuitive to read/write neither. Besides the difficulty of implementation, algorithm performance (a.k.a speed) is also a major consideration in a more realistic application. Luckily, well-written tools are available to resolve these obstacles, namely, Stan and PyMC3.]]></description>
+</item><item>
+    <title>Dive into Bayesian statistics (4): Posterior predictive distribution</title>
+    <link>https://jasontan-code.github.io/posts/bayesian-4/</link>
+    <pubDate>Mon, 22 Nov 2021 20:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/bayesian-4/</guid>
+    <description><![CDATA[In the last few posts, we tried three methods (Integration, Conjugate Prior and MCMC) to infer the posterior distribution $P(\lambda | \text{data})$, which gave us
+$$\lambda \sim \text{Gamma}(\alpha = 20, \beta = 6)$$
+Now you may ask: Cool, we have our posterior distribution, but SO WHAT?
+In this post, we are going to see why studying the posterior distribution is advantageous and interesting, and show you the internal relationship between a Poisson distribution, a Gamma distribution and a Negative binomial distribution.]]></description>
+</item><item>
+    <title>Dive into Bayesian statistics (3): Markov Chain Monte Carlo</title>
+    <link>https://jasontan-code.github.io/posts/bayesian-3/</link>
+    <pubDate>Mon, 22 Nov 2021 19:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/bayesian-3/</guid>
+    <description><![CDATA[In this post, I will continue to use the same example that I used before (Bayesian: MAP and Bayesian: solve denominator). Also, it will be very helpful to first understand accept-reject sampling that I discussed in this post.
+ Now let&rsquo;s get started!
+As we discussed at the end of this post, solving the denominator is a non-trivial work, especially when you have many parameters to estimate. One way to overcome this obstacle is to use a method called Markov Chain Monte Carlo (MCMC).]]></description>
+</item><item>
+    <title>Dive into Bayesian statistics (2): Solve the nasty denominator!</title>
+    <link>https://jasontan-code.github.io/posts/bayesian-2/</link>
+    <pubDate>Mon, 22 Nov 2021 18:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/bayesian-2/</guid>
+    <description><![CDATA[In the last post, we tried to use a Bayesian framework to model the number of visitors per hour. After concatenating a Poisson distribution with a Gamma prior, we get something like: $$ P(\lambda | \text{data}) = c \cdot \lambda^{19} e^{-6\lambda} $$
+Since we are interested to find $\lambda_0$ that gives the maximum value of $P(\lambda | \text{data})$ (a.k.a. Maximum A Posteriori), we don&rsquo;t need to worry too much about a constant $c$.]]></description>
+</item><item>
+    <title>Dive into Bayesian statistics (1): Maximum A Posteriori</title>
+    <link>https://jasontan-code.github.io/posts/bayesian-1/</link>
+    <pubDate>Mon, 22 Nov 2021 17:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/bayesian-1/</guid>
+    <description><![CDATA[I know, this is an exciting &amp; scary topic. It literally took me months to understand, and I hope this post will make your life easier.
+Before you read this post, I assume you are already familiar with basic probability theories, maximum likelihood estimation and bayes theorem. I encourage you to read my previous post that discussed MLE, and we are going to use the same dataset in this post.]]></description>
+</item><item>
+    <title>How to draw sample from a generic distribution?</title>
+    <link>https://jasontan-code.github.io/posts/monte_corlo/</link>
+    <pubDate>Mon, 22 Nov 2021 16:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/monte_corlo/</guid>
+    <description><![CDATA[In this post, I am going to show two methods to draw samples from a generic distribution.
+But before we get started, we should define what do I mean generic distribution. Here is one example:
+$$ f(x)= \begin{cases} 0 &amp; \text{if $x$ &lt; 0} \\ c \cdot \sqrt{x} &amp; \text{if $0 &lt; x &lt; 1 $} \\ 0 &amp; \text{if $x &gt; 1$} \end{cases} $$
+First, let&rsquo;s take a look at the probability density function (pdf):]]></description>
+</item><item>
     <title>Maximum likelihood estimation</title>
     <link>https://jasontan-code.github.io/posts/mle/</link>
     <pubDate>Mon, 22 Nov 2021 15:18:26 -0600</pubDate>

@@ -1,0 +1,24 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Genetics - Tag - Taotao Tan</title>
+        <link>https://jasontan-code.github.io/tags/genetics/</link>
+        <description>Genetics - Tag - Taotao Tan</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 23 Nov 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/tags/genetics/" rel="self" type="application/rss+xml" /><item>
+    <title>Model the Gene Expression (2): Likelihood Ratio Test</title>
+    <link>https://jasontan-code.github.io/posts/gene-exp2/</link>
+    <pubDate>Tue, 23 Nov 2021 15:19:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/gene-exp2/</guid>
+    <description><![CDATA[In the last post, we used a GLM framework to model the gene expression. $$ y \sim NB(\mu, r) \\ log( \mu )= b_1 x + b_0 $$
+Using maximum likelihood estimation, we were able to find a set of parameters $\hat b_0, \hat b_1, \hat r$, that maximizes the likelihood function.
+But if you send this model (the estimated parameters) to biologists, they wouldn&rsquo;t be happy. And we all know what is lacking: the p-value!]]></description>
+</item><item>
+    <title>Model the Gene Expression (1): A GLM framework</title>
+    <link>https://jasontan-code.github.io/posts/gene-exp1/</link>
+    <pubDate>Tue, 23 Nov 2021 15:18:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/gene-exp1/</guid>
+    <description><![CDATA[Before you start reading this post, please familiarize yourself with MLE and linear model.
+ Background In transcriptomic research, we often want to determine if genes are unregulated or down-regulated under a particular perturbation. For example, we have a medication that may cure type 2 diabetes. In our experiment, 6 patients are split into two groups, with 3 patients taking the medication, and 3 patients taking the placebo. The patients' blood samples are then collected to measure the transcriptomic profile (mRNA abundance level for each gene) using NGS technology (RNA seq).]]></description>
+</item></channel>
+</rss>
