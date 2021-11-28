@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Probability - Category - Taotao Tan</title>
+        <link>https://jasontan-code.github.io/categories/probability/</link>
+        <description>Probability - Category - Taotao Tan</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 27 Nov 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/probability/" rel="self" type="application/rss+xml" /><item>
+    <title>An Intuitive Explanation of Bayesian Network</title>
+    <link>https://jasontan-code.github.io/posts/bayesian-network-1/</link>
+    <pubDate>Sat, 27 Nov 2021 15:19:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/bayesian-network-1/</guid>
+    <description><![CDATA[Introduction Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.
+ An example Suppose we are going to take a math exam next week.]]></description>
+</item></channel>
+</rss>

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+        <title>An Intuitive Explanation of Bayesian Network - Taotao Tan</title><meta name="Description" content="Taotao&#39;s Blog Posts"><meta property="og:title" content="An Intuitive Explanation of Bayesian Network" />
+<meta property="og:description" content="Introduction Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.
+ An example Suppose we are going to take a math exam next week." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://jasontan-code.github.io/posts/bayesian-network-1/" />
+<meta property="og:image" content="https://jasontan-code.github.io/images/avatar.png"/>
+<meta property="article:published_time" content="2021-11-27T15:19:26-06:00" />
+<meta property="article:modified_time" content="2021-11-27T15:19:26-06:00" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://jasontan-code.github.io/images/avatar.png"/>
+
+<meta name="twitter:title" content="An Intuitive Explanation of Bayesian Network"/>
+<meta name="twitter:description" content="Introduction Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.
+ An example Suppose we are going to take a math exam next week."/>
+<meta name="application-name" content="Taotao&#39;s Blog Posts">
+<meta name="apple-mobile-web-app-title" content="Taotao&#39;s Blog Posts"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://jasontan-code.github.io/posts/bayesian-network-1/" /><link rel="prev" href="https://jasontan-code.github.io/posts/gene-exp2/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"><link rel="stylesheet" href="/lib/animate/animate.min.css"><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "An Intuitive Explanation of Bayesian Network",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/jasontan-code.github.io\/posts\/bayesian-network-1\/"
+        },"genre": "posts","keywords": "Probability","wordcount":  1027 ,
+        "url": "https:\/\/jasontan-code.github.io\/posts\/bayesian-network-1\/","datePublished": "2021-11-27T15:19:26-06:00","dateModified": "2021-11-27T15:19:26-06:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "Taotao"
+            },"description": ""
+    }
+    </script></head>
+    <body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('auto' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'auto' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Taotao Tan">Taotao Tan</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Taotao Tan">Taotao Tan</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animated flipInX">An Intuitive Explanation of Bayesian Network</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-category">included in <a href="/categories/probability/"><i class="far fa-folder fa-fw"></i>Probability</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-11-27">2021-11-27</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1027 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="true">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#an-example">An example</a></li>
+    <li><a href="#inference">Inference</a></li>
+    <li><a href="#inference-by-sampling">Inference by sampling</a></li>
+    <li><a href="#an-r-package-for-bayesian-network">An R package for Bayesian network</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="introduction">Introduction</h2>
+<p>Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="an-example">An example</h2>
+<p>Suppose we are going to take a math exam next week. The outcome of the exam heavily depends on two factors: <strong>sleep</strong> and <strong>study</strong>. If we study and sleep well, chances are high that we will do a good job in the exam. Also, <strong>sleep</strong> can affect our attention and therefore influence our <strong>study</strong> quality. Since the world is probabilistic, we need to define the probability of each action (<strong>sleep</strong>, <strong>study</strong> and <strong>exam</strong>):</p>
+<p><img
+        class="lazyload"
+        src="/svg/loading.min.svg"
+        data-src="/images/Bayesian_Net/BayesianNet.png"
+        data-srcset="/images/Bayesian_Net/BayesianNet.png, /images/Bayesian_Net/BayesianNet.png 1.5x, /images/Bayesian_Net/BayesianNet.png 2x"
+        data-sizes="auto"
+        alt="/images/Bayesian_Net/BayesianNet.png"
+        title="Bayesian Network" /></p>
+<p>The graph is easy to interpret: for example, the probability that we have a good sleep is 80%; the probability of we study well given that we slept well is 70%; the probability of we perform well in the exam, given we slept well and studied well is 90%, etc&hellip; Notice that each column should sum up to 1 to make sure the probability is valid.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="inference">Inference</h2>
+<p>Suppose we have finished the exam and we Aced it! Your teacher looked at your grade, and asked a question: did you sleep well recently? Equivalently, our teacher asked what is $$P (\text{Sleep = good}|\text{Exam = good})$$</p>
+<p>In this section, we will try to answer this question by carefully examine each term, and calculate the probability based on the graph above.</p>
+<p> </p>
+<p>To answer this question, we can list all possible combinations of $(\text{Sleep, Study})$ when we did well in our exam. Here is the calculation:</p>
+<blockquote>
+<p>For example, to calculate the probability of Sleep well, Study well, and Exam well, we have
+$$
+\begin{aligned}
+&amp; P(\text{Sleep = G, Study = G, Exam = G}) \\
+&amp;= P(\text{Sleep = G}) \times P(\text{Study = G | Sleep = G}) \times P(\text{Exam = G | Sleep = G, Study = G}) \\
+&amp;=0.8 \times 0.7 \times 0.9 \\
+&amp;= 0.504
+\end{aligned}
+$$</p>
+<p>Similarly, we can calculate the probability of other combination of Sleep and Exam, when we did well in our exam</p>
+<p>$P(\text{Sleep = G, Study = B, Exam = G}) = 0.8 \times 0.3 \times 0.5 = 0.12$
+$P(\text{Sleep = B, Study = G, Exam = G}) = 0.2 \times 0.6 \times 0.8 = 0.096$
+$P(\text{Sleep = B, Study = B, Exam = G}) = 0.2 \times 0.4 \times 0.4 = 0.032$</p>
+</blockquote>
+<p> </p>
+<blockquote>
+<p>According to conditional probability formula, we have:<br>
+$$P (\text{Sleep = G}|\text{Exam = G}) = \frac{P (\text{Sleep = G} \cap \text{Exam = G})}{P (\text{Exam = G})}
+$$</p>
+<p> <br>
+  <br>
+We have already listed all possible combinations of $P (\text{Exam = G})$ above, so the denominator is:
+$$P (\text{Exam = G}) = 0.504 + 0.12 + 0.096 + 0.032 = 0.752$$</p>
+<p> <br>
+ <br>
+To calculate $P (\text{Sleep = G} \cap \text{Exam = G})$, we have two different scenarios:</p>
+<p>$$P(\text{Sleep = G, Study = G, Exam = G}) + P(\text{Sleep = G, Study = B, Exam = G}) \\
+= 0.504 + 0.12 = 0.624$$</p>
+</blockquote>
+<p> <br>
+ <br>
+The final answer is $P (\text{Sleep = good}|\text{Exam = good}) = \frac{0.624}{0.752} = 0.83$</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="inference-by-sampling">Inference by sampling</h2>
+<p>So far the calculation isn&rsquo;t crazy, but many times the Bayesian network can have hundreds of nodes and edges. Calculating the exact conditional probability for a large network is often unmanageable. In fact, it has been proven that Bayesian network inference is a <strong>NP</strong> problem, meaning the complexity grows exponentially.</p>
+<p> </p>
+<p>A more feasible way of inferring bayesian network is to draw samples from the network, and we estimate the conditional probability based on our samples.</p>
+<p> </p>
+<p>Here I provide some R code that can simulate this network, and the answer should be very close to the above result:</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="c1"># define a function that simulate the Bayesian network</span>
+
+<span class="n">Simulate</span> <span class="o">=</span> <span class="nf">function</span><span class="p">(){</span>
+  <span class="c1"># define probability of sleep</span>
+  <span class="n">SLEEP</span> <span class="o">=</span> <span class="nf">rbinom</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="m">0.8</span><span class="p">)</span>
+  
+  <span class="c1"># define conditional probability of study</span>
+  <span class="nf">if </span><span class="p">(</span><span class="n">SLEEP</span> <span class="o">==</span> <span class="m">1</span><span class="p">){</span>
+    <span class="n">STUDY</span> <span class="o">=</span> <span class="nf">rbinom</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="m">0.7</span><span class="p">)</span>
+  <span class="p">}</span><span class="n">else</span><span class="p">{</span>
+    <span class="n">STUDY</span> <span class="o">=</span> <span class="nf">rbinom</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="m">0.6</span><span class="p">)</span>
+  <span class="p">}</span>
+  
+  <span class="c1"># define conditional probability of exam</span>
+  <span class="nf">if </span><span class="p">(</span><span class="n">SLEEP</span> <span class="o">==</span> <span class="m">1</span> <span class="o">&amp;</span> <span class="n">STUDY</span> <span class="o">==</span> <span class="m">1</span><span class="p">){</span>
+    <span class="n">EXAM</span> <span class="o">=</span> <span class="nf">rbinom</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="m">0.9</span><span class="p">)</span>
+  <span class="p">}</span> <span class="n">else</span> <span class="nf">if </span><span class="p">(</span><span class="n">SLEEP</span> <span class="o">==</span> <span class="m">1</span> <span class="o">&amp;</span> <span class="n">STUDY</span> <span class="o">==</span> <span class="m">0</span><span class="p">){</span>
+    <span class="n">EXAM</span> <span class="o">=</span> <span class="nf">rbinom</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="m">0.5</span><span class="p">)</span>
+  <span class="p">}</span> <span class="n">else</span> <span class="nf">if </span><span class="p">(</span><span class="n">SLEEP</span> <span class="o">==</span> <span class="m">0</span> <span class="o">&amp;</span> <span class="n">STUDY</span> <span class="o">==</span> <span class="m">1</span><span class="p">){</span>
+    <span class="n">EXAM</span> <span class="o">=</span> <span class="nf">rbinom</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="m">0.8</span><span class="p">)</span>
+  <span class="p">}</span> <span class="n">else</span> <span class="nf">if </span><span class="p">(</span><span class="n">SLEEP</span> <span class="o">==</span> <span class="m">0</span> <span class="o">&amp;</span> <span class="n">STUDY</span> <span class="o">==</span> <span class="m">0</span><span class="p">){</span>
+    <span class="n">EXAM</span> <span class="o">=</span> <span class="nf">rbinom</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="m">1</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="m">0.4</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nf">return</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">SLEEP</span><span class="p">,</span> <span class="n">STUDY</span><span class="p">,</span> <span class="n">EXAM</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="c1"># create an empty table to store results</span>
+<span class="n">Simulate_res</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="n">nrow</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="m">3</span><span class="p">)</span>
+
+<span class="c1"># simulate 100000 times; this process takes about 1 minute.</span>
+<span class="nf">for </span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="m">100000</span><span class="p">){</span>
+  <span class="n">Simulate_res</span> <span class="o">=</span> <span class="nf">rbind</span><span class="p">(</span><span class="n">Simulate_res</span><span class="p">,</span> <span class="nf">Simulate</span><span class="p">())</span>
+<span class="p">}</span>
+
+<span class="c1"># calculate the conditional probability</span>
+<span class="nf">sum</span><span class="p">((</span><span class="n">Simulate_res[</span><span class="p">,</span><span class="m">3</span><span class="n">]</span> <span class="o">==</span> <span class="m">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Simulate_res[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span> <span class="o">==</span> <span class="m">1</span><span class="p">))</span><span class="o">/</span> <span class="nf">sum</span><span class="p">(</span><span class="n">Simulate_res[</span><span class="p">,</span><span class="m">3</span><span class="n">]</span> <span class="o">==</span> <span class="m">1</span><span class="p">)</span>
+</code></pre></div><p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="an-r-package-for-bayesian-network">An R package for Bayesian network</h2>
+<p>Here I also provide some code that I adapted from the <a href="https://bookdown.org/robertness/causalml/docs/tutorial-probabilistic-modeling-with-bayesian-networks-and-bnlearn.html#understanding-the-directed-acyclic-graph-representation" target="_blank" rel="noopener noreffer">tutorial</a> of $bnlearn$ package. I constructed the Bayesian network and defined the probability distribution for each node. $bnlearn$ can make the inference process much easier. It also provide functionalities that enables us to learn from data (hopefully I can cover this topic in the future).</p>
+<div class="highlight"><pre class="chroma"><code class="language-r" data-lang="r"><span class="nf">library</span><span class="p">(</span><span class="n">bnlearn</span><span class="p">)</span>
+
+<span class="c1"># define the structure of the network</span>
+<span class="n">dag</span> <span class="o">&lt;-</span> <span class="nf">empty.graph</span><span class="p">(</span><span class="n">nodes</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;Sleep&#34;</span><span class="p">,</span><span class="s">&#34;Study&#34;</span><span class="p">,</span> <span class="s">&#34;Exam&#34;</span><span class="p">))</span>
+<span class="n">arc.set</span> <span class="o">&lt;-</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="s">&#34;Sleep&#34;</span><span class="p">,</span> <span class="s">&#34;Study&#34;</span><span class="p">,</span>
+                    <span class="s">&#34;Sleep&#34;</span><span class="p">,</span> <span class="s">&#34;Exam&#34;</span><span class="p">,</span>
+                    <span class="s">&#34;Study&#34;</span><span class="p">,</span> <span class="s">&#34;Exam&#34;</span><span class="p">),</span>
+                  <span class="n">byrow</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="m">2</span><span class="p">,</span>
+                  <span class="n">dimnames</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="kc">NULL</span><span class="p">,</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;from&#34;</span><span class="p">,</span> <span class="s">&#34;to&#34;</span><span class="p">)))</span>
+
+<span class="nf">arcs</span><span class="p">(</span><span class="n">dag</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">arc.set</span>
+
+<span class="c1"># plot the network</span>
+<span class="nf">graphviz.plot</span><span class="p">(</span><span class="n">dag</span><span class="p">,</span> <span class="n">layout</span> <span class="o">=</span> <span class="s">&#34;dot&#34;</span><span class="p">)</span>
+
+<span class="c1"># define the probability for each node</span>
+<span class="n">Sleep.lv</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;good&#34;</span><span class="p">,</span> <span class="s">&#34;bad&#34;</span><span class="p">)</span>
+<span class="n">Study.lv</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;good&#34;</span><span class="p">,</span> <span class="s">&#34;bad&#34;</span><span class="p">)</span>
+<span class="n">Exam.lv</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;good&#34;</span><span class="p">,</span> <span class="s">&#34;bad&#34;</span><span class="p">)</span>
+
+<span class="n">Sleep.prob</span> <span class="o">=</span> <span class="nf">array</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">0.8</span><span class="p">,</span><span class="m">0.2</span><span class="p">),</span> <span class="n">dim</span> <span class="o">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">dimnames</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">Sleep</span> <span class="o">=</span> <span class="n">Sleep.lv</span><span class="p">))</span>
+<span class="n">Study.prob</span> <span class="o">=</span> <span class="nf">array</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">0.7</span><span class="p">,</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.6</span><span class="p">,</span><span class="m">0.4</span><span class="p">),</span> <span class="n">dim</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">),</span> <span class="n">dimnames</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">Study</span> <span class="o">=</span> <span class="n">Study.lv</span><span class="p">,</span> <span class="n">Sleep</span> <span class="o">=</span> <span class="n">Sleep.lv</span><span class="p">))</span>
+<span class="n">Exam.prob</span> <span class="o">=</span> <span class="nf">array</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">0.9</span><span class="p">,</span><span class="m">0.1</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span><span class="m">0.5</span><span class="p">,</span> <span class="m">0.8</span><span class="p">,</span> <span class="m">0.2</span><span class="p">,</span> <span class="m">0.4</span><span class="p">,</span> <span class="m">0.6</span><span class="p">),</span> <span class="n">dim</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">),</span> <span class="n">dimnames</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">Exam</span> <span class="o">=</span> <span class="n">Exam.lv</span><span class="p">,</span> <span class="n">Study</span> <span class="o">=</span> <span class="n">Study.lv</span><span class="p">,</span> <span class="n">Sleep</span><span class="o">=</span> <span class="n">Sleep.lv</span><span class="p">))</span>
+<span class="n">cpt</span> <span class="o">&lt;-</span> <span class="nf">list</span><span class="p">(</span><span class="n">Sleep</span> <span class="o">=</span> <span class="n">Sleep.prob</span><span class="p">,</span> <span class="n">Study</span> <span class="o">=</span> <span class="n">Study.prob</span><span class="p">,</span> <span class="n">Exam</span> <span class="o">=</span> <span class="n">Exam.prob</span><span class="p">)</span>
+
+<span class="c1"># build the network</span>
+<span class="n">bn</span> <span class="o">&lt;-</span> <span class="nf">custom.fit</span><span class="p">(</span><span class="n">dag</span><span class="p">,</span> <span class="n">cpt</span><span class="p">)</span>
+
+<span class="c1"># inference</span>
+<span class="nf">cpquery</span><span class="p">(</span><span class="n">bn</span><span class="p">,</span> <span class="n">event</span> <span class="o">=</span> <span class="p">(</span><span class="n">Sleep</span> <span class="o">==</span> <span class="s">&#34;good&#34;</span><span class="p">),</span> <span class="n">evidence</span> <span class="o">=</span> <span class="p">(</span><span class="n">Exam</span> <span class="o">==</span> <span class="s">&#34;good&#34;</span><span class="p">))</span>
+</code></pre></div></div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-11-27</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://jasontan-code.github.io/posts/bayesian-network-1/" data-title="An Intuitive Explanation of Bayesian Network" data-via="doubleTaoTan" data-hashtags="Probability"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://jasontan-code.github.io/posts/bayesian-network-1/" data-hashtag="Probability"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://jasontan-code.github.io/posts/bayesian-network-1/" data-title="An Intuitive Explanation of Bayesian Network" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://jasontan-code.github.io/posts/bayesian-network-1/" data-title="An Intuitive Explanation of Bayesian Network"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://jasontan-code.github.io/posts/bayesian-network-1/" data-title="An Intuitive Explanation of Bayesian Network"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://jasontan-code.github.io/posts/bayesian-network-1/" data-title="An Intuitive Explanation of Bayesian Network" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://jasontan-code.github.io/posts/bayesian-network-1/" data-title="An Intuitive Explanation of Bayesian Network" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://jasontan-code.github.io/posts/bayesian-network-1/" data-title="An Intuitive Explanation of Bayesian Network"><i class="fab fa-evernote fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/probability/">Probability</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/gene-exp2/" class="prev" rel="prev" title="Model the Gene Expression (2): Likelihood Ratio Test"><i class="fas fa-angle-left fa-fw"></i>Model the Gene Expression (2): Likelihood Ratio Test</a></div>
+</div>
+<div id="comments"><div id="fb-root" class="comment"></div>
+            <div
+                class="fb-comments"
+                data-href="https://jasontan-code.github.io/posts/bayesian-network-1/"
+                data-width="100%"
+                data-numposts="10"
+            ></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://developers.facebook.com/docs/plugins/comments/"></a>Facebook</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.80.0">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.10"><i class="far fa-kiss-wink-heart fa-fw"></i> LoveIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2021</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/lightgallery/lightgallery.min.css"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script type="text/javascript" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&amp;version=v5.0&amp;appId=2162149760591137&amp;autoLogAppEvents=1" defer></script><script type="text/javascript" src="/lib/smooth-scroll/smooth-scroll.min.js"></script><script type="text/javascript" src="/lib/lazysizes/lazysizes.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lightgallery.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-thumbnail.min.js"></script><script type="text/javascript" src="/lib/lightgallery/lg-zoom.min.js"></script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js"></script><script type="text/javascript" src="/lib/katex/auto-render.min.js"></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js"></script><script type="text/javascript" src="/lib/katex/mhchem.min.js"></script><script type="text/javascript" src="/lib/cookieconsent/cookieconsent.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":10},"comment":{},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"lightGallery":{"actualSize":false,"exThumbImage":"data-thumbnail","hideBarsDelay":2000,"selector":".lightgallery","speed":400,"thumbContHeight":80,"thumbWidth":80,"thumbnail":true},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false}};</script><script type="text/javascript" src="/js/theme.min.js"></script><script type="text/javascript">
+            window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());
+            gtag('config', 'G-C4MZRQHWVE', { 'anonymize_ip': true });
+        </script><script type="text/javascript" src="https://www.googletagmanager.com/gtag/js?id=G-C4MZRQHWVE" async></script></body>
+</html>

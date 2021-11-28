@@ -3,9 +3,17 @@
         <title>Taotao Tan</title>
         <link>https://jasontan-code.github.io/</link>
         <description>Taotao&#39;s Blog Posts</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Tue, 23 Nov 2021 15:19:26 -0600</lastBuildDate>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 27 Nov 2021 15:19:26 -0600</lastBuildDate>
             <atom:link href="https://jasontan-code.github.io/index.xml" rel="self" type="application/rss+xml" />
         <item>
+    <title>An Intuitive Explanation of Bayesian Network</title>
+    <link>https://jasontan-code.github.io/posts/bayesian-network-1/</link>
+    <pubDate>Sat, 27 Nov 2021 15:19:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/bayesian-network-1/</guid>
+    <description><![CDATA[Introduction Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.
+ An example Suppose we are going to take a math exam next week.]]></description>
+</item><item>
     <title>Model the Gene Expression (2): Likelihood Ratio Test</title>
     <link>https://jasontan-code.github.io/posts/gene-exp2/</link>
     <pubDate>Tue, 23 Nov 2021 15:19:26 -0600</pubDate>
@@ -83,14 +91,5 @@ Before you read this post, I assume you are already familiar with basic probabil
 But before we get started, we should define what do I mean generic distribution. Here is one example:
 $$ f(x)= \begin{cases} 0 &amp; \text{if $x$ &lt; 0} \\ c \cdot \sqrt{x} &amp; \text{if $0 &lt; x &lt; 1 $} \\ 0 &amp; \text{if $x &gt; 1$} \end{cases} $$
 First, let&rsquo;s take a look at the probability density function (pdf):]]></description>
-</item><item>
-    <title>Maximum likelihood estimation</title>
-    <link>https://jasontan-code.github.io/posts/mle/</link>
-    <pubDate>Mon, 22 Nov 2021 15:18:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/mle/</guid>
-    <description><![CDATA[In this post, I will show you THE most important technique in inferential statistics: Maximum Likelihood Estimation (MLE).
- 1. Some data to work with Before we get started, let&rsquo;s see what type of problem could be solved using MLE.
-For example, I record the number of visitors of this website each hour from 8:00 am - 12:00 am (p.s. off course this is fake data, and I am probably too optimistic).]]></description>
 </item></channel>
 </rss>
