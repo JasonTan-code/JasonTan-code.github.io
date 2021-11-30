@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noodp" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-        <title>A Random Walk through HMM (1) - a background - Taotao Tan</title><meta name="Description" content="Taotao&#39;s Blog Posts"><meta property="og:title" content="A Random Walk through HMM (1) - a background" />
+        <title>A random walk through HMM (1) - a background - Taotao Tan</title><meta name="Description" content="Taotao&#39;s Blog Posts"><meta property="og:title" content="A random walk through HMM (1) - a background" />
 <meta property="og:description" content="Introduction This series of blog posts is aiming to discuss the Hidden Markov Model (HMM), given its wide applications in various fields including natural language processing, population genetics, finance, and so on. Besides its usefulness, I found HMM particularly interesting to learn, since it connects multiple disciplines like probability, linear algebra, machine learning and computer science. In this post, I will introduce Markov Model, which serves as the backbone of HMM model." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://jasontan-code.github.io/posts/hmm1/" />
@@ -15,7 +15,7 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://jasontan-code.github.io/images/avatar.png"/>
 
-<meta name="twitter:title" content="A Random Walk through HMM (1) - a background"/>
+<meta name="twitter:title" content="A random walk through HMM (1) - a background"/>
 <meta name="twitter:description" content="Introduction This series of blog posts is aiming to discuss the Hidden Markov Model (HMM), given its wide applications in various fields including natural language processing, population genetics, finance, and so on. Besides its usefulness, I found HMM particularly interesting to learn, since it connects multiple disciplines like probability, linear algebra, machine learning and computer science. In this post, I will introduce Markov Model, which serves as the backbone of HMM model."/>
 <meta name="application-name" content="Taotao&#39;s Blog Posts">
 <meta name="apple-mobile-web-app-title" content="Taotao&#39;s Blog Posts"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
@@ -24,12 +24,12 @@
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "A Random Walk through HMM (1) - a background",
+        "headline": "A random walk through HMM (1) - a background",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/jasontan-code.github.io\/posts\/hmm1\/"
-        },"genre": "posts","keywords": "Probability","wordcount":  1304 ,
+        },"genre": "posts","keywords": "Probability","wordcount":  1308 ,
         "url": "https:\/\/jasontan-code.github.io\/posts\/hmm1\/","datePublished": "2021-11-29T15:19:26-06:00","dateModified": "2021-11-29T15:19:26-06:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -77,9 +77,9 @@
                 <div class="container"><div class="toc" id="toc-auto">
             <h2 class="toc-title">Contents</h2>
             <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animated flipInX">A Random Walk through HMM (1) - a background</h1><div class="post-meta">
+        </div><article class="page single"><h1 class="single-title animated flipInX">A random walk through HMM (1) - a background</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-category">included in <a href="/categories/probability/"><i class="far fa-folder fa-fw"></i>Probability</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-11-29">2021-11-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1304 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-11-29">2021-11-29</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1308 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;7 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="true">
                 <div class="details-summary toc-title">
@@ -282,7 +282,7 @@ $$</p>
 <p> <br>
  </p>
 <h2 id="a-trillion-dollar-model">A trillion dollar model</h2>
-<p>In 1999, two Ph.D students at Stanford University named Larry Page and Sergey Brin developed a model that tried to recommend certain websites to users. The model was so successful that they even quit the Ph.D program. Years after, they became the most successful businessman on earth, and the company they built is called Google.</p>
+<p>In 1999, two Ph.D students at Stanford University named Larry Page and Sergey Brin developed a model that tried to recommend certain websites to users. The model was so successful that they even quit the Ph.D program. Years after, they became the most successful businessmen on earth, and the company they built is called Google.</p>
 <p>The core idea of the webpage recommendation system is to recommend high quality websites. What is a high quality website? A high quality websites is a website that many websites referred to, (a.k.a: a website that has many hyperlinks pointed to). This assumption makes intuitive sense - an analogy is that a paper that has a lot citations must be a good paper. Based on this assumption, Page &amp; Brin built this model called PageRank.</p>
 <p>Assume there are 5 websites, and each arrow represents a hyperlink that goes from one page to another page:</p>
 <p><img
@@ -295,7 +295,7 @@ $$</p>
         title="/images/HMM1/HMM3.png" /></p>
 <p> <br>
  </p>
-<p>Intuitively, pageA and pageC look like good pages, since a lot of other websites referred these two pages. Now assume we have 100 random users, with 20 users in each page. A user will typically follow the hyperlinks to browse the website. For example, if a user is currently browsing pageC, the next moment, this user will have 50% of the chance to go to pageD, and 50% of the chance to go to pageA. Based on this graph, we can specify the transition matrix</p>
+<p>Intuitively, pageA and pageC look like good pages, since a lot of other websites referred these two pages. A user will typically follow the hyperlinks to browse the website. For example, if a user is currently browsing pageC, the next moment, this user will have 50% of the chance to go to pageD, and 50% of the chance to go to pageA. Based on this graph, we can specify the transition matrix</p>
 <p>(note row/column order from pageA - pageE):</p>
 <p>$$
 \begin{bmatrix}
@@ -306,7 +306,7 @@ $$</p>
 0 &amp; 0 &amp; 0 &amp; 0 &amp; 0.5
 \end{bmatrix}
 $$</p>
-<p>Using the same technique we have discussed above, we can calculate the stationary distribution (a.k.a, how many random users in each page eventually).</p>
+<p>Now assume we have 100 random users, with 20 users in each page. Using the same technique we have discussed above, we can calculate the stationary distribution (a.k.a, how many random users in each page eventually).</p>
 <p>$$
 \begin{bmatrix}
 0 &amp; 1 &amp; 0.5 &amp; 0 &amp; 0.5\\
@@ -330,7 +330,7 @@ $$</p>
 0
 \end{bmatrix}
 $$</p>
-<p>According to the PageRank algorithm, eventually we will have 53.4 users landing on pageC, and therefore pageC has the highest quality and should be recommended to the users.</p>
+<p>According to the PageRank algorithm, eventually we will have 53.4 users landing on pageC, and therefore pageC has the highest quality and should be recommended as the top page to the users.</p>
 <p> </p>
 <p>(There are more interesting techniques Page &amp; Brin used in this model. For example, how to prevent the random surfer from trapping in a certain loop, but this is beyond the scope of this post.)</p>
 <p> <br>
@@ -348,7 +348,7 @@ $$</p>
         <div class="post-info-line">
             <div class="post-info-md"></div>
             <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A Random Walk through HMM (1) - a background" data-via="doubleTaoTan" data-hashtags="Probability"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://jasontan-code.github.io/posts/hmm1/" data-hashtag="Probability"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A Random Walk through HMM (1) - a background" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A Random Walk through HMM (1) - a background"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A Random Walk through HMM (1) - a background"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A Random Walk through HMM (1) - a background" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A Random Walk through HMM (1) - a background" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A Random Walk through HMM (1) - a background"><i class="fab fa-evernote fa-fw"></i></a></span>
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A random walk through HMM (1) - a background" data-via="doubleTaoTan" data-hashtags="Probability"><i class="fab fa-twitter fa-fw"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://jasontan-code.github.io/posts/hmm1/" data-hashtag="Probability"><i class="fab fa-facebook-square fa-fw"></i></a><a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A random walk through HMM (1) - a background" data-web><i class="fab fa-whatsapp fa-fw"></i></a><a href="javascript:void(0);" title="Share on Line" data-sharer="line" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A random walk through HMM (1) - a background"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="javascript:void(0);" title="Share on 微博" data-sharer="weibo" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A random walk through HMM (1) - a background"><i class="fab fa-weibo fa-fw"></i></a><a href="javascript:void(0);" title="Share on Myspace" data-sharer="myspace" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A random walk through HMM (1) - a background" data-description=""><i data-svg-src="/lib/simple-icons/icons/myspace.min.svg"></i></a><a href="javascript:void(0);" title="Share on Blogger" data-sharer="blogger" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A random walk through HMM (1) - a background" data-description=""><i class="fab fa-blogger fa-fw"></i></a><a href="javascript:void(0);" title="Share on Evernote" data-sharer="evernote" data-url="https://jasontan-code.github.io/posts/hmm1/" data-title="A random walk through HMM (1) - a background"><i class="fab fa-evernote fa-fw"></i></a></span>
             </div>
         </div>
     </div>
