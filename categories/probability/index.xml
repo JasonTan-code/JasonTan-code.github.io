@@ -3,7 +3,14 @@
         <title>Probability - Category - Taotao Tan</title>
         <link>https://jasontan-code.github.io/categories/probability/</link>
         <description>Probability - Category - Taotao Tan</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 27 Nov 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/probability/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 29 Nov 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/probability/" rel="self" type="application/rss+xml" /><item>
+    <title>A Random Walk through HMM (1) - a background</title>
+    <link>https://jasontan-code.github.io/posts/hmm1/</link>
+    <pubDate>Mon, 29 Nov 2021 15:19:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/hmm1/</guid>
+    <description><![CDATA[Introduction This series of blog posts is aiming to discuss the Hidden Markov Model (HMM), given its wide applications in various fields including natural language processing, population genetics, finance, and so on. Besides its usefulness, I found HMM particularly interesting to learn, since it connects multiple disciplines like probability, linear algebra, machine learning and computer science. In this post, I will introduce Markov Model, which serves as the backbone of HMM model.]]></description>
+</item><item>
     <title>An Intuitive Explanation of Bayesian Network</title>
     <link>https://jasontan-code.github.io/posts/bayesian-network-1/</link>
     <pubDate>Sat, 27 Nov 2021 15:19:26 -0600</pubDate>

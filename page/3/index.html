@@ -73,42 +73,14 @@
         alt="/images/avatar.png"
         title="/images/avatar.png" /></a></div><h2 class="home-subtitle"><div id="id-1" class="typeit"></div></h2><div class="links"><a href="https://github.com/jasontan-code" title="GitHub" target="_blank" rel="noopener noreffer me"><i class="fab fa-github-alt fa-fw"></i></a><a href="https://twitter.com/doubleTaoTan" title="Twitter" target="_blank" rel="noopener noreffer me"><i class="fab fa-twitter fa-fw"></i></a></div></div>
 <article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/hmm1/">A Random Walk through HMM (1) - a background</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-11-29">2021-11-29</time></span>&nbsp;<span class="post-category">included in <a href="/categories/probability/"><i class="far fa-folder fa-fw"></i>Probability</a></span></div><div class="content">Introduction This series of blog posts is aiming to discuss the Hidden Markov Model (HMM), given its wide applications in various fields including natural language processing, population genetics, finance, and so on. Besides its usefulness, I found HMM particularly interesting to learn, since it connects multiple disciplines like probability, linear algebra, machine learning and computer science. In this post, I will introduce Markov Model, which serves as the backbone of HMM model.</div><div class="post-footer">
-        <a href="/posts/hmm1/">Read More</a><div class="post-tags">
-                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/probability/">Probability</a></div></div>
-</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/bayesian-network-1/">An Intuitive Explanation of Bayesian Network</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-11-27">2021-11-27</time></span>&nbsp;<span class="post-category">included in <a href="/categories/probability/"><i class="far fa-folder fa-fw"></i>Probability</a></span></div><div class="content">Introduction Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.
- An example Suppose we are going to take a math exam next week.</div><div class="post-footer">
-        <a href="/posts/bayesian-network-1/">Read More</a><div class="post-tags">
-                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/probability/">Probability</a></div></div>
-</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/gene-exp2/">Model the Gene Expression (2): Likelihood Ratio Test</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-11-23">2021-11-23</time></span>&nbsp;<span class="post-category">included in <a href="/categories/genetics/"><i class="far fa-folder fa-fw"></i>Genetics</a></span></div><div class="content">In the last post, we used a GLM framework to model the gene expression. $$ y \sim NB(\mu, r) \\ log( \mu )= b_1 x + b_0 $$
-Using maximum likelihood estimation, we were able to find a set of parameters $\hat b_0, \hat b_1, \hat r$, that maximizes the likelihood function.
-But if you send this model (the estimated parameters) to biologists, they wouldn&rsquo;t be happy. And we all know what is lacking: the p-value!</div><div class="post-footer">
-        <a href="/posts/gene-exp2/">Read More</a><div class="post-tags">
-                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/genetics/">Genetics</a></div></div>
-</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/gene-exp1/">Model the Gene Expression (1): A GLM framework</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-11-23">2021-11-23</time></span>&nbsp;<span class="post-category">included in <a href="/categories/genetics/"><i class="far fa-folder fa-fw"></i>Genetics</a></span></div><div class="content">Before you start reading this post, please familiarize yourself with MLE and linear model.
- Background In transcriptomic research, we often want to determine if genes are unregulated or down-regulated under a particular perturbation. For example, we have a medication that may cure type 2 diabetes. In our experiment, 6 patients are split into two groups, with 3 patients taking the medication, and 3 patients taking the placebo. The patients' blood samples are then collected to measure the transcriptomic profile (mRNA abundance level for each gene) using NGS technology (RNA seq).</div><div class="post-footer">
-        <a href="/posts/gene-exp1/">Read More</a><div class="post-tags">
-                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/genetics/">Genetics</a></div></div>
-</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/calculate_svd/">Calculate SVD by hand (and decompose Spongebob)</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-11-22">2021-11-22</time></span>&nbsp;<span class="post-category">included in <a href="/categories/linear-algebra/"><i class="far fa-folder fa-fw"></i>Linear Algebra</a></span></div><div class="content">In my previous post, I have manually implemented PCA by finding the eigenvectors and eigenvalues of a covariance matrix. Today, let&rsquo;s try to perform PCA using a different approach called Singular Value Decomposition. Then we are going to decompose SPONGEBOB!
-Note: you might find this post to be useful, if you are new to PCA.
- Algorithm Again, we are going to use the same dataset we have used before.</div><div class="post-footer">
-        <a href="/posts/calculate_svd/">Read More</a><div class="post-tags">
+        <a href="/posts/calculate_pca/">Calculate PCA by hand</a>
+    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-11-21">2021-11-21</time></span>&nbsp;<span class="post-category">included in <a href="/categories/linear-algebra/"><i class="far fa-folder fa-fw"></i>Linear Algebra</a></span></div><div class="content">Here I am going to show you how to calculate PCA by hand!
+But before we dive deep into PCA, there are two prerequisite concepts we need to understand:
+ Variance/Covariance Find eigenvectors and eigenvalues  If you already understand those two concepts, you can skip this part.
+ Prerequisite 1: Variance/Covariance  Variance Variance measures how far a set of numbers is spread out from their average value. The sample variance is defined as $$ s^2 = \frac{\sum(x_i - \bar x)^2}{n - 1} $$</div><div class="post-footer">
+        <a href="/posts/calculate_pca/">Read More</a><div class="post-tags">
                 <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/linear-algebra/">Linear Algebra</a></div></div>
-</article><article class="single summary" itemscope itemtype="http://schema.org/Article"><h1 class="single-title" itemprop="name headline">
-        <a href="/posts/bayesian-5/">Dive into Bayesian statistics (5): Intro to PyMC3</a>
-    </h1><div class="post-meta"><span class="post-author"><a href="/" title="Author" rel=" author" class="author"><i class="fas fa-user-circle fa-fw"></i>Taotao</a></span>&nbsp;<span class="post-publish">published on <time datetime="2021-11-22">2021-11-22</time></span>&nbsp;<span class="post-category">included in <a href="/categories/statistics/"><i class="far fa-folder fa-fw"></i>Statistics</a></span></div><div class="content">In our previous post, we have manually implemented the Markov Chain Monte Carlo algorithm (specially, Metropolis Hastings), and drew samples from the posterior distribution. The code isn&rsquo;t particularly difficult to understand, but it&rsquo;s not intuitive to read/write neither. Besides the difficulty of implementation, algorithm performance (a.k.a speed) is also a major consideration in a more realistic application. Luckily, well-written tools are available to resolve these obstacles, namely, Stan and PyMC3.</div><div class="post-footer">
-        <a href="/posts/bayesian-5/">Read More</a><div class="post-tags">
-                <i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/statistics/">Statistics</a></div></div>
-</article><ul class="pagination"><li class="page-item active">
+</article><ul class="pagination"><li class="page-item ">
                     <span class="page-link">
                         <a href="/">1</a>
                     </span>
@@ -116,7 +88,7 @@ Note: you might find this post to be useful, if you are new to PCA.
                     <span class="page-link">
                         <a href="/page/2/">2</a>
                     </span>
-                </li><li class="page-item ">
+                </li><li class="page-item active">
                     <span class="page-link">
                         <a href="/page/3/">3</a>
                     </span>

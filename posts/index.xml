@@ -3,7 +3,14 @@
         <title>All Posts - Taotao Tan</title>
         <link>https://jasontan-code.github.io/posts/</link>
         <description>All Posts | Taotao Tan</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 27 Nov 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 29 Nov 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>A Random Walk through HMM (1) - a background</title>
+    <link>https://jasontan-code.github.io/posts/hmm1/</link>
+    <pubDate>Mon, 29 Nov 2021 15:19:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/hmm1/</guid>
+    <description><![CDATA[Introduction This series of blog posts is aiming to discuss the Hidden Markov Model (HMM), given its wide applications in various fields including natural language processing, population genetics, finance, and so on. Besides its usefulness, I found HMM particularly interesting to learn, since it connects multiple disciplines like probability, linear algebra, machine learning and computer science. In this post, I will introduce Markov Model, which serves as the backbone of HMM model.]]></description>
+</item><item>
     <title>An Intuitive Explanation of Bayesian Network</title>
     <link>https://jasontan-code.github.io/posts/bayesian-network-1/</link>
     <pubDate>Sat, 27 Nov 2021 15:19:26 -0600</pubDate>
@@ -79,15 +86,5 @@ Since we are interested to find $\lambda_0$ that gives the maximum value of $P(\
     <guid>https://jasontan-code.github.io/posts/bayesian-1/</guid>
     <description><![CDATA[I know, this is an exciting &amp; scary topic. It literally took me months to understand, and I hope this post will make your life easier.
 Before you read this post, I assume you are already familiar with basic probability theories, maximum likelihood estimation and bayes theorem. I encourage you to read my previous post that discussed MLE, and we are going to use the same dataset in this post.]]></description>
-</item><item>
-    <title>How to draw sample from a generic distribution?</title>
-    <link>https://jasontan-code.github.io/posts/monte_corlo/</link>
-    <pubDate>Mon, 22 Nov 2021 16:18:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/monte_corlo/</guid>
-    <description><![CDATA[In this post, I am going to show two methods to draw samples from a generic distribution.
-But before we get started, we should define what do I mean generic distribution. Here is one example:
-$$ f(x)= \begin{cases} 0 &amp; \text{if $x$ &lt; 0} \\ c \cdot \sqrt{x} &amp; \text{if $0 &lt; x &lt; 1 $} \\ 0 &amp; \text{if $x &gt; 1$} \end{cases} $$
-First, let&rsquo;s take a look at the probability density function (pdf):]]></description>
 </item></channel>
 </rss>
