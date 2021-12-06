@@ -2,13 +2,14 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
     xmlns:xhtml="http://www.w3.org/1999/xhtml"
     ><url>
+            <loc>https://jasontan-code.github.io/posts/hmm2/</loc><lastmod>2021-12-04T15:19:26-06:00</lastmod></url><url>
+            <loc>https://jasontan-code.github.io/categories/</loc><lastmod>2021-12-04T15:19:26-06:00</lastmod></url><url>
+            <loc>https://jasontan-code.github.io/posts/</loc><lastmod>2021-12-04T15:19:26-06:00</lastmod></url><url>
+            <loc>https://jasontan-code.github.io/tags/probability/</loc><lastmod>2021-12-04T15:19:26-06:00</lastmod></url><url>
+            <loc>https://jasontan-code.github.io/categories/probability/</loc><lastmod>2021-12-04T15:19:26-06:00</lastmod></url><url>
+            <loc>https://jasontan-code.github.io/tags/</loc><lastmod>2021-12-04T15:19:26-06:00</lastmod></url><url>
+            <loc>https://jasontan-code.github.io/</loc><lastmod>2021-12-04T15:19:26-06:00</lastmod></url><url>
             <loc>https://jasontan-code.github.io/posts/hmm1/</loc><lastmod>2021-11-29T15:19:26-06:00</lastmod></url><url>
-            <loc>https://jasontan-code.github.io/categories/</loc><lastmod>2021-11-29T15:19:26-06:00</lastmod></url><url>
-            <loc>https://jasontan-code.github.io/posts/</loc><lastmod>2021-11-29T15:19:26-06:00</lastmod></url><url>
-            <loc>https://jasontan-code.github.io/tags/probability/</loc><lastmod>2021-11-29T15:19:26-06:00</lastmod></url><url>
-            <loc>https://jasontan-code.github.io/categories/probability/</loc><lastmod>2021-11-29T15:19:26-06:00</lastmod></url><url>
-            <loc>https://jasontan-code.github.io/tags/</loc><lastmod>2021-11-29T15:19:26-06:00</lastmod></url><url>
-            <loc>https://jasontan-code.github.io/</loc><lastmod>2021-11-29T15:19:26-06:00</lastmod></url><url>
             <loc>https://jasontan-code.github.io/posts/bayesian-network-1/</loc><lastmod>2021-11-27T15:19:26-06:00</lastmod></url><url>
             <loc>https://jasontan-code.github.io/about/</loc><lastmod>2021-11-26T14:17:54&#43;05:45</lastmod></url><url>
             <loc>https://jasontan-code.github.io/tags/genetics/</loc><lastmod>2021-11-23T15:19:26-06:00</lastmod></url><url>

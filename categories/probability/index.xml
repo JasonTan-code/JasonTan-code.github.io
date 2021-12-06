@@ -3,7 +3,14 @@
         <title>Probability - Category - Taotao Tan</title>
         <link>https://jasontan-code.github.io/categories/probability/</link>
         <description>Probability - Category - Taotao Tan</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Mon, 29 Nov 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/probability/" rel="self" type="application/rss+xml" /><item>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 04 Dec 2021 15:19:26 -0600</lastBuildDate><atom:link href="https://jasontan-code.github.io/categories/probability/" rel="self" type="application/rss+xml" /><item>
+    <title>A random walk through HMM (2) - structure and inference</title>
+    <link>https://jasontan-code.github.io/posts/hmm2/</link>
+    <pubDate>Sat, 04 Dec 2021 15:19:26 -0600</pubDate>
+    <author>Author</author>
+    <guid>https://jasontan-code.github.io/posts/hmm2/</guid>
+    <description><![CDATA[Introduction I found most of HMM tutorial are presented in a top-down manner, where a lot of mathematical notations are thrown to the learners without a concrete example. This could sometimes make the learning process very frustrating, at least for me. In this post, I will try to demonstrate the core idea of HMM, as well as a commonly-used inference algorithm using a toy example. The example is from Dr.Xiaole Liu&rsquo;s Youtube channel, and I highly recommend you to check out her video if you want to develop intuition of HMM rather than get killed by notations.]]></description>
+</item><item>
     <title>A random walk through HMM (1) - a background</title>
     <link>https://jasontan-code.github.io/posts/hmm1/</link>
     <pubDate>Mon, 29 Nov 2021 15:19:26 -0600</pubDate>
