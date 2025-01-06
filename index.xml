@@ -1,91 +1,40 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>Taotao Tan</title>
-        <link>https://jasontan-code.github.io/</link>
-        <description>Taotao&#39;s Blog Posts</description>
-        <generator>Hugo -- gohugo.io</generator><language>en</language><lastBuildDate>Sat, 04 Dec 2021 15:19:26 -0600</lastBuildDate>
-            <atom:link href="https://jasontan-code.github.io/index.xml" rel="self" type="application/rss+xml" />
-        <item>
-    <title>A random walk through HMM (2) - structure and inference</title>
-    <link>https://jasontan-code.github.io/posts/hmm2/</link>
-    <pubDate>Sat, 04 Dec 2021 15:19:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/hmm2/</guid>
-    <description><![CDATA[Introduction I found most of HMM tutorial are presented in a top-down manner, where a lot of mathematical notations are thrown to the learners without a concrete example. This could sometimes make the learning process very frustrating, at least for me. In this post, I will try to demonstrate the core idea of HMM, as well as a commonly-used inference algorithm using a toy example. The example is from Dr.Xiaole Liu&rsquo;s Youtube channel, and I highly recommend you to check out her video if you want to develop intuition of HMM rather than get killed by notations.]]></description>
-</item><item>
-    <title>A random walk through HMM (1) - a background</title>
-    <link>https://jasontan-code.github.io/posts/hmm1/</link>
-    <pubDate>Mon, 29 Nov 2021 15:19:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/hmm1/</guid>
-    <description><![CDATA[Introduction This series of blog posts is aiming to discuss the Hidden Markov Model (HMM), given its wide applications in various fields including natural language processing, population genetics, finance, and so on. Besides its usefulness, I found HMM particularly interesting to learn, since it connects multiple disciplines like probability, linear algebra, machine learning and computer science. In this post, I will introduce Markov Model, which serves as the backbone of HMM model.]]></description>
-</item><item>
-    <title>An Intuitive Explanation of Bayesian Network</title>
-    <link>https://jasontan-code.github.io/posts/bayesian-network-1/</link>
-    <pubDate>Sat, 27 Nov 2021 15:19:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/bayesian-network-1/</guid>
-    <description><![CDATA[Introduction Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.
- An example Suppose we are going to take a math exam next week.]]></description>
-</item><item>
-    <title>Model the Gene Expression (2): Likelihood Ratio Test</title>
-    <link>https://jasontan-code.github.io/posts/gene-exp2/</link>
-    <pubDate>Tue, 23 Nov 2021 15:19:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/gene-exp2/</guid>
-    <description><![CDATA[In the last post, we used a GLM framework to model the gene expression. $$ y \sim NB(\mu, r) \\ log( \mu )= b_1 x + b_0 $$
-Using maximum likelihood estimation, we were able to find a set of parameters $\hat b_0, \hat b_1, \hat r$, that maximizes the likelihood function.
-But if you send this model (the estimated parameters) to biologists, they wouldn&rsquo;t be happy. And we all know what is lacking: the p-value!]]></description>
-</item><item>
-    <title>Model the Gene Expression (1): A GLM framework</title>
-    <link>https://jasontan-code.github.io/posts/gene-exp1/</link>
-    <pubDate>Tue, 23 Nov 2021 15:18:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/gene-exp1/</guid>
-    <description><![CDATA[Before you start reading this post, please familiarize yourself with MLE and linear model.
- Background In transcriptomic research, we often want to determine if genes are unregulated or down-regulated under a particular perturbation. For example, we have a medication that may cure type 2 diabetes. In our experiment, 6 patients are split into two groups, with 3 patients taking the medication, and 3 patients taking the placebo. The patients' blood samples are then collected to measure the transcriptomic profile (mRNA abundance level for each gene) using NGS technology (RNA seq).]]></description>
-</item><item>
-    <title>Calculate SVD by hand (and decompose Spongebob)</title>
-    <link>https://jasontan-code.github.io/posts/calculate_svd/</link>
-    <pubDate>Mon, 22 Nov 2021 21:18:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/calculate_svd/</guid>
-    <description><![CDATA[In my previous post, I have manually implemented PCA by finding the eigenvectors and eigenvalues of a covariance matrix. Today, let&rsquo;s try to perform PCA using a different approach called Singular Value Decomposition. Then we are going to decompose SPONGEBOB!
-Note: you might find this post to be useful, if you are new to PCA.
- Algorithm Again, we are going to use the same dataset we have used before.]]></description>
-</item><item>
-    <title>Dive into Bayesian statistics (5): Intro to PyMC3</title>
-    <link>https://jasontan-code.github.io/posts/bayesian-5/</link>
-    <pubDate>Mon, 22 Nov 2021 20:19:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/bayesian-5/</guid>
-    <description><![CDATA[In our previous post, we have manually implemented the Markov Chain Monte Carlo algorithm (specially, Metropolis Hastings), and drew samples from the posterior distribution. The code isn&rsquo;t particularly difficult to understand, but it&rsquo;s not intuitive to read/write neither. Besides the difficulty of implementation, algorithm performance (a.k.a speed) is also a major consideration in a more realistic application. Luckily, well-written tools are available to resolve these obstacles, namely, Stan and PyMC3.]]></description>
-</item><item>
-    <title>Dive into Bayesian statistics (4): Posterior predictive distribution</title>
-    <link>https://jasontan-code.github.io/posts/bayesian-4/</link>
-    <pubDate>Mon, 22 Nov 2021 20:18:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/bayesian-4/</guid>
-    <description><![CDATA[In the last few posts, we tried three methods (Integration, Conjugate Prior and MCMC) to infer the posterior distribution $P(\lambda | \text{data})$, which gave us
-$$\lambda \sim \text{Gamma}(\alpha = 20, \beta = 6)$$
-Now you may ask: Cool, we have our posterior distribution, but SO WHAT?
-In this post, we are going to see why studying the posterior distribution is advantageous and interesting, and show you the internal relationship between a Poisson distribution, a Gamma distribution and a Negative binomial distribution.]]></description>
-</item><item>
-    <title>Dive into Bayesian statistics (3): Markov Chain Monte Carlo</title>
-    <link>https://jasontan-code.github.io/posts/bayesian-3/</link>
-    <pubDate>Mon, 22 Nov 2021 19:18:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/bayesian-3/</guid>
-    <description><![CDATA[In this post, I will continue to use the same example that I used before (Bayesian: MAP and Bayesian: solve denominator). Also, it will be very helpful to first understand accept-reject sampling that I discussed in this post.
- Now let&rsquo;s get started!
-As we discussed at the end of this post, solving the denominator is a non-trivial work, especially when you have many parameters to estimate. One way to overcome this obstacle is to use a method called Markov Chain Monte Carlo (MCMC).]]></description>
-</item><item>
-    <title>Dive into Bayesian statistics (2): Solve the nasty denominator!</title>
-    <link>https://jasontan-code.github.io/posts/bayesian-2/</link>
-    <pubDate>Mon, 22 Nov 2021 18:18:26 -0600</pubDate>
-    <author>Author</author>
-    <guid>https://jasontan-code.github.io/posts/bayesian-2/</guid>
-    <description><![CDATA[In the last post, we tried to use a Bayesian framework to model the number of visitors per hour. After concatenating a Poisson distribution with a Gamma prior, we get something like: $$ P(\lambda | \text{data}) = c \cdot \lambda^{19} e^{-6\lambda} $$
-Since we are interested to find $\lambda_0$ that gives the maximum value of $P(\lambda | \text{data})$ (a.k.a. Maximum A Posteriori), we don&rsquo;t need to worry too much about a constant $c$.]]></description>
-</item></channel>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>A Hugo website</title>
+    <link>//localhost:4321/</link>
+    <description>Recent content on A Hugo website</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 05 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:4321/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LDSC</title>
+      <link>//localhost:4321/post/ldsc/</link>
+      <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/post/ldsc/</guid>
+      <description>&lt;p&gt;LDSC is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;\mathbb{E}[\chi^2] = \frac{Nh^2}{M} l + 1&#xA;$$&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Linear regression</title>
+      <link>//localhost:4321/post/linear-regression/</link>
+      <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/post/linear-regression/</guid>
+      <description>&lt;p&gt;Linear regression is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;y = X \beta + \varepsilon&#xA;$$&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(lm(iris$Sepal.Length ~ iris$Sepal.Width))&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-2.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-3.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>About</title>
+      <link>//localhost:4321/about/</link>
+      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
+      <guid>//localhost:4321/about/</guid>
+      <description>&lt;p&gt;My name is Taotao Tan, and I am a Ph.D. student in Computational Biology at Baylor College of Medicine. My research interests span a diverse range of topics, including statistics, deep learning, genetics, and functional genomics.&lt;/p&gt;&#xA;&lt;h3 id=&#34;contact&#34;&gt;Contact:&lt;/h3&gt;&#xA;&lt;p&gt;Twitter/X: &lt;a href=&#34;https://x.com/doubleTaoTan&#34;&gt;@doubleTaoTan&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;Github: &lt;a href=&#34;https://github.com/JasonTan-code&#34;&gt;@JasonTan-code&lt;/a&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Category</title>
+      <link>//localhost:4321/category/</link>
+      <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
+      <guid>//localhost:4321/category/</guid>
+      <description>&lt;h3 id=&#34;linear-algebra&#34;&gt;Linear algebra&lt;/h3&gt;&#xA;&lt;h3 id=&#34;statistics&#34;&gt;Statistics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;//localhost:4321/post/linear-regression/&#34;&gt;Linear regression&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;deep-learning&#34;&gt;Deep learning&lt;/h3&gt;&#xA;&lt;h3 id=&#34;genetics&#34;&gt;Genetics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;//localhost:4321/post/ldsc/&#34;&gt;LDSC&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+    </item>
+  </channel>
 </rss>

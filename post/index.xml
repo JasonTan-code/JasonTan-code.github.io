@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Statistics on A Hugo website</title>
-    <link>//localhost:4321/categories/statistics/</link>
-    <description>Recent content in Statistics on A Hugo website</description>
+    <title>Posts on A Hugo website</title>
+    <link>//localhost:4321/post/</link>
+    <description>Recent content in Posts on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 05 Jan 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="//localhost:4321/categories/statistics/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="//localhost:4321/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LDSC</title>
+      <link>//localhost:4321/post/ldsc/</link>
+      <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>//localhost:4321/post/ldsc/</guid>
+      <description>&lt;p&gt;LDSC is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;\mathbb{E}[\chi^2] = \frac{Nh^2}{M} l + 1&#xA;$$&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Linear regression</title>
       <link>//localhost:4321/post/linear-regression/</link>
