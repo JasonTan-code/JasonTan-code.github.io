@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Maximum likelihood estimation - A Hugo website</title>
+<meta property="og:title" content="Maximum likelihood estimation - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">Maximum likelihood estimation</h1>
+
+    
+    <span class="article-date">2021-11-22</span>
+    
+
+    <div class="article-content">
+      
+      <p>In this post, I will show you <strong>THE</strong> most important technique in inferential statistics: Maximum Likelihood Estimation (MLE).</p>
+<p> <br>
+ </p>
+<h2 id="1-some-data-to-work-with">1. Some data to work with</h2>
+<p>Before we get started, let&rsquo;s see what type of problem could be solved using MLE.</p>
+<p>For example, I recorded the number of visitors of this website each hour from 8:00 am - 12:00 am (<strong>p.s.</strong> off course this is fake data, and I am probably too optimistic), and I hope to have a model that can accurately describe my data, and well as making predictions.  Here is my data:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Time</th>
+          <th style="text-align: right">Number of visitors</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">8:am - 9:am</td>
+          <td style="text-align: right">5</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">9:am - 10:am</td>
+          <td style="text-align: right">3</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">10:am - 11:am</td>
+          <td style="text-align: right">4</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11:am - 12:am</td>
+          <td style="text-align: right">6</td>
+      </tr>
+  </tbody>
+</table>
+<p>The first thing you need to do is to choose an appropriate probability distribution to describe your data. From your experience, you are happy with a poisson distribution, which has a probability mass function: <code>$$f(x) = \frac{\lambda^x e^{- \lambda}}{x !}$$</code></p>
+<p>where <code>\(x\)</code> is our observed data and <code>\(\lambda\)</code> the parameter we want to estimate.</p>
+<p>(p.s. You can also use other distributions like negative binomial to model count data.)</p>
+<p> <br>
+ 
+ <br>
+ </p>
+<h2 id="2-lets-experiment-with-different-lambda">2. Let&rsquo;s experiment with different <code>\(\lambda\)</code></h2>
+<h3 id="try-lambda--2">Try <code>\(\lambda = 2\)</code>.</h3>
+<p>The core question here is:<br>
+<strong>Assume <code>\(\lambda = 2\)</code>, then what is the probability of observing our data?</strong></p>
+<p>That shouldn&rsquo;t be difficult to answer. We first plug <code>\(\lambda = 2\)</code> into the probability mass function, and get: <code>$$f(x) = \frac{2^x e^{- 2}}{x !}$$</code></p>
+<p>Now we can calculate the probability of having exact 5 visitors in 1-hour duration.  <code>\(f(x = 5) = \frac{2^5 e^{- 2}}{5 !} = 0.036\)</code></p>
+<p>Similarly, we have:<br>
+<code>\(f(x = 3) = \frac{2^3 e^{- 2}}{3 !} = 0.18\)</code><br>
+<code>\(f(x = 4) = \frac{2^4 e^{- 2}}{4 !} = 0.09\)</code><br>
+<code>\(f(x = 6) = \frac{2^6 e^{- 2}}{6 !} = 0.012\)</code></p>
+<p>Since our sample is independent and identically distributed (a.k.a.  i.i.d), <strong>the probability of observing our data ( <code>\([5,3,4,6]\)</code> ) given <code>\(\lambda = 2\)</code>, is simply the product of the probabilities we have calculated</strong>:</p>
+<p><code>$$P(data | \lambda = 2) = 0.036 \times 0.18 \times 0.09 \times 0.012 = 7 \times 10^{-6}$$</code></p>
+<p> </p>
+<h3 id="try-lambda--4">Try <code>\(\lambda = 4\)</code></h3>
+<p>The calculation is exactly the same, and I am not going to repeat this. But here is the result:<br>
+<code>\(f(x = 5) = 0.156\)</code> <br>
+<code>\(f(x = 3) = 0.195\)</code><br>
+<code>\(f(x = 4) = 0.195\)</code><br>
+<code>\(f(x = 6) = 0.104\)</code><br>
+Again, we want to calculate the probability of observing those data, given <code>\(\lambda = 4\)</code>:
+<code>$$P(data | \lambda = 4) = 0.156 \times 0.195 \times 0.195 \times 0.104 = 6.2 \times 10^{-4}$$</code></p>
+<p>Notice the conditional probability in our example <code>\(P(data | \lambda = \lambda_0)\)</code>, is also called <strong>likelihood function:</strong> <code>\(L(\lambda = \lambda_0 | data)\)</code></p>
+<p>Also notice that when we change <code>\(\lambda\)</code>, the result of <code>\(\prod_ip(x_i | \lambda)\)</code> (a.k.a. likelihood) also change. In our example, when <code>\(\lambda\)</code> change from 2  to 4, our likelihood function increased. This means <code>\(\lambda = 4\)</code> is a superior model, as it better aligns with our observed data.</p>
+<p><strong>The goal of MLE is to find <code>\(\lambda_0\)</code> to maximize the likelihood of the observed data given the model.</strong></p>
+<p> <br>
+ 
+ <br>
+ </p>
+<h2 id="3-find-lambda_0">3. Find <code>\(\lambda_0\)</code></h2>
+<p>Now the question become clear, we have:<br>
+$$
+L( \lambda| data) = P(data| \lambda) = f_{\lambda}(5) \times  f_{\lambda}(3) \times  f_{\lambda}(4) \times  f_{\lambda}(6)  \\
+= \frac{\lambda^5 e^{- \lambda}}{5 !} \times \frac{\lambda^3 e^{- \lambda}}{3 !} \times \frac{\lambda^4 e^{- \lambda}}{4 !} \times \frac{\lambda^6 e^{- \lambda}}{6 !}
+$$</p>
+<p>And we are trying to find the <code>\(\lambda_0\)</code> to make sure the <code>\(L( \lambda_0 | data)\)</code> is the greatest. In mathematical notation:</p>
+<p>$$
+\underset{\lambda}{\mathrm{argmax}} (L( \lambda | data))
+$$</p>
+<p>Obviously, you can take the derivative of the likelihood function to find the maximum value, but this is beyond the scope of this blog. However, if you are interested, please check the appendix. I drew a graph to show you the relationship between <code>\(\lambda\)</code> and <code>\(L( \lambda | data)\)</code></p>
+<div style="text-align: center;">
+  <img src="/images/MLE/MLE.png" alt="Description" width="50%" />
+</div>
+<p>You can visually tell, when <code>\(\lambda = 4.5\)</code>, our likelihood function reaches its maximum.</p>
+<p>In fact, <code>\(\lambda = 4.5\)</code> is the average number of our data, and this is not a coincidence~</p>
+<p> <br>
+ <br>
+ </p>
+<h2 id="summary">Summary</h2>
+<p>In summary, when we observed a set of data <code>\([5,3,4,6]\)</code> and we believed our data is from a poisson distribution, the &ldquo;best guess&rdquo; (under frequentist&rsquo;s framework) of that poisson distribution is that it has <code>\(\hat \lambda = 4.5\)</code>, which is the average of our data points.</p>
+<p>That&rsquo;s the end of this post Thanks for reading.</p>
+<p> <br>
+ 
+ <br>
+ </p>
+<hr>
+<h2 id="appendix">Appendix</h2>
+<p>We have the likelihood function:</p>
+<p>$$
+L(\lambda | data) = \frac{\lambda^5 e^{- \lambda}}{5 !} \times \frac{\lambda^3 e^{- \lambda}}{3 !} \times \frac{\lambda^4 e^{- \lambda}}{4 !} \times \frac{\lambda^6 e^{- \lambda}}{6 !}
+$$</p>
+<p>Let <code>$$g(\lambda) = \log(L(\lambda | data))$$</code></p>
+<p>Taking the logarithm wouldn&rsquo;t change the place where the function reach its peak. Therefore, we can instead find the <code>\(\lambda\)</code> that maximizes <code>\(g(\lambda)\)</code>.</p>
+<p>After applying logarithm, we have
+$$
+g(\lambda) = \log(\frac{\lambda^5 e^{- \lambda}}{5 !} \times \frac{\lambda^3 e^{- \lambda}}{3 !} \times \frac{\lambda^4 e^{- \lambda}}{4 !} \times \frac{\lambda^6 e^{- \lambda}}{6 !})
+$$</p>
+<p>Since logarithm covert product to summation, we have:</p>
+<p>$$
+g(\lambda) = [\log(\lambda ^5) - \lambda - \log(5!) ]+ [\log(\lambda ^3) - \lambda - \log(3!)] \\\ + [\log(\lambda ^4) - \lambda - \log(4!)]+[\log(\lambda ^6) - \lambda - \log(6!)]
+$$</p>
+<p>We then take the derivative of <code>\(g(\lambda)\)</code>:</p>
+<p>$$
+g(\lambda)&rsquo; = \frac{5}{\lambda} - 1 + \frac{3}{\lambda} - 1  + \frac{4}{\lambda} - 1  +\frac{6}{\lambda} - 1
+$$</p>
+<p>Let <code>\(g(\lambda)' = 0\)</code>, we have:</p>
+<p>$$
+\frac{5}{\lambda} - 1 + \frac{3}{\lambda} - 1  + \frac{4}{\lambda} - 1  +\frac{6}{\lambda} - 1  = 0
+$$</p>
+<p>Solve <code>\(\lambda\)</code>, we have:</p>
+<p>$$
+\lambda = 4.5
+$$</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

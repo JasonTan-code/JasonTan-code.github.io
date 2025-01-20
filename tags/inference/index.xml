@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Inference on A Hugo website</title>
+    <link>/tags/inference/</link>
+    <description>Recent content in Inference on A Hugo website</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 22 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/tags/inference/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Maximum likelihood estimation</title>
+      <link>/post/mle/</link>
+      <pubDate>Mon, 22 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>/post/mle/</guid>
+      <description>&lt;p&gt;In this post, I will show you &lt;strong&gt;THE&lt;/strong&gt; most important technique in inferential statistics: Maximum Likelihood Estimation (MLE).&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;1-some-data-to-work-with&#34;&gt;1. Some data to work with&lt;/h2&gt;&#xA;&lt;p&gt;Before we get started, let&amp;rsquo;s see what type of problem could be solved using MLE.&lt;/p&gt;&#xA;&lt;p&gt;For example, I recorded the number of visitors of this website each hour from 8:00 am - 12:00 am (&lt;strong&gt;p.s.&lt;/strong&gt; off course this is fake data, and I am probably too optimistic), and I hope to have a model that can accurately describe my data, and well as making predictions.  Here is my data:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

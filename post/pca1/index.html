@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Calculate PCA by hand (via eigen-decomposition) - A Hugo website</title>
+<meta property="og:title" content="Calculate PCA by hand (via eigen-decomposition) - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Calculate PCA by hand (via eigen-decomposition)</h1>
+
+    
+    <span class="article-date">2021-11-21</span>
+    
+
+    <div class="article-content">
+      
+      <p>In this blog post, I will calculate PCA step-by-step (via eigen-decomposition).</p>
+<p>But before we dive deep into PCA, there are two prerequisite concepts we need to understand:</p>
+<ul>
+<li><strong>Variance/Covariance</strong></li>
+<li><strong>Find eigenvectors and eigenvalues</strong></li>
+</ul>
+<p>If you already familiar those two concepts, feel free to skip those sections.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="prerequisite-1-variancecovariance">Prerequisite 1: Variance/Covariance</h2>
+<h3 id="variance">Variance</h3>
+<p>Variance measures how far a set of numbers is spread out from their average value. The sample variance is defined as:</p>
+<p>$$
+s^2 = \frac{\sum(x_i - \bar x)^2}{n - 1}
+$$</p>
+<p>Let&rsquo;s say you have a vector <code>\(\vec{v} =  [1, 2,3 ]\)</code>. To calculate the variance, there are two steps:</p>
+<ul>
+<li>Calculate mean: <code>\(\bar v = \frac{(1 + 2 + 3)}{3 } = 2\)</code></li>
+<li>Calculate variance: <code>\(s^2 = \frac{(1 - 2)^2 + (2 - 2)^2 + (3 - 2)^2}{3 -1} = 1\)</code></li>
+</ul>
+<p> <br>
+ </p>
+<h3 id="covariance">Covariance</h3>
+<p>The covariance of two vector <code>\(\vec{x}, \vec{y}\)</code> is defined as
+$$
+Cov(x,y) = \frac{\sum{(x_i - \bar x)(y_i - \bar y)}}{n - 1}
+$$
+If the <code>\(Cov(x, y) &gt; 0\)</code>, that means <code>\(\vec{x}, \vec{y}\)</code> have the same trend (they co-increase or co-decrease).<br>
+If the <code>\(Cov(x, y) &lt; 0\)</code>, that means <code>\(\vec{x}, \vec{y}\)</code> have the opposite trend (one increases, the other decreases).</p>
+<p>Let&rsquo;s give an example here.
+$$
+\vec{x} = [1,2,3],  \vec{y} = [3,2,7]
+$$</p>
+<p>To calculate the covariance, we have two steps as well:</p>
+<ul>
+<li>Calculate the mean of <code>\(\vec{x}, \vec{y}\)</code>. We have <code>\(\bar x = 2\)</code>, <code>\(\bar y = 4\)</code></li>
+<li>Calculate the covariance <code>\(Cov(x, y) = \frac{(1 - 2) \cdot (3 - 4) + (2 - 2) \cdot (2 - 4) + (3 - 2) \cdot (7 - 4)}{3 - 1} = 2\)</code>.</li>
+</ul>
+<p>Since the <code>\(Cov(x, y) = 2 &gt; 0\)</code>, we know that <code>\(\vec{x}, \vec{y}\)</code> co-vary.</p>
+<p>If we plot those three points in a x-y coordinate plane, we get:</p>
+<div style="text-align: center;">
+  <img src="/images/PCA_by_hand/covariance.png" alt="Covariance" width="50%" />
+</div>
+<p>It is obvious that <code>\(\vec{x}, \vec{y}\)</code> have the same trend (they go up/down together).</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="prerequisite-2-find-eigenvectors-and-eigenvalues">Prerequisite 2: Find eigenvectors and eigenvalues</h2>
+<p>The word &ldquo;eigen&rdquo; sounds scary, at least to me when I first learned linear algebra. But it is not that complicated. I am going to walk you through the calculation of eigenvalue and eigenvectors.</p>
+<p>Assume you have a matrix <code>\(\mathbf{A}\)</code>, all eigen-decomposition does is that it finds a set of vectors <code>\(\vec{v}\)</code> and <code>\(\lambda\)</code>, so that <code>$$\mathbf{A } \cdot \vec{v} = \lambda \vec{v}$$</code></p>
+<p>This means applying a linear transformation <code>\(\mathbf{A}\)</code> to the vector <code>\(\vec{v}\)</code>, is the same as scaling <code>\(\vec{v}\)</code> by a factor <code>\(\lambda\)</code>. In other word, the linear transformation(a.k.a matrix) <code>\(\mathbf{A}\)</code> doesn&rsquo;t rotate <code>\(\vec{v}\)</code>.</p>
+<p> </p>
+<p>Here I provide an example with a <code>\(2 \times 2\)</code> matrix. Let&rsquo;s say our matrix <code>\(\mathbf{A}\)</code> is:</p>
+<p>$$
+\begin{bmatrix}
+0 &amp; -1 \\
+2 &amp; 3
+\end{bmatrix}
+$$</p>
+<p>By definition, we want to find <code>\(\vec{v}, \lambda\)</code> so that
+$$
+\begin{bmatrix}
+0 &amp; -1 \\
+2 &amp; 3
+\end{bmatrix} \cdot \vec{v} = \lambda \vec{v}
+$$</p>
+<p>We find <code>\(\lambda\)</code> first. Let the right side of the equation times the identity matrix <code>\(\mathbf{I}\)</code>,</p>
+<p>$$
+\begin{align}
+\begin{bmatrix}
+0 &amp; -1 \\
+2 &amp; 3
+\end{bmatrix} \cdot \vec{v} &amp;= \lambda \cdot \begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1
+\end{bmatrix} \cdot \vec{v} \\
+\begin{bmatrix}
+0 &amp; -1 \\
+2 &amp; 3
+\end{bmatrix} \cdot \vec{v} &amp;=   \begin{bmatrix}
+\lambda &amp; 0 \\
+0 &amp; \lambda
+\end{bmatrix} \cdot \vec{v} \\
+\begin{bmatrix}
+0 - \lambda &amp; -1 \\
+2 &amp; 3 - \lambda
+\end{bmatrix} \cdot \vec{v} &amp;= \vec{0} \\
+det ( \begin{bmatrix}
+0 - \lambda &amp; -1 \\
+2 &amp; 3 - \lambda
+\end{bmatrix}  ) &amp;= 0 \\
+-\lambda \cdot (3 - \lambda) + 2  &amp;= 0
+\end{align}
+$$</p>
+<p>Solve this quadratic equation, we get: <code>\(\lambda_1 = 2\)</code>, <code>\(\lambda_2 = 1\)</code>.</p>
+<p> </p>
+<p>So far we have found our eigen-values ( <code>\(\lambda\)</code> ). The next step is to find our eigenvectors. We should have <code>\(\vec{v_1}, \vec{v_2}\)</code>, each of them is paired with an eigenvalue. Also, notice that there are infinite amount of eigenvectors and they all point to the same direction. We want to find the one with length equal to 1.</p>
+<p> <br>
+To calculate eigenvectors, we simply plug <code>\(\lambda_1, \lambda_2\)</code> into the following equation, which is obtained when we are trying to figure out eigenvalues:</p>
+<p>$$
+\begin{bmatrix}
+0 - \lambda &amp; -1 \\
+2 &amp; 3 - \lambda
+\end{bmatrix} \cdot \vec{v} =   \vec{0}
+$$</p>
+<p>We plug in <code>\(\lambda_1 = 2\)</code>, and get</p>
+<p>$$
+\begin{bmatrix}
+-2 &amp; -1 \\
+2 &amp; 1
+\end{bmatrix} \cdot \vec{v_1} =   \vec{0}
+$$</p>
+<p>This is essentially finding the <a href="https://en.wikipedia.org/wiki/Kernel_(linear_algebra)">null space</a> of the matrix on the left side. I will skip this part for now, but you can find plenty of resources online. But here is the result: <code>\(\vec{v_1} = [0.447, -0.894]\)</code>.</p>
+<p> </p>
+<p>We can apply the same technique to find the second pair of eigenvalue &amp; eigenvector:</p>
+<p><code>\(\lambda_2 = 1, \vec{v_2} = [-0.707, 0.707]\)</code></p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="pca-eigen-decompose-the-covariance-matrix">PCA: eigen-decompose the covariance matrix</h2>
+<p>If you are still with me, you are 80% done. The rest of this post is simply combine the two techniques I discussed above.</p>
+<p>Let&rsquo;s say we have a matrix
+`$$\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1
+\end{bmatrix}$$</p>
+<p>Generally, each row represents our observations/samples, and each column represents features we measured. After applying PCA, we are expect to reduce the dimensionality of the matrix, while still retain most of the information.</p>
+<p>Keep in mind, the high level intuition of PCA is that you rotate the coordinate system, so that your first coordinate (PC1) captures most of the variation, and second coordinate (PC2) captures the second most of the variation, etc&hellip;</p>
+<p>Okay, let&rsquo;s first take a look of our data</p>
+<div style="text-align: center;">
+  <img src="/images/PCA_by_hand/PCA1.png" alt="PCA1" width="50%" />
+</div>
+<p>Imagine you fix the origin, and counterclockwise spin the coordinate system, until the x-axis capture the most of the variation. Here is a visual demonstration</p>
+<div style="text-align: center;">
+  <img src="/images/PCA_by_hand/PCA2.png" alt="PCA2" width="50%" />
+</div>
+<p>Now we can visually tell we should rotate 45 degree, so that our PC1 can capture most of the variation. But how can I calculate this mathematically?</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h3 id="step-1">Step 1</h3>
+<p>We have two features/columns <code>\(C1 = [1, 0, -1]\)</code>, <code>\(C2 = [0, 1, -1]\)</code>. Now we need to construct a matrix, where the diagonal entries are the variance, and off-diagonal entries are covariance. In our case, we should construct a matrix like this:</p>
+<p>`$$\begin{bmatrix}
+Var(C1) &amp; Cov(C1, C2) \\
+Cov(C2, C1) &amp; Var(C2)
+\end{bmatrix}$$</p>
+<p>Use the technique (section 1) I described above, we have <code>$$Var(C1) = 1$$</code> <code>$$Var(C2) = 1$$</code> <code>$$Cov(C1, C2)  = Cov(C2, C1)= 0.5$$</code></p>
+<p>Plug in the result, we have our covariance matrix:
+`$$\begin{bmatrix}
+1 &amp; 0.5 \\
+0.5 &amp; 1
+\end{bmatrix}$$</p>
+<p> </p>
+<h3 id="step-2">Step 2</h3>
+<p>Find the eigenvalues and eigenvectors of our covariance matrix. We have</p>
+<p>$$
+\lambda_1 = 1.5, \vec{v_1} = [0.707, 0.707]
+$$</p>
+<p>$$
+\lambda_2 = 0.5, \vec{v_2} = [-0.707, 0.707]
+$$</p>
+<p>Notice <code>\(\vec{v_1}\)</code> is pointing to 45 degree upward,  <code>\(\vec{v_2}\)</code> is pointing to 135 degree upward, which is exactly what we expected.</p>
+<p><strong>Therefore, we find our <code>\(PC1\)</code> and <code>\(PC2\)</code>, which are <code>\(\vec{v_1}\)</code> and  <code>\(\vec{v_2}\)</code>!</strong></p>
+<p> </p>
+<h3 id="step3">Step3</h3>
+<p>Here we can combine the eigenvectors into a matrix, with the first column to be <code>\(\vec{v_1}\)</code>, and second column to be <code>\(\vec{v_2}\)</code>. This is often called loading matrix (<a href="https://stats.stackexchange.com/questions/143905/loadings-vs-eigenvectors-in-pca-when-to-use-one-or-another">although the word &ldquo;loading&rdquo; is somewhat ambiguous</a>)
+$$
+\begin{bmatrix}
+0.707 &amp; -0.707 \\
+0.707 &amp; 0.707
+\end{bmatrix}
+$$</p>
+<p><strong>If we multiply the loading matrix and our dataset, we should get our scores matrix, which is the projection of the data on the PCs.</strong></p>
+<p>$$
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1
+\end{bmatrix}
+\begin{bmatrix}
+0.707 &amp; -0.707 \\
+0.707 &amp; 0.707
+\end{bmatrix} = \begin{bmatrix}
+0.707 &amp; -0.707 \\
+0.707 &amp; 0.707 \\
+-1.414 &amp; 0
+\end{bmatrix}
+$$</p>
+<p> </p>
+<p>Now we have our <strong>transformed data</strong>:
+$$
+\begin{bmatrix}
+0.707 &amp; -0.707 \\
+0.707 &amp; 0.707 \\
+-1.414 &amp; 0
+\end{bmatrix}
+$$</p>
+<p>Let&rsquo;s plot our transformed data, with PCs be the coordinate system:</p>
+<div style="text-align: center;">
+  <img src="/images/PCA_by_hand/PCA3.png" alt="PCA3" width="50%" />
+</div>
+<p>The last point here:</p>
+<p>In the scores matrix, if you calculate the variance of the first column, you will get <code>\(Var(PC1) = 1.5\)</code>. For the second column, you will get <code>\(Var(PC2) = 0.5\)</code>.</p>
+<p>Does the number look familiar? In fact, <code>$$Var(PC1) = 1.5 = \lambda_1$$</code> <code>$$Var(PC2) = 0.5 = \lambda_1$$</code></p>
+<p>For this dataset, <code>\(\lambda_1\)</code> explains 75% of the variance since <code>\(\frac{1.5}{1.5 + 0.5} =0.75\)</code>; Likewise, <code>\(\lambda_2\)</code> explains 25% of the variance since <code>\(\frac{0.5}{1.5 + 0.5} =0.25\)</code></p>
+<p>In summary, eigenvalue tells you how much variance captured by its associated PC</p>
+<p> <br>
+ <br>
+ </p>
+<p>That&rsquo;s the end of this post. Thanks for reading!</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

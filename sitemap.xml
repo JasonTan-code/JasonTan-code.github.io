@@ -2,40 +2,55 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>//localhost:4321/</loc>
+    <loc>/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/categories/</loc>
+    <loc>/categories/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/tags/genetics/</loc>
+    <loc>/tags/genetics/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/categories/genetics/</loc>
+    <loc>/categories/genetics/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/post/ldsc/</loc>
+    <loc>/post/ldsc/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/post/linear-regression/</loc>
+    <loc>/post/linear-regression/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/post/</loc>
+    <loc>/post/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/tags/regression/</loc>
+    <loc>/tags/regression/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/categories/statistics/</loc>
+    <loc>/categories/statistics/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/tags/</loc>
+    <loc>/tags/</loc>
     <lastmod>2025-01-05T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/about/</loc>
+    <loc>/tags/inference/</loc>
+    <lastmod>2021-11-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/post/mle/</loc>
+    <lastmod>2021-11-22T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/post/pca1/</loc>
+    <lastmod>2021-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/categories/linear-algebra/</loc>
+    <lastmod>2021-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/tags/pca/</loc>
+    <lastmod>2021-11-21T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>/about/</loc>
     <lastmod>2016-05-05T21:48:51-07:00</lastmod>
   </url><url>
-    <loc>//localhost:4321/category/</loc>
+    <loc>/category/</loc>
     <lastmod>2016-05-05T21:48:51-07:00</lastmod>
   </url>
 </urlset>

@@ -2,25 +2,39 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on A Hugo website</title>
-    <link>//localhost:4321/post/</link>
+    <link>/post/</link>
     <description>Recent content in Posts on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 05 Jan 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="//localhost:4321/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>LDSC</title>
-      <link>//localhost:4321/post/ldsc/</link>
+      <link>/post/ldsc/</link>
       <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/post/ldsc/</guid>
+      <guid>/post/ldsc/</guid>
       <description>&lt;p&gt;LDSC is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;\mathbb{E}[\chi^2] = \frac{Nh^2}{M} l + 1&#xA;$$&lt;/p&gt;</description>
     </item>
     <item>
       <title>Linear regression</title>
-      <link>//localhost:4321/post/linear-regression/</link>
+      <link>/post/linear-regression/</link>
       <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/post/linear-regression/</guid>
-      <description>&lt;p&gt;Linear regression is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;y = X \beta + \varepsilon&#xA;$$&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(lm(iris$Sepal.Length ~ iris$Sepal.Width))&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-2.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-3.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;</description>
+      <guid>/post/linear-regression/</guid>
+      <description>&lt;p&gt;Linear regression is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;y = X \beta + \varepsilon&#xA;$$&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(lm(iris$Sepal.Length ~ iris$Sepal.Width))&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-2.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-3.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Maximum likelihood estimation</title>
+      <link>/post/mle/</link>
+      <pubDate>Mon, 22 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>/post/mle/</guid>
+      <description>&lt;p&gt;In this post, I will show you &lt;strong&gt;THE&lt;/strong&gt; most important technique in inferential statistics: Maximum Likelihood Estimation (MLE).&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;1-some-data-to-work-with&#34;&gt;1. Some data to work with&lt;/h2&gt;&#xA;&lt;p&gt;Before we get started, let&amp;rsquo;s see what type of problem could be solved using MLE.&lt;/p&gt;&#xA;&lt;p&gt;For example, I recorded the number of visitors of this website each hour from 8:00 am - 12:00 am (&lt;strong&gt;p.s.&lt;/strong&gt; off course this is fake data, and I am probably too optimistic), and I hope to have a model that can accurately describe my data, and well as making predictions.  Here is my data:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Calculate PCA by hand (via eigen-decomposition)</title>
+      <link>/post/pca1/</link>
+      <pubDate>Sun, 21 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>/post/pca1/</guid>
+      <description>&lt;p&gt;In this blog post, I will calculate PCA step-by-step (via eigen-decomposition).&lt;/p&gt;&#xA;&lt;p&gt;But before we dive deep into PCA, there are two prerequisite concepts we need to understand:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Variance/Covariance&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Find eigenvectors and eigenvalues&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;If you already familiar those two concepts, feel free to skip those sections.&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;prerequisite-1-variancecovariance&#34;&gt;Prerequisite 1: Variance/Covariance&lt;/h2&gt;&#xA;&lt;h3 id=&#34;variance&#34;&gt;Variance&lt;/h3&gt;&#xA;&lt;p&gt;Variance measures how far a set of numbers is spread out from their average value. The sample variance is defined as:&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>PCA on A Hugo website</title>
+    <link>/tags/pca/</link>
+    <description>Recent content in PCA on A Hugo website</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 21 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/tags/pca/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Calculate PCA by hand (via eigen-decomposition)</title>
+      <link>/post/pca1/</link>
+      <pubDate>Sun, 21 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>/post/pca1/</guid>
+      <description>&lt;p&gt;In this blog post, I will calculate PCA step-by-step (via eigen-decomposition).&lt;/p&gt;&#xA;&lt;p&gt;But before we dive deep into PCA, there are two prerequisite concepts we need to understand:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Variance/Covariance&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Find eigenvectors and eigenvalues&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;If you already familiar those two concepts, feel free to skip those sections.&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;prerequisite-1-variancecovariance&#34;&gt;Prerequisite 1: Variance/Covariance&lt;/h2&gt;&#xA;&lt;h3 id=&#34;variance&#34;&gt;Variance&lt;/h3&gt;&#xA;&lt;p&gt;Variance measures how far a set of numbers is spread out from their average value. The sample variance is defined as:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

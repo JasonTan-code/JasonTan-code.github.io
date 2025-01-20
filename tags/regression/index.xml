@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Regression on A Hugo website</title>
-    <link>//localhost:4321/tags/regression/</link>
+    <link>/tags/regression/</link>
     <description>Recent content in Regression on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
     <lastBuildDate>Sun, 05 Jan 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="//localhost:4321/tags/regression/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/regression/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Linear regression</title>
-      <link>//localhost:4321/post/linear-regression/</link>
+      <link>/post/linear-regression/</link>
       <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>//localhost:4321/post/linear-regression/</guid>
-      <description>&lt;p&gt;Linear regression is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;y = X \beta + \varepsilon&#xA;$$&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(lm(iris$Sepal.Length ~ iris$Sepal.Width))&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-2.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-3.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;//localhost:4321/post/linear-regression/index_files/figure-html/unnamed-chunk-1-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;</description>
+      <guid>/post/linear-regression/</guid>
+      <description>&lt;p&gt;Linear regression is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;y = X \beta + \varepsilon&#xA;$$&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(lm(iris$Sepal.Length ~ iris$Sepal.Width))&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-2.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-3.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
