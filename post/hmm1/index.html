@@ -74,7 +74,7 @@
 <h2 id="an-example">An example</h2>
 <p>Imagine there are only 100 people and three cities (New York, Boston, and Houston) in this world. Currently, 50 people live in New York, 30 people live in Boston, and 20 people live in Houston. Every year, a certain proportion of the population moves from one city to another, causing the population of each city to change constantly. Below is a diagram that shows the proportions:</p>
 <div style="text-align: center;">
-  <img src="/images/HMM1/HMM1.png" alt="HMM1" width="50%" />
+  <img src="/images/HMM1/HMM1.png" alt="HMM1" width="100%" />
 </div>
 <p> </p>
 <p><strong>The question is: what is the population size for each city in the next year?</strong></p>
@@ -103,33 +103,60 @@ $$</p>
 <p> </p>
 <p>For example, to calculate the population of the 2nd year, we simply multiply the matrix with the population of the previous year:</p>
 <p>$$
-<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix}</code>
+\begin{bmatrix}
+0.72 &amp; 0.05 &amp; 0.1 \\
+0.1 &amp; 0.75 &amp; 0.15 \\
+0.18 &amp; 0.2 &amp; 0.75
+\end{bmatrix}
 \cdot
-<code>\begin{bmatrix} 39.5 \\\\  30.5  \\\\  30  \end{bmatrix}</code>
+\begin{bmatrix}
+39.5 \\
+30.5 \\
+30
+\end{bmatrix}
 = \begin{bmatrix}
 33 \\
-31.3  \\
+31.3 \\
 35.7
-\end{bmatrix}`
+\end{bmatrix}
 $$</p>
 <p>To calculate the 3rd year, we have</p>
 <p>$$
-<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix}</code>
+\begin{bmatrix}
+0.72 &amp; 0.05 &amp; 0.1 \\
+0.1 &amp; 0.75 &amp; 0.15 \\
+0.18 &amp; 0.2 &amp; 0.75
+\end{bmatrix}
 \cdot
-<code>\begin{bmatrix} 33 \\\\  31.3  \\\\  35.7 \end{bmatrix}</code>
+\begin{bmatrix}
+33 \\
+31.3 \\
+35.7
+\end{bmatrix}
 = \begin{bmatrix}
 28.9 \\
-32.1  \\
+32.1 \\
 39
-\end{bmatrix}`
+\end{bmatrix}
 $$</p>
 <p>This is equivalent to
 $$
-<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix} ^ 3 \cdot </code>\begin{bmatrix}
+\begin{bmatrix}
+0.72 &amp; 0.05 &amp; 0.1 \\
+0.1 &amp; 0.75 &amp; 0.15 \\
+0.18 &amp; 0.2 &amp; 0.75
+\end{bmatrix}^3
+\cdot
+\begin{bmatrix}
 50 \\
-30  \\
+30 \\
 20
-\end{bmatrix}<code> = \begin{bmatrix} 28.9 \\\\  32.1  \\\\  39  \end{bmatrix}</code>
+\end{bmatrix}
+= \begin{bmatrix}
+28.9 \\
+32.1 \\
+39
+\end{bmatrix}
 $$</p>
 <p>,which is raising the matrix to the power of the year, and multiply by the initial population vector.</p>
 <p> <br>
@@ -142,29 +169,62 @@ $$</p>
  </p>
 <p>Here we use initial population vector <code>\([50, 30, 20]\)</code>, and we calculate the population after 20 years:</p>
 <p>$$
-<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix} ^ {20} \cdot </code>\begin{bmatrix}
+\begin{bmatrix}
+0.72 &amp; 0.05 &amp; 0.1 \\
+0.1 &amp; 0.75 &amp; 0.15 \\
+0.18 &amp; 0.2 &amp; 0.75
+\end{bmatrix}^{20}
+\cdot
+\begin{bmatrix}
 50 \\
-30  \\
+30 \\
 20
-\end{bmatrix}<code> = \begin{bmatrix} 21.7 \\\\  34.8  \\\\  43.5  \end{bmatrix}</code>
+\end{bmatrix}
+= \begin{bmatrix}
+21.7 \\
+34.8 \\
+43.5
+\end{bmatrix}
 $$</p>
 <p>Here is the population after 50 years:
 $$
-<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix} ^ {50} \cdot </code>\begin{bmatrix}
+\begin{bmatrix}
+0.72 &amp; 0.05 &amp; 0.1 \\
+0.1 &amp; 0.75 &amp; 0.15 \\
+0.18 &amp; 0.2 &amp; 0.75
+\end{bmatrix}^{50}
+\cdot
+\begin{bmatrix}
 50 \\
-30  \\
+30 \\
 20
-\end{bmatrix}<code> = \begin{bmatrix} 21.7 \\\\  34.8  \\\\  43.5  \end{bmatrix}</code>
+\end{bmatrix}
+= \begin{bmatrix}
+21.7 \\
+34.8 \\
+43.5
+\end{bmatrix}
 $$</p>
 <p> <br>
  </p>
 <p>In a parallel universe, at year-0, we have 100 people in NY, 0 people in Boston, and 0 people in Houston. However, after 20 years, we achieve the same population across these three cities:</p>
 <p>$$
-<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix} ^ {20} \cdot </code>\begin{bmatrix}
+\begin{bmatrix}
+0.72 &amp; 0.05 &amp; 0.1 \\
+0.1 &amp; 0.75 &amp; 0.15 \\
+0.18 &amp; 0.2 &amp; 0.75
+\end{bmatrix}^{20}
+\cdot
+\begin{bmatrix}
 100 \\
-0  \\
+0 \\
 0
-\end{bmatrix}<code> = \begin{bmatrix} 21.7 \\\\  34.8  \\\\  43.5  \end{bmatrix}</code>
+\end{bmatrix}
+= \begin{bmatrix}
+21.7 \\
+34.8 \\
+43.5
+\end{bmatrix}
 $$</p>
 <p> <br>
  </p>
@@ -191,18 +251,38 @@ $$</p>
 <p>Intuitively, pageA and pageC look like good pages, since a lot of other websites referred these two pages. A user will typically follow the hyperlinks to browse the website. For example, if a user is currently browsing pageC, the next moment, this user will have 50% of the chance to go to pageD, and 50% of the chance to go to pageA. Based on this graph, we can specify the transition matrix</p>
 <p>(note row/column order from pageA - pageE):</p>
 <p>$$
-<code>\begin{bmatrix} 0 &amp; 1 &amp; 0.5 &amp; 0 &amp; 0.5\\\\  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\\\  1 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\\\  0 &amp; 0 &amp; 0.5 &amp; 0 &amp; 0 \\\\  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0.5 \end{bmatrix}</code>
-$$</p>
-<p>Now assume we have 100 random users, with 20 users in each page. Using the same technique we have discussed above, we can calculate the stationary distribution (a.k.a, how many random users in each page eventually).</p>
+\begin{bmatrix}
+0 &amp; 1 &amp; 0.5 &amp; 0 &amp; 0.5\\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+1 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 0.5 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0.5
+\end{bmatrix}
+$$
+Now assume we have 100 random users, with 20 users in each page. Using the same technique we have discussed above, we can calculate the stationary distribution (a.k.a, how many random users in each page eventually).</p>
 <p>$$
-<code>\begin{bmatrix} 0 &amp; 1 &amp; 0.5 &amp; 0 &amp; 0.5\\\\  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\\\  1 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\\\  0 &amp; 0 &amp; 0.5 &amp; 0 &amp; 0 \\\\  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0.5 \end{bmatrix}^{50} \cdot </code>\begin{bmatrix}
+\begin{bmatrix}
+0 &amp; 1 &amp; 0.5 &amp; 0 &amp; 0.5\\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\
+1 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 0.5 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 0 &amp; 0.5
+\end{bmatrix}^{20}
+\cdot
+\begin{bmatrix}
 20 \\
-20  \\
-20  \\
-20  \\
+20 \\
+20 \\
+20 \\
 20
-\end{bmatrix} =
-<code>\begin{bmatrix} 23.3 \\\\  0  \\\\  53.4  \\\\  23.3  \\\\  0  \end{bmatrix}</code>
+\end{bmatrix}
+= \begin{bmatrix}
+23.3 \\
+0 \\
+53.4 \\
+23.3 \\
+0
+\end{bmatrix}
 $$</p>
 <p>According to the PageRank algorithm, eventually we will have 53.4 users landing on pageC, and therefore pageC has the highest quality and should be recommended as the top page to the users.</p>
 <p> </p>
