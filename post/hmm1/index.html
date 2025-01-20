@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Hidden Markov Model (1) - Markov Chain - A Hugo website</title>
+<meta property="og:title" content="Hidden Markov Model (1) - Markov Chain - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">7 min read</span>
+    
+
+    <h1 class="article-title">Hidden Markov Model (1) - Markov Chain</h1>
+
+    
+    <span class="article-date">2021-11-29</span>
+    
+
+    <div class="article-content">
+      
+      <h2 id="introduction">Introduction</h2>
+<p>This series of blog posts aims to explore the Hidden Markov Model (HMM) due to its broad applications across various fields, including natural language processing, population genetics, finance, and more. Beyond its practical utility, I find HMM particularly fascinating because it bridges multiple disciplines such as probability, linear algebra, machine learning, and computer science. In this post, I will introduce the Markov Chain, which serves as the foundation of HMM. As before, the concepts will be explained through a simple example, with minimal use of complex mathematical notation.</p>
+<p> <br>
+ <br>
+ </p>
+<h2 id="an-example">An example</h2>
+<p>Imagine there are only 100 people and three cities (New York, Boston, and Houston) in this world. Currently, 50 people live in New York, 30 people live in Boston, and 20 people live in Houston. Every year, a certain proportion of the population moves from one city to another, causing the population of each city to change constantly. Below is a diagram that shows the proportions:</p>
+<div style="text-align: center;">
+  <img src="/images/HMM1/HMM1.png" alt="HMM1" width="50%" />
+</div>
+<p> </p>
+<p><strong>The question is: what is the population size for each city in the next year?</strong></p>
+<p> <br>
+ <br>
+ </p>
+<p>The question is trivial to solve with some algebra. For example:</p>
+<p>For New York, next year, 5% of Boston&rsquo;s population will move in, 10% of Houston&rsquo;s population will move in, and 1 - 10% - 18% = 72% of New York&rsquo;s population will remain in New York. So, in total, next year, New York will have:</p>
+<p>$$
+0.72 \times 50 + 0.05 \times 30 + 0.1 \times 20 = 39.5
+$$</p>
+<p>Similarly, for Boston, we have:
+$$
+0.1 \times 50 + 0.75 \times 30 + 0.15 \times 20 = 30.5
+$$</p>
+<p>For Houston, we have:</p>
+<p>$$
+0.18 \times 50 + 0.2 \times 30 + 0.75 \times 20 = 30
+$$</p>
+<p> </p>
+<p>To make the expression more compact, it&rsquo;s helpful to rewrite these three linear equations into matrix form:</p>
+<div style="text-align: center;">
+  <img src="/images/HMM1/HMM2.png" alt="HMM2" width="100%" />
+</div>
+<p>Besides being more compact, one advantage of using a matrix and vector representation is that it helps keeping track of the population of 2nd year, 3rd year, 4th year, etc.</p>
+<p> </p>
+<p>For example, to calculate the population of the 2nd year, we simply multiply the matrix with the population of the previous year:</p>
+<p>$$
+<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix}</code>
+\cdot
+<code>\begin{bmatrix} 39.5 \\\\  30.5  \\\\  30  \end{bmatrix}</code>
+= \begin{bmatrix}
+33 \\
+31.3  \\
+35.7
+\end{bmatrix}`
+$$</p>
+<p>To calculate the 3rd year, we have</p>
+<p>$$
+<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix}</code>
+\cdot
+<code>\begin{bmatrix} 33 \\\\  31.3  \\\\  35.7 \end{bmatrix}</code>
+= \begin{bmatrix}
+28.9 \\
+32.1  \\
+39
+\end{bmatrix}`
+$$</p>
+<p>This is equivalent to
+$$
+<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix} ^ 3 \cdot </code>\begin{bmatrix}
+50 \\
+30  \\
+20
+\end{bmatrix}<code> = \begin{bmatrix} 28.9 \\\\  32.1  \\\\  39  \end{bmatrix}</code>
+$$</p>
+<p>,which is raising the matrix to the power of the year, and multiply by the initial population vector.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="stationary-distribution">Stationary distribution</h2>
+<p>Believe it or not, the population of each city won&rsquo;t change after many years, <strong>regardless of the initial population size of each city</strong>. We can show this by calculating the population after 20 years and after 50 years with different initial population size.</p>
+<p> <br>
+ </p>
+<p>Here we use initial population vector <code>\([50, 30, 20]\)</code>, and we calculate the population after 20 years:</p>
+<p>$$
+<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix} ^ {20} \cdot </code>\begin{bmatrix}
+50 \\
+30  \\
+20
+\end{bmatrix}<code> = \begin{bmatrix} 21.7 \\\\  34.8  \\\\  43.5  \end{bmatrix}</code>
+$$</p>
+<p>Here is the population after 50 years:
+$$
+<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix} ^ {50} \cdot </code>\begin{bmatrix}
+50 \\
+30  \\
+20
+\end{bmatrix}<code> = \begin{bmatrix} 21.7 \\\\  34.8  \\\\  43.5  \end{bmatrix}</code>
+$$</p>
+<p> <br>
+ </p>
+<p>In a parallel universe, at year-0, we have 100 people in NY, 0 people in Boston, and 0 people in Houston. However, after 20 years, we achieve the same population across these three cities:</p>
+<p>$$
+<code>\begin{bmatrix} 0.72 &amp; 0.05 &amp; 0.1 \\\\  0.1 &amp; 0.75 &amp; 0.15 \\\\  0.18 &amp; 0.2 &amp; 0.75 \end{bmatrix} ^ {20} \cdot </code>\begin{bmatrix}
+100 \\
+0  \\
+0
+\end{bmatrix}<code> = \begin{bmatrix} 21.7 \\\\  34.8  \\\\  43.5  \end{bmatrix}</code>
+$$</p>
+<p> <br>
+ </p>
+<p>It turns out that the population, after many years of migration, becomes independent of the initial population, and this is called a &ldquo;stationary distribution.&rdquo; This means the population of each city no longer changes over time. In fact, the stationary distribution is an intrinsic property of the matrix we have specified.</p>
+<p> <br>
+ </p>
+<h4 id="an-extra-note">An Extra Note</h4>
+<p>In fact, the stationary distribution is the first eigenvector of the transition matrix!!!</p>
+<p>(If the word &ldquo;eigenvector&rdquo; sounds unfamiliar, don’t worry about it. Intuition is more important here.)</p>
+<p>(If it sounds familiar, try pulling out a calculator and calculating the first eigenvector, then rescale the vector so that the elements sum up to 1. This eigenvector should match with what we have computed above)</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="a-trillion-dollar-model">A trillion dollar model</h2>
+<p>In 1999, two Ph.D students at Stanford University named Larry Page and Sergey Brin developed a model that tried to recommend certain websites to users. The model was so successful that they even quit the Ph.D program. Years after, they became the most successful businessmen on earth, and the company they built is called Google.</p>
+<p>The core idea of the webpage recommendation system is to recommend high quality websites. What is a high quality website? A high quality websites is a website that many websites referred to, (a.k.a: a website that has many hyperlinks pointed to). This assumption makes intuitive sense - an analogy is that a paper that has a lot citations must be a good paper. Based on this assumption, Page &amp; Brin built this model called PageRank.</p>
+<p>Assume there are 5 websites, and each arrow represents a hyperlink that goes from one page to another page:</p>
+<div style="text-align: center;">
+  <img src="/images/HMM1/HMM3.png" alt="HMM3" width="100%" />
+</div>
+<p> <br>
+ </p>
+<p>Intuitively, pageA and pageC look like good pages, since a lot of other websites referred these two pages. A user will typically follow the hyperlinks to browse the website. For example, if a user is currently browsing pageC, the next moment, this user will have 50% of the chance to go to pageD, and 50% of the chance to go to pageA. Based on this graph, we can specify the transition matrix</p>
+<p>(note row/column order from pageA - pageE):</p>
+<p>$$
+<code>\begin{bmatrix} 0 &amp; 1 &amp; 0.5 &amp; 0 &amp; 0.5\\\\  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\\\  1 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\\\  0 &amp; 0 &amp; 0.5 &amp; 0 &amp; 0 \\\\  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0.5 \end{bmatrix}</code>
+$$</p>
+<p>Now assume we have 100 random users, with 20 users in each page. Using the same technique we have discussed above, we can calculate the stationary distribution (a.k.a, how many random users in each page eventually).</p>
+<p>$$
+<code>\begin{bmatrix} 0 &amp; 1 &amp; 0.5 &amp; 0 &amp; 0.5\\\\  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0 \\\\  1 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\\\  0 &amp; 0 &amp; 0.5 &amp; 0 &amp; 0 \\\\  0 &amp; 0 &amp; 0 &amp; 0 &amp; 0.5 \end{bmatrix}^{50} \cdot </code>\begin{bmatrix}
+20 \\
+20  \\
+20  \\
+20  \\
+20
+\end{bmatrix} =
+<code>\begin{bmatrix} 23.3 \\\\  0  \\\\  53.4  \\\\  23.3  \\\\  0  \end{bmatrix}</code>
+$$</p>
+<p>According to the PageRank algorithm, eventually we will have 53.4 users landing on pageC, and therefore pageC has the highest quality and should be recommended as the top page to the users.</p>
+<p> </p>
+<p>(There are more interesting techniques Page &amp; Brin used in this model. For example, how to prevent the random surfer from trapping in a certain loop, but this is beyond the scope of this post.)</p>
+<p> <br>
+ <br>
+ </p>
+<p>In the next few posts, I will discuss HMM model in detail. Stay in tune!</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

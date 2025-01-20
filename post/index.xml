@@ -23,6 +23,13 @@
       <description>&lt;p&gt;Linear regression is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;y = X \beta + \varepsilon&#xA;$$&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(lm(iris$Sepal.Length ~ iris$Sepal.Width))&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-2.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-3.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;</description>
     </item>
     <item>
+      <title>Hidden Markov Model (1) - Markov Chain</title>
+      <link>/post/hmm1/</link>
+      <pubDate>Mon, 29 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>/post/hmm1/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;This series of blog posts aims to explore the Hidden Markov Model (HMM) due to its broad applications across various fields, including natural language processing, population genetics, finance, and more. Beyond its practical utility, I find HMM particularly fascinating because it bridges multiple disciplines such as probability, linear algebra, machine learning, and computer science. In this post, I will introduce the Markov Chain, which serves as the foundation of HMM. As before, the concepts will be explained through a simple example, with minimal use of complex mathematical notation.&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Maximum likelihood estimation</title>
       <link>/post/mle/</link>
       <pubDate>Mon, 22 Nov 2021 00:00:00 +0000</pubDate>

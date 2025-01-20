@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>HMM on A Hugo website</title>
+    <link>/tags/hmm/</link>
+    <description>Recent content in HMM on A Hugo website</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 29 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <atom:link href="/tags/hmm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hidden Markov Model (1) - Markov Chain</title>
+      <link>/post/hmm1/</link>
+      <pubDate>Mon, 29 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>/post/hmm1/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;This series of blog posts aims to explore the Hidden Markov Model (HMM) due to its broad applications across various fields, including natural language processing, population genetics, finance, and more. Beyond its practical utility, I find HMM particularly fascinating because it bridges multiple disciplines such as probability, linear algebra, machine learning, and computer science. In this post, I will introduce the Markov Chain, which serves as the foundation of HMM. As before, the concepts will be explained through a simple example, with minimal use of complex mathematical notation.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
