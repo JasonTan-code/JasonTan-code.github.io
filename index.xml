@@ -30,6 +30,13 @@
       <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;This series of blog posts aims to explore the Hidden Markov Model (HMM) due to its broad applications across various fields, including natural language processing, population genetics, finance, and more. Beyond its practical utility, I find HMM particularly fascinating because it bridges multiple disciplines such as probability, linear algebra, machine learning, and computer science. In this post, I will introduce the Markov Chain, which serves as the foundation of HMM. As before, the concepts will be explained through a simple example, with minimal use of complex mathematical notation.&lt;/p&gt;</description>
     </item>
     <item>
+      <title>Hidden Markov Model (2) - Forward Backward Propagation</title>
+      <link>/post/hmm2/</link>
+      <pubDate>Mon, 29 Nov 2021 00:00:00 +0000</pubDate>
+      <guid>/post/hmm2/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;This post will include a few sections:&lt;/p&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;Introducing HMM, and demonstrate how it different from the Markov Chain&lt;/li&gt;&#xA;&lt;li&gt;Introducing an exhaustive method to infer the hidden state&lt;/li&gt;&#xA;&lt;li&gt;Introducing forward-backward propagation as an improvement&lt;/li&gt;&#xA;&lt;/ol&gt;&#xA;&lt;p&gt;The example is from &lt;a href=&#34;https://www.youtube.com/watch?v=VBs8FYsZIN4&#34;&gt;Dr.Xiaole Liu&amp;rsquo;s Youtube channel&lt;/a&gt;, and I highly recommend you to check out her video if you want to develop intuition of HMM rather than get killed by notations. Also, you may want to review &lt;a href=&#34;https://en.wikipedia.org/wiki/Conditional_independence&#34;&gt;conditional independence&lt;/a&gt; before you start reading, since it will be very frequently used later in this post.&lt;/p&gt;</description>
+    </item>
+    <item>
       <title>Maximum likelihood estimation</title>
       <link>/post/mle/</link>
       <pubDate>Mon, 22 Nov 2021 00:00:00 +0000</pubDate>
@@ -55,7 +62,7 @@
       <link>/category/</link>
       <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
       <guid>/category/</guid>
-      <description>&lt;h3 id=&#34;linear-algebra&#34;&gt;Linear algebra&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/pca1/&#34;&gt;Calculate PCA by hand (via eigen-decomposition)&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;inferential-statistics&#34;&gt;Inferential Statistics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/mle/&#34;&gt;Maximum likelihood estimation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;hidden-markov-model&#34;&gt;Hidden Markov Model&lt;/h3&gt;&#xA;&lt;h3 id=&#34;deep-learning&#34;&gt;Deep learning&lt;/h3&gt;&#xA;&lt;h3 id=&#34;genetics&#34;&gt;Genetics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/ldsc/&#34;&gt;LDSC&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+      <description>&lt;h3 id=&#34;linear-algebra&#34;&gt;Linear algebra&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/pca1/&#34;&gt;Calculate PCA by hand (via eigen-decomposition)&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;inferential-statistics&#34;&gt;Inferential Statistics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/mle/&#34;&gt;Maximum likelihood estimation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;hidden-markov-model&#34;&gt;Hidden Markov Model&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/hmm1/&#34;&gt;Hidden Markov Model (1) - Markov Chain&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/hmm2/&#34;&gt;Hidden Markov Model (2) - Forward Backward Propagation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;deep-learning&#34;&gt;Deep learning&lt;/h3&gt;&#xA;&lt;h3 id=&#34;genetics&#34;&gt;Genetics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/ldsc/&#34;&gt;LDSC&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>

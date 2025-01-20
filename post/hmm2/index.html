@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Hidden Markov Model (2) - Forward Backward Propagation - A Hugo website</title>
+<meta property="og:title" content="Hidden Markov Model (2) - Forward Backward Propagation - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">12 min read</span>
+    
+
+    <h1 class="article-title">Hidden Markov Model (2) - Forward Backward Propagation</h1>
+
+    
+    <span class="article-date">2021-11-29</span>
+    
+
+    <div class="article-content">
+      
+      <h2 id="introduction">Introduction</h2>
+<p>This post will include a few sections:</p>
+<ol>
+<li>Introducing HMM, and demonstrate how it different from the Markov Chain</li>
+<li>Introducing an exhaustive method to infer the hidden state</li>
+<li>Introducing forward-backward propagation as an improvement</li>
+</ol>
+<p>The example is from <a href="https://www.youtube.com/watch?v=VBs8FYsZIN4">Dr.Xiaole Liu&rsquo;s Youtube channel</a>, and I highly recommend you to check out her video if you want to develop intuition of HMM rather than get killed by notations. Also, you may want to review <a href="https://en.wikipedia.org/wiki/Conditional_independence">conditional independence</a> before you start reading, since it will be very frequently used later in this post.</p>
+<p> <br>
+ <br>
+ </p>
+<h2 id="set-up-the-model">Set up the model</h2>
+<p>I have a biased coin and a fair coin. Each time I toss a coin under the table, and will show you the outcome (Head or Tail). After I toss this coin, There will be a chance that I will switch to a different coin or to continue to use the same coin, and make another toss under the table. Again, <strong>what you can see is the outcome of the coin toss, but you don&rsquo;t know if I used a fair coin or a biased coin</strong>. <strong>Your job is to make an educated guess of which coin I have used to generate the sequence of outcomes</strong>. To make the example more concrete, imagine I tossed the coin three times, and the outcome is Head - Tail - Tail, as the diagram shows:</p>
+<p><img src="/images/HMM2/HMM1.png" alt=""></p>
+<p> </p>
+<p>Besides the sequence of the outcome, you have another three pieces of information to help you make this educated guess:</p>
+<ol>
+<li>Initial probability of which coin I used.</li>
+</ol>
+<p> </p>
+<ol start="2">
+<li>Transition probability, meaning the probability that I switch from a Fair coin to a Biased coin, or vice versa. In the following graph, we are saying if I use a fair coin this time, then I have have 90% of chance to continue to use a fair coin, and 10% of chance to switch to a biased coin. If I used a biased coin this time, I will have 30% of chance to switch to a fair coin next time, and 70% of chance to use the same coin.</li>
+</ol>
+<p> </p>
+<ol start="3">
+<li>Emission probability, meaning the probability of getting Head/Tail, given the coin is Fair/Biased. Here, we will have 50% of chance to get Head/Tail if I am using a fair coin. However, if I am using a biased coin, I will have 80% chance to get a head, and 20% chance to get a tail.</li>
+</ol>
+<p><img src="/images/HMM2/HMM2.png" alt=""></p>
+<p> </p>
+<p>I think it&rsquo;s important to first clarify some notations. Here is a few examples to help demonstrate:</p>
+<p> </p>
+<p>The probability of getting a fair coin at the beginning (time 1) can be denoted as <code>\(P(F_1) = 0.4\)</code></p>
+<p>The probability of switching to a fair coin at time 3, given that we see a biased coin at time 2 can be denoted as <code>\(P(F_3 | B_2) = 0.3\)</code></p>
+<p>The probability of seeing a tail at time 2, given that we have a fair coin at time 2 can be denoted as <code>\(P(T_2 | F_2) = 0.5\)</code></p>
+<p> <br>
+ <br>
+ </p>
+<h2 id="brutal-force-inference">Brutal force inference</h2>
+<p>Before we jump into the detail, let me reiterate the goal: <strong>we want to guess the most possible sequence of states that generates the outcome. In our example, when did I use a fair coin and when did I use a biased coin.</strong></p>
+<p> </p>
+<p>Let&rsquo;s first assume our coin sequence is <strong>Biased &ndash; Biased &ndash; Fair</strong>. The question is: what is the probability of seeing this coin sequence and the outcome sequence.</p>
+<p>What we need to do here is simply multiply all the transition probability (including the <strong>initial probability of getting a biased coin</strong>) from <strong>Biased &ndash; Biased &ndash; Fair</strong> and their emission probability <strong>Biased &ndash; Head</strong>, <strong>Biased &ndash; Tail</strong>,  <strong>Fair &ndash; Head</strong>.</p>
+<p>$$
+\begin{aligned}
+P(B_1, B_2, F_3, H_1, T_2, T_3)  &amp;= P(B_1) \cdot P(H_1 | B_1) \cdot P(B_2 | B_1)\cdot P(T_2 | B_2) \cdot P(F_3 | B_2)\cdot P(T_3 | F_3) \\
+&amp;= 0.6 \times 0.8 \times 0.7 \times 0.2 \times 0.3 \times 0.5 \\
+&amp; = 0.01008
+\end{aligned}
+$$</p>
+<p> </p>
+<p>Of course there are more than one way to get a sequence of <strong>Head &ndash; Tail &ndash; Tail</strong>. For example, to get <strong>Head &ndash; Tail &ndash; Tail</strong>, we can have our coin sequence to be <strong>Fair &ndash; Fair &ndash; Biased</strong>, <strong>Biased &ndash; Fair &ndash; Biased</strong>, etc. In fact there are <code>\(2^3= 8\)</code> possible ways to get <strong>Head &ndash; Tail &ndash; Tail</strong>, and here is the table with their probabilities.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Coin sequence</th>
+          <th style="text-align: right">Probability of coin sequence <strong>and</strong> outcome sequence</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><code>\(F_1, F_2, F_3\)</code></td>
+          <td style="text-align: right"><code>\(P(F_1, F_2, F_3, H_1, T_2, T_3) = 0.0405\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(F_1, F_2, B_3\)</code></td>
+          <td style="text-align: right"><code>\(P(F_1, F_2, B_3, H_1, T_2, T_3) = 0.0018\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(F_1, B_2, F_3\)</code></td>
+          <td style="text-align: right"><code>\(P(F_1, B_2, F_3, H_1, T_2, T_3) = 0.0006\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(F_1, B_2, B_3\)</code></td>
+          <td style="text-align: right"><code>\(P(F_1, B_2, B_3, H_1, T_2, T_3) = 0.00056\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(B_1, F_2, F_3\)</code></td>
+          <td style="text-align: right"><code>\(P(B_1, F_2, F_3, H_1, T_2, T_3) = 0.0324\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(B_1, F_2, B_3\)</code></td>
+          <td style="text-align: right"><code>\(P(B_1, F_2, B_3, H_1, T_2, T_3) = 0.00144\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(B_1, B_2, F_3\)</code></td>
+          <td style="text-align: right"><code>\(P(B_1, B_2, F_3, H_1, T_2, T_3) = 0.01008\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(B_1, B_2, B_3\)</code></td>
+          <td style="text-align: right"><code>\(P(B_1, B_2, B_3, H_1, T_2, T_3) = 0.009408\)</code></td>
+      </tr>
+  </tbody>
+</table>
+<p> </p>
+<p>Here we have enumerated all possible states. If we sum up all the values in the above table, we can achieve the probability of observing this sequence of outcome:
+$$
+\begin{aligned}
+P(H_1, T_2, T_3) &amp;= P(F_1, F_2, F_3, H_1, T_2, T_3) + P(F_1, F_2, B_3, H_1, T_2, T_3) + &hellip; + P(B_1, B_2, B_3, H_1, T_2, T_3) \\
+&amp; = 0.0405 + 0.0018 + 0.0006 + 0.00056 + 0.0324 + 0.00144 + 0.01008 + 0.009408 \\
+&amp; = 0.096788
+\end{aligned}
+$$</p>
+<p> </p>
+<p>Using conditional probability, we can achieve <code>\(P(\text{coin sequence} |H_1, T_2, T_3)\)</code>. For example, we can calculate the probability of our outcome sequence is from <strong>Fair &ndash; Fair &ndash; Fair</strong>:</p>
+<p>$$
+\begin{aligned}
+P(F_1, F_2, F_3 |H_1, T_2, T_3) &amp; = \frac{P(F_1, F_2, F_3 ,H_1, T_2, T_3) }{P(H_1, T_2, T_3)} \\
+&amp; = \frac{0.0405}{0.096788} \\
+&amp; = 0.418
+\end{aligned}
+$$</p>
+<p>That means there are 41.8% of the chance that the outcome sequence is from <strong>Fair &ndash; Fair &ndash; Fair</strong>.</p>
+<p> </p>
+<p>To see the whole picture, let&rsquo;s calculate the probability of every possible coin sequence, given we observed <strong>Head &ndash; Tail &ndash;Tail</strong> outcome sequence:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Coin sequence</th>
+          <th style="text-align: right">Probability of coin sequence <strong>given</strong> outcome sequence</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><code>\(F_1, F_2, F_3\)</code></td>
+          <td style="text-align: right"><code>\(0.0405/0.096788= 0.4184403\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(F_1, F_2, B_3\)</code></td>
+          <td style="text-align: right"><code>\(0.0018/0.096788= 0.01859735\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(F_1, B_2, F_3\)</code></td>
+          <td style="text-align: right"><code>\(0.0006/0.096788= 0.006199116\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(F_1, B_2, B_3\)</code></td>
+          <td style="text-align: right"><code>\(0.00056/0.096788= 0.005785841\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(B_1, F_2, F_3\)</code></td>
+          <td style="text-align: right"><code>\(0.0324/0.096788= 0.3347522\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(B_1, F_2, B_3\)</code></td>
+          <td style="text-align: right"><code>\(0.00144/0.096788= 0.01487788\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(B_1, B_2, F_3\)</code></td>
+          <td style="text-align: right"><code>\(0.01008/0.096788= 0.1041451\)</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(B_1, B_2, B_3\)</code></td>
+          <td style="text-align: right"><code>\(0.009408/0.096788= 0.09720213\)</code></td>
+      </tr>
+  </tbody>
+</table>
+<p> <br>
+ </p>
+<p>According to this table, the most likely coin sequence is <strong>Fair &ndash; Fair &ndash; Fair</strong>, which has 41.8% of the chance. So here is our final answer:</p>
+<p><img src="/images/HMM2/HMM3.png" alt=""></p>
+<p> </p>
+<p>Besides inferring the coin sequence, we can also calculate the probability of head/tail at a given time. For example, we can calculate <code>\(P(F_2 |H_1, T_2, T_3 )\)</code> by summing up all cases when the second coin is Fair, divided by all outcomes:</p>
+<p>$$
+\begin{aligned}
+P(F_2 |H_1, T_2, T_3 ) &amp; = \frac{P(F_2 ,H_1, T_2, T_3) }{P(H_1, T_2, T_3)} \\
+&amp; = \frac{P(F_1, F_2, F_3,H_1, T_2, T_3) + P(F_1, F_2, B_3,H_1, T_2, T_3) + P(B_1, F_2, F_3,H_1, T_2, T_3)  + P(B_1, F_2, B_3,H_1, T_2, T_3)  }{P(H_1, T_2, T_3)} \\
+&amp; = \frac{0.0405 + 0.0018 + 0.0324 + 0.00144}{0.096788} \\
+&amp; = 0.7867
+\end{aligned}
+$$</p>
+<p>The results are telling us that we are 78% sure that the second toss is from a fair coin.</p>
+<p> </p>
+<h4 id="a-drawback">A drawback</h4>
+<p>The brutal force approach can help us develop intuition, but it should never be used to solve real-world problem. The biggest issue is the computation complexity. In our toy example, we have 3 observations, and we need to enumerate all <code>\(2^3 = 8\)</code> cases in order to infer the hidden state. Imagine if we have 100 observations, we will have to enumerate all <code>\(2^{100}\)</code> cases, which is never practical.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="forward-backward-algorithm-inference">Forward Backward algorithm inference</h2>
+<p>The beauty of this method is that we can infer the hidden states with a much lower computational complexity ( <code>\(O(S^2T)\)</code>, compared to <code>\(O(T^S)\)</code>), and we can find the exact probability of Head/Tail at a given time point. The essence of this method is called <strong>dynamic programming</strong>, and I will demonstrate the idea below:</p>
+<p> </p>
+<h4 id="forward-algorithm">Forward algorithm</h4>
+<p>We first need to define a few quantities <code>\(\alpha_i(F)\)</code> and <code>\(\alpha_i(B)\)</code>. It is the joint probability of all <strong>previously observed outcomes</strong> and the <strong>current state</strong>.</p>
+<p> </p>
+<p>What do I mean by that? For example. <code>\(\alpha_2(F) = P(H_1, T_2, F_2)\)</code>. Similarly <code>\(\alpha_2(B) = P(H_1, T_2, B_2)\)</code>, <code>\(\alpha_3(B) = P(H_1, T_2,T_3, B_3)\)</code>, etc &hellip; (I hope the pattern is clear)</p>
+<p> </p>
+<p>The quantities themselves might not be very interpretable, but a nice feature of this quantity is that each <code>\(\alpha\)</code> can be derived from the previous <code>\(\alpha\)</code>. Let&rsquo;s calculate them step by step:</p>
+<h4 id="calculate-alpha_1f-and-alpha_1b">Calculate <code>\(\alpha_1(F)\)</code> and <code>\(\alpha_1(B)\)</code>:</h4>
+<p><code>\(\alpha_1(F) = P(H_1, F_1) = P(F_1) \cdot P(H_1 |F_1) = 0.4 \times 0.5 = 0.2\)</code></p>
+<p><code>\(\alpha_1(B) = P(H_1, B_1) = P(B_1) \cdot P(H_1 |B_1) = 0.6 \times 0.8 = 0.48\)</code></p>
+<p> </p>
+<h4 id="calculate-alpha_2f-and-alpha_2b">Calculate <code>\(\alpha_2(F)\)</code> and <code>\(\alpha_2(B)\)</code>:</h4>
+<p>$$
+\begin{aligned}
+\alpha_2(F) &amp;= P(H_1, T_2, F_2) \\
+&amp;= [P(H_1, F_1, F_2) + P(H_1, B_1, F_2)] \cdot P(T_2 |F_2) \\
+&amp; = [P(H_1, F_1) \cdot P(F_2 |F_1) + P(H_1, B_1) \cdot P(F_2 |B_1)]\cdot P(T_2 |F_2) \\
+&amp; =  [\alpha_1(F)\cdot P(F_2 |F_1) +\alpha_1(B) \cdot P(F_2 |B_1)]\cdot P(T_2 |F_2) \\
+&amp; = (0.2 \times 0.9 + 0.48	 \times 0.3)\times 0.5 \\
+&amp; = 0.162
+\end{aligned}
+$$
+$$
+\begin{aligned}
+\alpha_2(B) &amp;= P(H_1, T_2, B_2) \\
+&amp;= [P(H_1, F_1, B_2) + P(H_1, B_1, B_2)] \cdot P(T_2 |B_2) \\
+&amp; = [P(H_1, F_1) \cdot P(B_2 |F_1) + P(H_1, B_1) \cdot P(B_2 |B_1)]\cdot P(T_2 |B_2) \\
+&amp; = [\alpha_1(F) \cdot P(B_2 |F_1) + \alpha_1(B)  \cdot P(B_2 |B_1)]\cdot P(T_2 |B_2) \\
+&amp; = (0.2 \times 0.1 + 0.48	 \times 0.7)\times 0.2 \\
+&amp; = 0.0712
+\end{aligned}
+$$</p>
+<p>I know the math is very messy, but here is a graphical demonstration of calculating <code>\(\alpha_2(F)\)</code>. It&rsquo;s important to understand the pattern, and the same pattern can be applied to <code>\(\alpha_3(F)\)</code> and <code>\(\alpha_3(B)\)</code></p>
+<p><img src="/images/HMM2/HMM4.png" alt=""></p>
+<p> </p>
+<h4 id="calculate-alpha_3f-and-alpha_3b">Calculate <code>\(\alpha_3(F)\)</code> and <code>\(\alpha_3(B)\)</code>:</h4>
+<p>Instead of deriving the formula from scratch, I will simply use the pattern above</p>
+<p>$$
+\begin{aligned}
+\alpha_3(F) &amp; = P(H_1, T_2,T_3, F_3) \\
+&amp;= [\alpha_2(F)  \cdot P(F_3 |F_2) + \alpha_2(B)\cdot P(F_3 |B_2)]\cdot P(T_3 |F_3) \\
+&amp; = (0.162 \times 0.9 + 0.0712 \times 0.3) \times 0.5 \\
+&amp; = 0.08358
+\end{aligned}
+$$</p>
+<p>$$
+\begin{aligned}
+\alpha_3(B) &amp; = P(H_1, T_2,T_3, B_3) \\
+&amp;= [\alpha_2(F)\cdot P(B_3 |F_2) + \alpha_2(B)  \cdot P(B_3 |B_2)]\cdot P(T_3 |B_3) \\
+&amp; = (0.162 \times 0.1 + 0.0712 \times 0.7) \times 0.2 \\
+&amp; = 0.013208
+\end{aligned}
+$$</p>
+<p>I have color-coded the <code>\(\alpha\)</code> in the equations. It&rsquo;s important to notice that the next <code>\(\alpha\)</code> can be derived from the previous <code>\(\alpha\)</code> with the same pattern. It&rsquo;s usage will be demonstrated in the next two sections.</p>
+<p> <br>
+ <br>
+ </p>
+<h4 id="backward-algorithm">Backward algorithm</h4>
+<p>Similar to <code>\(\alpha_i(F)\)</code> and <code>\(\alpha_i(B)\)</code>, we will need to define another quantity called <code>\(\beta_i(F)\)</code> and <code>\(\beta_i(B)\)</code>, which is the conditional probability of all the observations afterwards, given that the current coin is fair/biased. For example, <code>\(\beta_2(F) = P(T_3 |F_2)\)</code>, <code>\(\beta_1(B) = P(T_2, T_3 |B_1)\)</code>. Specifically, the last <code>\(\beta_i\)</code>, which is <code>\(\beta_3(F)\)</code> and <code>\(\beta_3(B)\)</code> in our example, is set to <code>\(1\)</code>.</p>
+<p> </p>
+<p>I bet you will ask what is the point of defining this <code>\(\beta\)</code> quantity. Please bare with me, it will be all clarified after I show you the mechanics.</p>
+<p> </p>
+<h4 id="calculate-beta_3f-and-beta_3b">Calculate <code>\(\beta_3(F)\)</code> and <code>\(\beta_3(B)\)</code>:</h4>
+<p>As I said above, the last <code>\(\beta\)</code> is set to <code>\(1\)</code>, so we have:</p>
+<p><code>\(\beta_3(F) = 1\)</code></p>
+<p><code>\(\beta_3(B) = 1\)</code></p>
+<p> </p>
+<h4 id="calculate-beta_2f-and-beta_2b">Calculate <code>\(\beta_2(F)\)</code> and <code>\(\beta_2(B)\)</code>:</h4>
+<p>$$
+\begin{aligned}
+\beta_2(F) &amp; = P(T_3|F_2) \\
+&amp; = P(T_3, F_3 | F_2) + P(T_3, B_3 | F_2) \\
+&amp; = P(F_3 | F_2) \cdot P(T_3 | F_3) + P(B_3 | F_2) \cdot P(T_3 | B_3) \\
+&amp; = P(F_3 | F_2) \cdot P(T_3 | F_3) \cdot\beta_3(F) + P(B_3 | F_2) \cdot P(T_3 | B_3) \cdot \beta_3(B) \\
+&amp; = 0.9 \times 0.5 \times 1 + 0.1 \times 0.2 \times 1 \\
+&amp; = 0.47
+\end{aligned}
+$$</p>
+<p>$$
+\begin{aligned}
+\beta_2(B) &amp; = P(T_3|B_2) \\
+&amp; = P(T_3, F_3 | B_2) + P(T_3, B_3 | B_2) \\
+&amp; = P(F_3 | B_2) \cdot P(T_3 | F_3) + P(B_3 | B_2) \cdot P(T_3 | B_3) \\
+&amp; = P(F_3 | B_2) \cdot P(T_3 | F_3) \cdot \beta_3(F)  + P(B_3 | B_2) \cdot P(T_3 | B_3) \cdot \beta_3(B) \\
+&amp; = 0.3 \times 0.5 \times 1 + 0.7 \times 0.2 \times 1 \\
+&amp; = 0.29
+\end{aligned}
+$$</p>
+<p>Again, the pattern of calculating <code>\(\beta\)</code> is important.</p>
+<p><img src="/images/HMM2/HMM5.png" alt=""></p>
+<p> </p>
+<h4 id="calculate-beta_1f-and-beta_1b">Calculate <code>\(\beta_1(F)\)</code> and <code>\(\beta_1(B)\)</code>:</h4>
+<p>$$
+\begin{aligned}
+\beta_1(F) &amp;= P(T_2, T_3 \mid F_1) \\
+&amp;= P(F_2 \mid F_1) \cdot P(T_2 \mid F_2) \cdot \beta_2(F) + P(B_2 \mid F_1) \cdot P(T_2 \mid B_2) \cdot \beta_2(B)\\
+&amp;= 0.9 \times 0.5 \times 0.47 + 0.1 \times 0.2 \times 0.29 \\
+&amp;= 0.2173
+\end{aligned}
+$$</p>
+<p>$$
+\begin{aligned}
+\beta_1(B) &amp;= P(T_2, T_3|B_1) \\
+&amp;= P(F_2 | B_1) \cdot P(T_2 | F_2) \cdot \beta_2(F)  + P(B_2 | B_1) \cdot P(T_2 | B_2) \cdot \beta_2(B)  \\
+&amp;= 0.3 \times 0.5 \times 0.47 + 0.7 \times 0.2 \times 0.29 \\
+&amp;= 0.1111
+\end{aligned}
+$$</p>
+<p> <br>
+ </p>
+<h4 id="forward--backward">Forward + backward</h4>
+<p>Here is a summary of all <code>\(\alpha\)</code> and <code>\(\beta\)</code> we have calculated:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Quantity</th>
+          <th><code>\(H_1\)</code></th>
+          <th><code>\(T_2\)</code></th>
+          <th style="text-align: right"><code>\(T_3\)</code></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><code>\(\alpha(F)\)</code></td>
+          <td>0.2</td>
+          <td>0.162</td>
+          <td style="text-align: right">0.08358</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(\alpha(B)\)</code></td>
+          <td>0.48</td>
+          <td>0.0712</td>
+          <td style="text-align: right">0.013208</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(\beta(F)\)</code></td>
+          <td>0.2173</td>
+          <td>0.47</td>
+          <td style="text-align: right">1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><code>\(\beta(B)\)</code></td>
+          <td>0.1111</td>
+          <td>0.29</td>
+          <td style="text-align: right">1</td>
+      </tr>
+  </tbody>
+</table>
+<p> </p>
+<p>It turns out we can use <code>\(\alpha\)</code> and <code>\(\beta\)</code> to calculate another quantity <code>\(\gamma\)</code>, which represents the probability of having head/tail at that particular time point, given the observed data.</p>
+<p> </p>
+<p>For example, let&rsquo;s calculate <code>\(\gamma_2 (F)\)</code></p>
+<p>$$
+\begin{aligned}
+\gamma_2 (F) &amp; = P(F_2 |H_1, T_2, T_3 )\\
+&amp;= \frac{\alpha_2(F) \cdot \beta_2(F) }{\alpha_2(F) \cdot \beta_2(F) + \alpha_2(B) \cdot \beta_2(B)} \\
+&amp; = \frac{0.162 \times 0.47}{0.162 \times 0.47 + 0.0712 \times 0.29} \\
+&amp; = 0.7867
+\end{aligned}
+$$</p>
+<p>If you scroll up a little bit of this page, you should find this result is exactly the same as what we get using brutal force approach.</p>
+<p> <br>
+ </p>
+<p>Let&rsquo;s try to calculate the probability of having a fair/biased coin for every single time point:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">P</th>
+          <th><code>\(H_1\)</code></th>
+          <th><code>\(T_2\)</code></th>
+          <th style="text-align: right"><code>\(T_3\)</code></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Fair</td>
+          <td>0.4490226</td>
+          <td>0.7866678</td>
+          <td style="text-align: right">0.8635368</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Biased</td>
+          <td>0.5509774</td>
+          <td>0.2133322</td>
+          <td style="text-align: right">0.1364632</td>
+      </tr>
+  </tbody>
+</table>
+<p> <br>
+According to our final results table from forward-backward propagation, it looks like the hidden state is <strong>Biased &ndash; Fair &ndash; Fair</strong>, which is different from from our brutal force calculation. This is expected, since <strong>forward-backward algorithm tries to find the most likely state for any point of time, but it&rsquo;s not meant to find the most likely sequence of states</strong>.</p>
+<p> <br>
+ </p>
+<p>Lastly, I want to prove the following equation:</p>
+<p>$$P(F_2 |H_1, T_2, T_3 ) = \frac{\alpha_2(F) \cdot \beta_2(F) }{\alpha_2(F) \cdot \beta_2(F) + \alpha_2(B) \cdot \beta_2(B)} $$</p>
+<p>We have
+$$
+\begin{aligned}
+P(F_2 |H_1, T_2, T_3 ) &amp;= \frac{P(F_2 , H_1, T_2, T_3 )}{P(H_1, T_2, T_3)} \\
+&amp; = \frac{P(F_2 , H_1, T_2, T_3 )}{P(F_2 , H_1, T_2, T_3 ) + P(B_2 , H_1, T_2, T_3 )} \\
+&amp;= \frac{P(T_3 | H_1, T_2, F_2 ) \cdot P(H_1, T_2, F_2)}{P(T_3 | H_1, T_2, F_2 ) \cdot P(H_1, T_2, F_2) + P(T_3 | H_1, T_2, B_2 ) \cdot P(H_1, T_2, B_2)} \\
+&amp; = \frac{P(T_3 | F_2 ) \cdot P(H_1, T_2, F_2)}{P(T_3 |  F_2 ) \cdot P(H_1, T_2, F_2) + P(T_3 | B_2 ) \cdot P(H_1, T_2, B_2)} \\
+&amp;= \frac{\beta_2(F) \cdot \alpha_2(F)}{\beta_2(F) \cdot \alpha_2(F) + \beta_2(B) \cdot \alpha_2(B)}
+\end{aligned}
+$$</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<p>We have covered quite a lot of materials in this blog post.  In the next blog post, I am planning to discuss viterbi algorithm, which is another greedy algorithm to infer the hidden states. Make sure to follow this series and leave comments if you have questions~</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
