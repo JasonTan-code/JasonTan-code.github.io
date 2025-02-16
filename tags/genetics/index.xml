@@ -6,14 +6,21 @@
     <description>Recent content in Genetics on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 05 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 16 Feb 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="/tags/genetics/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>LDSC</title>
+      <title>Genome-wide association studies</title>
+      <link>/post/gwas/</link>
+      <pubDate>Sun, 16 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>/post/gwas/</guid>
+      <description>&lt;h2 id=&#34;variants-trait-association&#34;&gt;Variants-trait association&lt;/h2&gt;&#xA;&lt;p&gt;The core objective of genetic studies is to identify which genetic variants contribute to disease risk. While establishing direct causation is challenging, we can detect statistical associations between genetic variants and traits by analyzing large-scale genomic data.&lt;/p&gt;&#xA;&lt;p&gt;Large biobanks (such as the UK Biobank) have collected genomic data from hundreds of thousands of samples. To study variant-trait associations, one approach is to apply linear or logistic regression for each genetic variant, treating genotypes as independent variables and the trait as the dependent variable.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Linkage Disequilibrium Score Regression</title>
       <link>/post/ldsc/</link>
       <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
       <guid>/post/ldsc/</guid>
-      <description>&lt;p&gt;LDSC is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;\mathbb{E}[\chi^2] = \frac{Nh^2}{M} l + 1&#xA;$$&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;ldsc-derivation&#34;&gt;LDSC derivation&lt;/h2&gt;&#xA;&lt;p&gt;We discussed how to perform &lt;a href=&#34;/post/gwas/&#34;&gt;GWAS with scaled genotypes &amp;amp; phenotype&lt;/a&gt;. In this blog post, I present an important piece of result: Linkage Disequilibrium Score Regression (LDSC)&lt;/p&gt;&#xA;&lt;p&gt;LDSC was proposed in &lt;a href=&#34;https://www.nature.com/articles/ng.3211&#34;&gt;this&lt;/a&gt; landmark paper, in which it described how LD affect the probability of a variant being significant. Under infinitesimal model, LDSC states &lt;code&gt;\(\mathbb{E}[\chi_j^2] = \frac{Nh^2}{M} l_j + 1\)&lt;/code&gt;, where &lt;code&gt;\(l_j \equiv \sum_{k = 1}^M r_{jk}^2\)&lt;/code&gt; is the LD score. To carry out the derivation, one must treat the effect size as random: &lt;code&gt;\(\lambda_j \sim N(0, \frac{h^2}{M})\)&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

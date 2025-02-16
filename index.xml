@@ -6,21 +6,21 @@
     <description>Recent content on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 05 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 16 Feb 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>LDSC</title>
+      <title>Genome-wide association studies</title>
+      <link>/post/gwas/</link>
+      <pubDate>Sun, 16 Feb 2025 00:00:00 +0000</pubDate>
+      <guid>/post/gwas/</guid>
+      <description>&lt;h2 id=&#34;variants-trait-association&#34;&gt;Variants-trait association&lt;/h2&gt;&#xA;&lt;p&gt;The core objective of genetic studies is to identify which genetic variants contribute to disease risk. While establishing direct causation is challenging, we can detect statistical associations between genetic variants and traits by analyzing large-scale genomic data.&lt;/p&gt;&#xA;&lt;p&gt;Large biobanks (such as the UK Biobank) have collected genomic data from hundreds of thousands of samples. To study variant-trait associations, one approach is to apply linear or logistic regression for each genetic variant, treating genotypes as independent variables and the trait as the dependent variable.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Linkage Disequilibrium Score Regression</title>
       <link>/post/ldsc/</link>
       <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
       <guid>/post/ldsc/</guid>
-      <description>&lt;p&gt;LDSC is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;\mathbb{E}[\chi^2] = \frac{Nh^2}{M} l + 1&#xA;$$&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>Linear regression</title>
-      <link>/post/linear-regression/</link>
-      <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
-      <guid>/post/linear-regression/</guid>
-      <description>&lt;p&gt;Linear regression is&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;y = X \beta + \varepsilon&#xA;$$&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;plot(lm(iris$Sepal.Length ~ iris$Sepal.Width))&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-2.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-3.png&#34; width=&#34;672&#34; /&gt;&lt;img src=&#34;/post/linear-regression/index_files/figure-html/unnamed-chunk-1-4.png&#34; width=&#34;672&#34; /&gt;&lt;/p&gt;</description>
+      <description>&lt;h2 id=&#34;ldsc-derivation&#34;&gt;LDSC derivation&lt;/h2&gt;&#xA;&lt;p&gt;We discussed how to perform &lt;a href=&#34;/post/gwas/&#34;&gt;GWAS with scaled genotypes &amp;amp; phenotype&lt;/a&gt;. In this blog post, I present an important piece of result: Linkage Disequilibrium Score Regression (LDSC)&lt;/p&gt;&#xA;&lt;p&gt;LDSC was proposed in &lt;a href=&#34;https://www.nature.com/articles/ng.3211&#34;&gt;this&lt;/a&gt; landmark paper, in which it described how LD affect the probability of a variant being significant. Under infinitesimal model, LDSC states &lt;code&gt;\(\mathbb{E}[\chi_j^2] = \frac{Nh^2}{M} l_j + 1\)&lt;/code&gt;, where &lt;code&gt;\(l_j \equiv \sum_{k = 1}^M r_{jk}^2\)&lt;/code&gt; is the LD score. To carry out the derivation, one must treat the effect size as random: &lt;code&gt;\(\lambda_j \sim N(0, \frac{h^2}{M})\)&lt;/code&gt;.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Hidden Markov Model (1) - Markov Chain</title>
@@ -62,7 +62,7 @@
       <link>/category/</link>
       <pubDate>Thu, 05 May 2016 21:48:51 -0700</pubDate>
       <guid>/category/</guid>
-      <description>&lt;h3 id=&#34;linear-algebra&#34;&gt;Linear algebra&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/pca1/&#34;&gt;Calculate PCA by hand (via eigen-decomposition)&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;inferential-statistics&#34;&gt;Inferential Statistics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/mle/&#34;&gt;Maximum likelihood estimation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;hidden-markov-model&#34;&gt;Hidden Markov Model&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/hmm1/&#34;&gt;Hidden Markov Model (1) - Markov Chain&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/hmm2/&#34;&gt;Hidden Markov Model (2) - Forward Backward Propagation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h3 id=&#34;deep-learning&#34;&gt;Deep learning&lt;/h3&gt;&#xA;&lt;h3 id=&#34;genetics&#34;&gt;Genetics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/ldsc/&#34;&gt;LDSC&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
+      <description>&lt;h3 id=&#34;linear-algebra&#34;&gt;Linear algebra&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/pca1/&#34;&gt;Calculate PCA by hand (via eigen-decomposition)&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt; &#xA; &lt;/p&gt;&#xA;&lt;h3 id=&#34;inferential-statistics&#34;&gt;Inferential Statistics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/mle/&#34;&gt;Maximum likelihood estimation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt; &#xA; &lt;/p&gt;&#xA;&lt;h3 id=&#34;hidden-markov-model&#34;&gt;Hidden Markov Model&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/hmm1/&#34;&gt;Hidden Markov Model (1) - Markov Chain&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/hmm2/&#34;&gt;Hidden Markov Model (2) - Forward Backward Propagation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt; &#xA; &lt;/p&gt;&#xA;&lt;h3 id=&#34;deep-learning&#34;&gt;Deep learning&lt;/h3&gt;&#xA;&lt;p&gt; &#xA; &lt;/p&gt;&#xA;&lt;h3 id=&#34;genetics&#34;&gt;Genetics&lt;/h3&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/gwas/&#34;&gt;Genome-wide association studies&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;/post/ldsc/&#34;&gt;Linkage Disequilibrium Score Regression&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
   </channel>
 </rss>

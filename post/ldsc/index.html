@@ -6,8 +6,8 @@
 <meta name="generator" content="Hugo 0.140.2">
 
 
-<title>LDSC - A Hugo website</title>
-<meta property="og:title" content="LDSC - A Hugo website">
+<title>Linkage Disequilibrium Score Regression - A Hugo website</title>
+<meta property="og:title" content="Linkage Disequilibrium Score Regression - A Hugo website">
 
 
   <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
@@ -19,6 +19,11 @@
 
 
 
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
 
 
 
@@ -55,10 +60,10 @@
 
   <article class="article">
     
-    <span class="article-duration">1 min read</span>
+    <span class="article-duration">3 min read</span>
     
 
-    <h1 class="article-title">LDSC</h1>
+    <h1 class="article-title">Linkage Disequilibrium Score Regression</h1>
 
     
     <span class="article-date">2025-01-05</span>
@@ -66,10 +71,82 @@
 
     <div class="article-content">
       
-      <p>LDSC is</p>
-<p>$$
-\mathbb{E}[\chi^2] = \frac{Nh^2}{M} l + 1
+      <h2 id="ldsc-derivation">LDSC derivation</h2>
+<p>We discussed how to perform <a href="/post/gwas/">GWAS with scaled genotypes &amp; phenotype</a>. In this blog post, I present an important piece of result: Linkage Disequilibrium Score Regression (LDSC)</p>
+<p>LDSC was proposed in <a href="https://www.nature.com/articles/ng.3211">this</a> landmark paper, in which it described how LD affect the probability of a variant being significant. Under infinitesimal model, LDSC states <code>\(\mathbb{E}[\chi_j^2] = \frac{Nh^2}{M} l_j + 1\)</code>, where <code>\(l_j \equiv \sum_{k = 1}^M r_{jk}^2\)</code> is the LD score. To carry out the derivation, one must treat the effect size as random: <code>\(\lambda_j \sim N(0, \frac{h^2}{M})\)</code>.</p>
+<p>In GWAS, the marginal effect size estimates (condition on true marginal effect size) is normally distributed: <code>\(\hat \beta_j | \beta_j \sim N(\beta_j, \frac{1}{N})\)</code>. Equivalently, <code>\(\hat \beta_j | \lambda \sim N(\sum_{k = 1}^{M} r_{jk} \lambda_k, \frac{1}{N})\)</code>.</p>
+<p>I first state some quantities that will be useful for the derivations. Those quantities should be easy to varify:
+$$
+<code>\begin{split} \mathbb{E}[\lambda_j] &amp;= 0 \\ \mathbb{E}[\lambda_j^2] &amp;= \frac{h^2}{M} \\ \mathbb{E}[\hat \beta_j | \lambda_j] &amp;= \sum_{k = 1}^{M} r_{jk} \lambda_k \\ \mathbb{V}ar[\hat \beta_j | \lambda_j] &amp;= \frac{1}{N} \\ \mathbb{E}[\hat \beta_j^2 | \lambda_j] &amp;= \mathbb{V}ar[\hat \beta_j | \lambda_j] + \mathbb{E}^2[\hat \beta_j | \lambda_j] = \frac{1}{N} + (\sum_{k = 1}^{M} r_{jk} \lambda_k )^2 \end{split}</code>
 $$</p>
+<p>Before we investigate <code>\(\mathbb{E}[\chi_j^2]\)</code>, let&rsquo;s express <code>\(\mathbb{E}[\hat \beta_j^2]\)</code>:
+$$
+<code>\begin{split} \mathbb{E}[\hat \beta_j^2] &amp;= \mathbb{E}[ \mathbb{E}[\hat \beta_j^2 \mid \lambda]] \\ &amp;= \mathbb{E}[\frac{1}{N} + (\sum_{k = 1}^{M} r_{jk} \lambda_k )^2] \\ &amp;= \frac{1}{N} + \mathbb{E}[ (\sum_{k = 1}^M r_{jk} \lambda_k)^2  ] \\ &amp;= \frac{1}{N} + \mathbb{E}[ (r_{j1} \lambda_1 + r_{j2} \lambda_2 +  ...)^2 ] \\ &amp;= \frac{1}{N} + \mathbb{E}[ \sum_{k = 1}^{M} (r_{jk} \lambda_k )^2 + 2 \cdot \sum_{p \neq q} r_{jp} r_{jq} \lambda_p  \lambda_q ] \\ &amp;= \frac{1}{N} + \sum_{k = 1}^M r_{jk}^2 \cdot \frac{h^2}{M} \\  &amp;= \frac{h^2}{M} l_j + \frac{1}{N}  \end{split}</code>
+$$</p>
+<p>Further,</p>
+<p>$$
+<code>\begin{split} \mathbb{E}[\chi_j^2]  &amp; = \mathbb{E}[(\frac{\hat \beta_j}{1/ \sqrt{N}})^2] \\ &amp;= N \mathbb{E}[\hat \beta_j^2] \\ &amp;= \frac{Nh^2}{M} l_j + 1 \end{split}</code>
+$$</p>
+<p>The derivation took the insight that only marginal effect size are observed. Therefore, we investigate the statistical property of the <strong>marginal distribution of marginal effect sizes</strong> (a.k.a <code>\(p(\hat \beta)\)</code>, but not the conditional distribution <code>\(p(\hat \beta \mid \lambda)\)</code>). Biologically, if one variant has more LD friends, then it is more likely to be significant. LDSC has been further extended to study binary traits, partition heritability, and genetic correlation between traits.</p>
+<p> 
+ 
+ </p>
+<h2 id="simulation">Simulation</h2>
+<p>Here is a simulation I have (with some code borrowed from <a href="https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/">Matti Pirinen&rsquo;s</a> incredible tutorial).</p>
+<pre><code class="language-r">path = &quot;https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/APOE_1000G_FIN_74SNPS.&quot;
+haps = read.table(paste0(path,&quot;txt&quot;))
+info = read.table(paste0(path,&quot;legend.txt&quot;),header = T, as.is = T)
+
+n = 1000
+G = as.matrix(haps[sample(1:nrow(haps), size = n, repl = T),] + haps[sample(1:nrow(haps), size = n, repl = T),])
+row.names(G) = NULL
+colnames(G) = NULL
+
+G_ = scale(G)
+h2 = 0.05
+R = t(G_) %*% G_ /n # LD matrix 
+
+get_chi2&lt;- function(G_, h2, R){
+  lambda = rnorm(ncol(G_), mean = 0, sd = sqrt(h2/ncol(G_)))
+  err = rnorm(n, mean = 0, sd = sqrt(1 - h2))
+  
+  y = G_ %*% lambda + err
+  y_ = scale(y)
+  
+  ## 
+  beta_hat = t(G_) %*% y / n
+  chi2 = n * beta_hat^2  
+
+  return(as.vector(chi2))
+}
+
+# do this 300 times, and average them to get the expectation 
+chi2_simulations = replicate(n = 300, get_chi2(G_, h2, R))
+exp_chi2 = rowMeans(chi2_simulations)
+
+ldsc = rowSums(R^2)
+
+
+plot(ldsc, exp_chi2)
+abline(lm(exp_chi2 ~ ldsc), col = &quot;red&quot;)
+abline(a = 1, b = (n * h2 / ncol(G)), col = &quot;blue&quot;)
+legend(4, 10, legend=c(&quot;Fitted line&quot;, &quot;Predicted line&quot;),  
+       fill = c(&quot;red&quot;,&quot;blue&quot;))
+</code></pre>
+<img src="/post/ldsc/index_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+<p> 
+ 
+ </p>
+<h2 id="reference">Reference:</h2>
+<ol>
+<li>
+<p>LDSC paper, Bulik-Sullivan et al. 2015, <em>Nat Gen</em> <a href="https://www.nature.com/articles/ng.3211#citeas">link</a></p>
+</li>
+<li>
+<p>Matti Pirinen&rsquo;s derivation <a href="https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/GWAS8.html">link</a></p>
+</li>
+</ol>
+<p>I also thank Arslan Zaidi&rsquo;s comment to correct my simulations</p>
 
     </div>
   </article>
@@ -90,6 +167,18 @@ $$</p>
 
     </div>
     
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
 
     
 <script src="/js/math-code.js"></script>

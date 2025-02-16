@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Genome-wide association studies - A Hugo website</title>
+<meta property="og:title" content="Genome-wide association studies - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">Genome-wide association studies</h1>
+
+    
+    <span class="article-date">2025-02-16</span>
+    
+
+    <div class="article-content">
+      
+      <h2 id="variants-trait-association">Variants-trait association</h2>
+<p>The core objective of genetic studies is to identify which genetic variants contribute to disease risk. While establishing direct causation is challenging, we can detect statistical associations between genetic variants and traits by analyzing large-scale genomic data.</p>
+<p>Large biobanks (such as the UK Biobank) have collected genomic data from hundreds of thousands of samples. To study variant-trait associations, one approach is to apply linear or logistic regression for each genetic variant, treating genotypes as independent variables and the trait as the dependent variable.</p>
+<p>If we define <code>G</code> as our genotype matrix, <code>y</code> as our phenotype vector, and <code>X</code> as our covariate matrix (including age, sex, and principal components), we can perform a GWAS using the following R pseudo code (of course you should use PLINK for a realistic analysis):</p>
+<pre><code class="language-r"># for continuous
+for (SNP in 1:ncol(G)) {
+    model &lt;- lm(y ~ G[, SNP] + X)  
+    p_value[SNP] &lt;- summary(model)$coefficients[2, 4]  # Extract p-value for SNP
+}
+
+# for binary
+for (SNP in 1:ncol(G)) {
+    model &lt;- glm(y ~ G[, SNP] + X, family = &quot;binomial&quot;) 
+    p_value[SNP] &lt;- summary(model)$coefficients[2, 4]  # Extract p-value for SNP
+}
+</code></pre>
+<p> <br>
+ <br>
+ </p>
+<h2 id="gwas-with-scaled-data">GWAS with scaled data</h2>
+<p>Statistical geneticists often scale genotypes and phenotypes before GWAS analysis. This procedure can simplify the mathematics, and has a few important consequences. They also tend to parameterize the model with heritability. Let&rsquo;s define some notations that we will use here, and in future blog posts.</p>
+<p>$$
+<code>\begin{split} G: &amp;\text{ standardized genotype matrix} \\ y: &amp;\text{ standardized phenotype} \\ \lambda, \hat\lambda: &amp;\text{ true and estimated causal effect sizes} \\ \beta, \hat\beta: &amp;\text{ true and estimated marginal effect sizes} \\ R: &amp;\text{ LD matrix/ correlation matrix} \\ h^2: &amp;\text{ narrow sense heritability} \\ N: &amp;\text{ sample size} \\ M: &amp;\text{ number of variants } \\ \end{split}</code>
+$$</p>
+<p>The model we are considering is
+$$
+<code>\begin{split} y &amp;= G \lambda + \varepsilon \\ \varepsilon &amp;\sim N(0, (1 - h^2) I) \end{split}</code>
+$$</p>
+<p>Assuming each variant only explains a tiny bit of phenotypical variation, I present a few important results:</p>
+<ol>
+<li>
+<p>GWAS effect size estimates is <code>\(\hat \beta = \frac{1}{N}G^Ty\)</code>.</p>
+</li>
+<li>
+<p>GWAS standard error is a constant <code>\(s.e. = 1/\sqrt{N}\)</code>.</p>
+</li>
+<li>
+<p>GWAS z score is <code>\(\hat\beta \sqrt{N}\)</code>.</p>
+</li>
+<li>
+<p>LD is <code>\(R = \frac{G^T G}{N}\)</code>. it is not always invertable, but we can add a small diagonal matrix as for regularization.</p>
+</li>
+<li>
+<p>multiple regression results is <code>\(\hat \lambda = R^{-1} \hat \beta\)</code>.</p>
+</li>
+<li>
+<p>The underlying genetic value is <code>\(G \lambda\)</code>, therefore the heritability is defined as <code>\(h^2 = \frac{\lambda^T G^T G \lambda}{N} = \lambda^T R \lambda = \beta^T R^{-1} \beta\)</code></p>
+</li>
+<li>
+<p><code>\(\hat \lambda\)</code> is an unbiased estimator of <code>\(\lambda\)</code>. More specifically, <code>\(\hat \lambda \sim MVN(\lambda, \frac{1 - h^2}{N} R^{-1} )\)</code></p>
+</li>
+<li>
+<p><code>\(\hat \beta\)</code> is an unbiased estimator of <code>\(\beta\)</code>, More specifically, <code>\(\hat \beta = R \hat \lambda \sim MVN(R\lambda, \frac{1 - h^2}{N} R)\)</code>. The diagonal elements are squared standard error of individual marker, which is usually close enough to <code>\(1/N\)</code> when heritability is small</p>
+</li>
+</ol>
+<p>Additionally, due to the sample size is typically large in GWAS, any additional degree of freedom will be ignored. Therefore, it is uncommon to see d.o.f adjustment like <code>\(n - k\)</code> in GWAS. In other words, we are performing asymptotic inference in GWAS.</p>
+<p>Surprisingly, covariates are often ignored in the formulation: <code>\(y = G \lambda + \varepsilon\)</code>. To ignore covariates, we either need to regress out covariates, or assume <code>\(\mathbb{C}ov[G, \varepsilon] \neq 0\)</code>.</p>
+<p> <br>
+ <br>
+ </p>
+<h2 id="simulation">Simulation</h2>
+<p>Here is a demonstration of scaled GWAS using simulated data:</p>
+<ol>
+<li>generated genotypes for 1000 individuals, each with 74 variants.</li>
+</ol>
+<pre><code class="language-r">######### Step1: Simulate genotypes
+path = &quot;https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/APOE_1000G_FIN_74SNPS.&quot;
+haps = read.table(paste0(path,&quot;txt&quot;))
+info = read.table(paste0(path,&quot;legend.txt&quot;),header = T, as.is = T)
+n = 1000 # number of samples 
+p = ncol(haps) # number of variants 
+G = as.matrix(haps[sample(1:nrow(haps), size = n, repl = T),] + 
+                haps[sample(1:nrow(haps), size = n, repl = T),])
+row.names(G) = NULL
+colnames(G) = NULL
+G_ = scale(G)
+</code></pre>
+<ol start="2">
+<li>pick 3 variants to be causal, and generate phenotypes</li>
+</ol>
+<pre><code class="language-r">######### Step2: Simulate phenotypes
+# pick 3 causal variants, and assign effect size
+lambda = rep(0, ncol(G_))
+causal_SNPs_idx = c(3, 18, 65)
+causal_SNPs_eff = c(0.3, -0.1, 0.15)
+lambda[causal_SNPs_idx] =  causal_SNPs_eff
+
+R = t(G_) %*% G_ /n # LD matrix 
+h2 = t(lambda) %*% R %*% lambda # heritability 
+
+err = rnorm(n, mean = 0, sd = sqrt(1 - h2))
+
+y = G_ %*% lambda + err
+y_ = scale(y)
+</code></pre>
+<ol start="3">
+<li>show key results</li>
+</ol>
+<pre><code class="language-r">######### Step3: key results
+beta_hat = 1/n * t(G_) %*% y_  # GWAS effect size estimates 
+z = sqrt(n) * beta_hat # z-score estimates 
+se = 1/sqrt(n) # standard error 
+pval = pchisq(z^2, df = 1, lower.tail = F) # p value
+beta = R %*% lambda # marginal effect size 
+
+# visualize Manhattan plot 
+colors &lt;- ifelse(lambda == 0, &quot;black&quot;, &quot;red&quot;)
+plot(x = 1:p, y = -log10(pval), main = &quot;Manhattan plot&quot;, 
+     xlab = &quot;Variant&quot;, ylab = &quot;-log10(p)&quot;, col = colors, bg = colors, pch = 21)
+legend(&quot;topright&quot;, legend = c(&quot;Causal variants&quot;, &quot;Non-causal variants&quot;), 
+       pch = 21, pt.bg = c(&quot;red&quot;, &quot;black&quot;), col = c(&quot;red&quot;, &quot;black&quot;), 
+       pt.cex = 1.5, cex = 0.8, bty = &quot;n&quot;)
+abline(h = -log10(5e-8), col = &quot;grey&quot;, lty = 2)
+</code></pre>
+<img src="/post/gwas/index_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<p>I want to highlight two important observations:</p>
+<ol>
+<li>Non-causal variants can be significantly associated with the traits (due to linkage with causal variants)</li>
+<li>Causal variants can be non-significant (due to insufficient power)</li>
+</ol>
+<p>By regressing the phenotype with each variants, we can nominate trait-associated variants. Additionally, these summary statistics allows us to estimate the heritability of a trait. One way is to apply <code>\(\hat h^2 = \hat \beta^T R^{-1} \hat \beta\)</code>, but this approach relies on inverting the LD matrix, which is practically impossible. Another practical approach is to use the variants with the most significant p value to estimate <code>\(h^2\)</code>.</p>
+<pre><code class="language-r">h2 # real h2
+##          [,1]
+## [1,] 0.136635
+</code></pre>
+<pre><code class="language-r">const = 1e-6
+t(beta_hat) %*% solve(R + const* diag(p)) %*% beta_hat # estimated h2 using all variants 
+##          [,1]
+## [1,] 0.175638
+</code></pre>
+<pre><code class="language-r">top_var = order(pval)[1]
+var(G_[,top_var] * beta_hat[top_var]) # estimated h2 using the top variant
+## [1] 0.1032919
+</code></pre>
+<p> <br>
+ <br>
+ </p>
+<h2 id="reference">Reference:</h2>
+<p>I learned these concepts largely through Matti Pirinen&rsquo;s fantastic <a href="https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/">tutorials</a>. I kept the notations to be consistent with his notations.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
