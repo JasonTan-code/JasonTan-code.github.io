@@ -6,8 +6,71 @@
     <description>Recent content in Inference on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Mon, 22 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 27 Nov 2021 15:19:26 -0600</lastBuildDate>
     <atom:link href="/tags/inference/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>An Intuitive Explanation of Bayesian Network</title>
+      <link>/post/bayesian_network/</link>
+      <pubDate>Sat, 27 Nov 2021 15:19:26 -0600</pubDate>
+      <guid>/post/bayesian_network/</guid>
+      <description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;&#xA;&lt;p&gt;Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;an-example&#34;&gt;An example&lt;/h2&gt;&#xA;&lt;p&gt;Suppose we are going to take a math exam next week. The outcome of the exam heavily depends on two factors: &lt;strong&gt;sleep&lt;/strong&gt; and &lt;strong&gt;study&lt;/strong&gt;. If we study and sleep well, chances are high that we will do a good job in the exam. Also, &lt;strong&gt;sleep&lt;/strong&gt; can affect our attention and therefore influence our &lt;strong&gt;study&lt;/strong&gt; quality. Since the world is probabilistic, we need to define the probability of each action (&lt;strong&gt;sleep&lt;/strong&gt;, &lt;strong&gt;study&lt;/strong&gt; and &lt;strong&gt;exam&lt;/strong&gt;):&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Model the Gene Expression (2): Likelihood Ratio Test</title>
+      <link>/post/gene_exp2/</link>
+      <pubDate>Tue, 23 Nov 2021 15:19:26 -0600</pubDate>
+      <guid>/post/gene_exp2/</guid>
+      <description>&lt;p&gt;In the &lt;a href=&#34;/post/gene_exp1/&#34;&gt;last post&lt;/a&gt;, we used a GLM framework to model the gene expression.&#xA;$$&#xA;y \sim NB(\mu, r) \\&#xA;log( \mu )= b_1 x + b_0&#xA;$$&lt;/p&gt;&#xA;&lt;p&gt;Using &lt;a href=&#34;/post/mle/&#34;&gt;maximum likelihood estimation&lt;/a&gt;, we were able to find a set of parameters &lt;code&gt;\(\hat b_0, \hat b_1, \hat r\)&lt;/code&gt;, that maximizes the likelihood function.&lt;/p&gt;&#xA;&lt;p&gt;But if you send this model (the estimated parameters) to biologists, they wouldn&amp;rsquo;t be happy. And we all know what is lacking: &lt;strong&gt;the p-value!&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Model the Gene Expression (1): A GLM framework</title>
+      <link>/post/gene_exp1/</link>
+      <pubDate>Tue, 23 Nov 2021 15:18:26 -0600</pubDate>
+      <guid>/post/gene_exp1/</guid>
+      <description>&lt;p&gt;Before you start reading this post, please familiarize yourself with &lt;a href=&#34;/post/mle/&#34;&gt;MLE&lt;/a&gt; and linear model.&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;background&#34;&gt;Background&lt;/h2&gt;&#xA;&lt;p&gt;In transcriptomic research, we often want to determine if genes are unregulated or down-regulated under a particular perturbation. For example, we have a medication that may cure type 2 diabetes. In our experiment, 6 patients are split into two groups, with 3 patients taking the medication, and 3 patients taking the placebo. The patients&amp;rsquo; blood samples are then collected to measure the transcriptomic profile (mRNA abundance level for each gene) using NGS technology (&lt;a href=&#34;https://en.wikipedia.org/wiki/RNA-Seq&#34;&gt;RNA seq&lt;/a&gt;). The mRNA abundance levels are quantified by the number of &lt;a href=&#34;https://en.wikipedia.org/wiki/Read_(biology)&#34;&gt;reads&lt;/a&gt; that were mapped to the reference genome. Finally, we use statistical tests to determine if the level of change is big enough to be considered as a DEG (differentially expressed gene).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Dive into Bayesian statistics (5): Intro to PyMC3</title>
+      <link>/post/bayesian5/</link>
+      <pubDate>Mon, 22 Nov 2021 20:19:26 -0600</pubDate>
+      <guid>/post/bayesian5/</guid>
+      <description>&lt;p&gt;In &lt;a href=&#34;/post/bayesian3/&#34;&gt;our previous post&lt;/a&gt;, we manually implemented the Markov Chain Monte Carlo (MCMC) algorithm, specifically Metropolis-Hastings, to draw samples from the posterior distribution. The code isn’t particularly difficult to understand, but it’s also not very intuitive to read or write. Besides the challenges of implementation, algorithm performance (i.e., speed) is a major consideration in more realistic applications. Fortunately, well-optimized tools are available to address these obstacles, namely Stan and PyMC3.&lt;/p&gt;&#xA;&lt;p&gt;Subjectively speaking, Stan is not my cup of tea. I remember spending an entire afternoon trying to install RStan, only to fail. To make matters worse, Stan has its own specialized language, adding another layer of complexity. In contrast, PyMC3 is much easier to install. The documentation and tutorials are well-written, and anyone with a basic understanding of Bayesian statistics should be able to follow them without much trouble. In this post—and future posts—I will stick with PyMC3.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Dive into Bayesian statistics (4): Markov Chain Monte Carlo</title>
+      <link>/post/bayesian4/</link>
+      <pubDate>Mon, 22 Nov 2021 20:18:26 -0600</pubDate>
+      <guid>/post/bayesian4/</guid>
+      <description>&lt;p&gt;In the last few posts, we tried three methods (&lt;a href=&#34;/post/bayesian2/&#34;&gt;Integration, Conjugate Prior&lt;/a&gt; and &lt;a href=&#34;/post/bayesian3/&#34;&gt;MCMC&lt;/a&gt; to infer the posterior distribution &lt;code&gt;\(P(\lambda | \text{data})\)&lt;/code&gt;, which gave us&lt;/p&gt;&#xA;&lt;p&gt;&lt;code&gt;$$\lambda \sim \text{Gamma}(\alpha = 20, \beta = 6)$$&lt;/code&gt;&lt;/p&gt;&#xA;&lt;p&gt;In this post, we are going to see 1) how to use Bayesian model to make prediction; 2) the internal relationship between a Poisson distribution, a Gamma distribution and a Negative binomial distribution.&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;question&#34;&gt;Question:&lt;/h2&gt;&#xA;&lt;p&gt;Here is the data we have worked so far:&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Dive into Bayesian statistics (3): Markov Chain Monte Carlo</title>
+      <link>/post/bayesian3/</link>
+      <pubDate>Mon, 22 Nov 2021 19:18:26 -0600</pubDate>
+      <guid>/post/bayesian3/</guid>
+      <description>&lt;p&gt;In this post, I will continue to use the same example that I used before (&lt;a href=&#34;/post/bayesian1/&#34;&gt;Bayesian: MAP&lt;/a&gt; and &lt;a href=&#34;/post/bayesian2/&#34;&gt;Bayesian: solve denominator&lt;/a&gt;. Also, it will be very helpful to first understand accept-reject sampling that I discussed in &lt;a href=&#34;/post/monte_carlo/&#34;&gt;this post&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;p&gt;Now let&amp;rsquo;s get started!&lt;/p&gt;&#xA;&lt;p&gt;As we discussed at the end of &lt;a href=&#34;/post/bayesian2/&#34;&gt;this post&lt;/a&gt;, solving the denominator is a non-trivial work, especially when you have many parameters to estimate. One way to overcome this obstacle is to use a method called Markov Chain Monte Carlo (MCMC).&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Dive into Bayesian statistics (2): Solve the nasty denominator!</title>
+      <link>/post/bayesian2/</link>
+      <pubDate>Mon, 22 Nov 2021 18:18:26 -0600</pubDate>
+      <guid>/post/bayesian2/</guid>
+      <description>&lt;p&gt;In the &lt;a href=&#34;/post/bayesian1/&#34;&gt;last post&lt;/a&gt;, we tried to use a Bayesian framework to model the number of visitors per hour. After concatenating a Poisson distribution with a Gamma prior, we get something like:&#xA;$$&#xA;P(\lambda | \text{data}) = c \cdot \lambda^{19} e^{-6\lambda}&#xA;$$&lt;/p&gt;&#xA;&lt;p&gt;Since we are interested to find &lt;code&gt;\(\lambda_0\)&lt;/code&gt; that gives the maximum value of &lt;code&gt;\(P(\lambda | \text{data})\)&lt;/code&gt; (a.k.a. &lt;strong&gt;Maximum A Posteriori&lt;/strong&gt;), we don&amp;rsquo;t need to worry too much about a constant &lt;code&gt;\(c\)&lt;/code&gt;. But in this post, we are going to solve &lt;code&gt;\(c\)&lt;/code&gt;, and consolidate our understanding of Bayesian inference.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Dive into Bayesian statistics (1): Maximum A Posteriori</title>
+      <link>/post/bayesian1/</link>
+      <pubDate>Mon, 22 Nov 2021 17:18:26 -0600</pubDate>
+      <guid>/post/bayesian1/</guid>
+      <description>&lt;p&gt;Before you read this post, I assume you are already familiar with basic probability theories, maximum likelihood estimation and bayes theorem. I encourage you to read my previous post that discussed &lt;a href=&#34;/post/mle/&#34;&gt;MLE&lt;/a&gt;, and we are going to use the same dataset in this post.&lt;/p&gt;&#xA;&lt;p&gt;Okay, let&amp;rsquo;s get started.&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &#xA; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;1-bayes-theorem&#34;&gt;1. Bayes theorem&lt;/h2&gt;&#xA;&lt;p&gt;In inferential statistics, our goal is to &lt;strong&gt;infer the population parameters&lt;/strong&gt;. That is, we observe the data, and from the data we guess the most likely population parameters. There are, in general, two ways to approach this goal.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>How to draw sample from a generic distribution?</title>
+      <link>/post/monte_carlo/</link>
+      <pubDate>Mon, 22 Nov 2021 16:18:26 -0600</pubDate>
+      <guid>/post/monte_carlo/</guid>
+      <description>&lt;p&gt;In this post, I am going to show two methods to draw samples from a generic distribution.&lt;/p&gt;&#xA;&lt;p&gt;But before we get started, we should define what do I mean generic distribution. Here is one example:&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;f(x)= \begin{cases}&#xA;0 &amp;amp; \text{if &lt;code&gt;\(x\)&lt;/code&gt; &amp;lt; 0} \\&#xA;c \cdot \sqrt{x} &amp;amp; \text{if  $0 &amp;lt; x &amp;lt; 1 $} \\&#xA;0 &amp;amp; \text{if &lt;code&gt;\(x &amp;gt; 1\)&lt;/code&gt;} \end{cases}&#xA;$$&lt;/p&gt;&#xA;&lt;p&gt;First, let&amp;rsquo;s take a look at the probability density function (pdf):&lt;br&gt;&#xA; &lt;/p&gt;</description>
+    </item>
     <item>
       <title>Maximum likelihood estimation</title>
       <link>/post/mle/</link>

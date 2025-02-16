@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Model the Gene Expression (2): Likelihood Ratio Test - A Hugo website</title>
+<meta property="og:title" content="Model the Gene Expression (2): Likelihood Ratio Test - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">8 min read</span>
+    
+
+    <h1 class="article-title">Model the Gene Expression (2): Likelihood Ratio Test</h1>
+
+    
+    <span class="article-date">2021-11-23</span>
+    
+
+    <div class="article-content">
+      
+      <p>In the <a href="/post/gene_exp1/">last post</a>, we used a GLM framework to model the gene expression.
+$$
+y \sim NB(\mu, r) \\
+log( \mu )= b_1 x + b_0
+$$</p>
+<p>Using <a href="/post/mle/">maximum likelihood estimation</a>, we were able to find a set of parameters <code>\(\hat b_0, \hat b_1, \hat r\)</code>, that maximizes the likelihood function.</p>
+<p>But if you send this model (the estimated parameters) to biologists, they wouldn&rsquo;t be happy. And we all know what is lacking: <strong>the p-value!</strong></p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="introduction">Introduction</h2>
+<p>Obviously, it&rsquo;s inappropriate to use a t-test/ANOVA to evaluate a generalized linear model, since the assumptions of linearity and normality fail. Now the question is: do we have a generic method to construct a hypothesis test, under the GLM framework?</p>
+<p>The answers is YES, and even better, we have more than one method to get the job done, namely:</p>
+<ul>
+<li>Likelihood ratio test</li>
+<li>Wald test</li>
+<li>Score test</li>
+</ul>
+<p>In this post, we will focus on the likelihood ratio test. I will offer some intuition, compare likelihood ratio test to ANOVA, and show you the calculation step by step,</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="anova">ANOVA</h2>
+<p>I think it might be helpful to go over ANOVA before we dive into likelihood ratio test, since they share a lot of similarities.
+ </p>
+<p>Recall in ANOVA, we build two models: a simple model, and a fancy model. By adding an additional variable, we want to see if the Sum of Squared Residuals decreases significantly, comparing to the inherent noise.</p>
+<p> </p>
+<p>Take our type 2 diabetic medication as an example. A simple model could be &ldquo;the medication doesn&rsquo;t affect gene1 expression&rdquo;. A fancy model could be &ldquo;the medication changed gene 1 expression&rdquo;.</p>
+<p> </p>
+<p>We fit the simple model using <code>lm(data ~ 1)</code>, and fit the fancy model using <code>lm(data ~ expgroup)</code>. After fitting those two models, we can calculate the Sum of Square Residuals (SSR) for each model: <code>\(SSR_{\text{simple}}, SSR_{\text{fancy}}\)</code>. Notice adding an additional variable could never hurt the model, so we have <code>\(SSR_{\text{simple}} &gt; SSR_{\text{fancy}}\)</code>, for any variables.</p>
+<p> </p>
+<p>The next step of ANOVA is to plug <code>\(SSR_{\text{simple}}, SSR_{\text{fancy}}\)</code> into the formula</p>
+<p>$$
+F = \frac{ (SSR_{\text{simple}} - SSR_{\text{fancy}}) /(p_{\text{fancy}} - p_{\text{simple}}) }{SSR_{\text{fancy}}/(n - p_{\text{fancy}} ) }
+$$</p>
+<p>, where <code>\(p_{\text{fancy}}, p_{\text{simple}}\)</code> represents the number of parameters in that model.</p>
+<p> </p>
+<p>We calculate the <code>\(F\)</code>, which has a f-distribution with <code>\(df_1 = p_{\text{fancy}} - p_{\text{simple}}\)</code>,  <code>\(df_2 = n - p_{\text{fancy}}\)</code>. To find the p value, we calculate the probability of more extreme events, which is <code>\(f\)</code> greater than what we have observed (our calculated F) &ndash; this is the area of the upper tail of the F distribution.</p>
+<p> </p>
+<p>The take home message is that, we are comparing a simple model and a fancy model. We want to determine if adding another variable could significantly improve the fitness (measured in SSR) of the model.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="likelihood-ratio-test">Likelihood Ratio Test</h2>
+<p>Similarly, in likelihood ratio test, we also fit a simple model, and a fancy model. In our medication example, our simple model could be expressed as <code>glm.nb(data ~ 1)</code>, while the fancy model could be expressed as <code>glm.nb(data ~ expgroup)</code>.</p>
+<p> </p>
+<p>To evaluate the fitness of the model, we use <a href="https://jasontan-code.github.io/blog/mle/">maximum likelihood estimation</a> again. For the simple model, we find the maximum of its likelihood function <code>\(\mathcal{L}_m(\mu, r | data)\)</code>; for the fancy model, we also find its maximum of likelihood function <code>\(\mathcal{L}_m(b_0, b_1, r | data)\)</code>.</p>
+<p>Then we take the logarithm of the likelihoods ratio:</p>
+<p> <br>
+$$
+<code>\begin{aligned} \lambda &amp; = -2 \cdot ln \Bigg[ \frac{\mathcal{L}_{\text{m}}(\mu, r | data)}{\mathcal{L} _{\text{m}}(b_0, b_1, r | data)} \Bigg] \\\\  &amp; = -2 \cdot \Bigg[ ln (\mathcal{L}_m (\mu, r | data)) - ln (\mathcal{L}_m (b_0, b_1,  r | data)) \Bigg] \end{aligned}</code>
+$$</p>
+<p>It has been proved that <code>\(\lambda\)</code> is <strong>asymptotically</strong>*  Chi square distributed, with a degree of freedom of 1 (in a more general case, with a degree of freedom equal to the difference in dimension between the fancy model and simple model).</p>
+<p> </p>
+<p>To find the p value, we simply calculate the area of the upper tail of the <code>\(\chi^2\)</code> distribution.</p>
+<p> </p>
+<p>I hope you have find some similarities between the Likelihood Ratio Test and ANOVA. The procedures are almost identical:</p>
+<ul>
+<li>build a simple model and a fancy model</li>
+<li>calculate the fitness for each model (RSS vs likelihood)</li>
+<li>determine if adding another variable could significantly improve the fitness</li>
+</ul>
+<p> </p>
+<p>(*<strong>Asymptotically:</strong> it means as the sample size gets larger, <code>\(\lambda\)</code> tends to be closer to a theoretical chi square distribution. With that being said, when we have a small sample size, the p value calculated with chi square distribution will be a little bit off)</p>
+<p>(I should mention that internally <strong>ANOVA is a likelihood ratio test</strong>, but I will skip the discussion for conciseness)</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="calculation">Calculation</h2>
+<p>Now let&rsquo;s do the actual calculation</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Patient</th>
+          <th style="text-align: right">Treatment</th>
+          <th style="text-align: right">Gene1 Expression</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">patient1</td>
+          <td style="text-align: right">placebo (0)</td>
+          <td style="text-align: right">1000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient2</td>
+          <td style="text-align: right">placebo (0)</td>
+          <td style="text-align: right">400</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient3</td>
+          <td style="text-align: right">placebo (0)</td>
+          <td style="text-align: right">700</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient4</td>
+          <td style="text-align: right">medication (1)</td>
+          <td style="text-align: right">2100</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient5</td>
+          <td style="text-align: right">medication (1)</td>
+          <td style="text-align: right">3200</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient6</td>
+          <td style="text-align: right">medication (1)</td>
+          <td style="text-align: right">1000</td>
+      </tr>
+  </tbody>
+</table>
+<p> <br>
+ </p>
+<h4 id="step-1-build-a-simple-model">Step 1: Build a simple model</h4>
+<p>This is equivalent to say that all the patients are from the same distribution. We construct the likelihood function as what we have done before</p>
+<p>$$
+<code>\begin{aligned} \mathcal{L}(\mu, r | data) = &amp; \prod_{i = 1}^6 P(y_i |\mu, r)  \end{aligned}</code>
+$$</p>
+<p> <br>
+ </p>
+<h4 id="step-2-build-a-fancy-model">Step 2: Build a fancy model</h4>
+<p>$$
+<code>\begin{aligned} \mathcal{L}(b_0, b_1, r | data) = &amp; \prod_{i = 1}^6 P(y_i |b_0, b_1, r)  \end{aligned}</code>
+$$</p>
+<p> <br>
+ </p>
+<h4 id="step-3-find-the-log-maximum-likelihood-for-the-simple-model">Step 3: Find the log maximum likelihood for the simple model</h4>
+<p>Again, we are going to use <code>optim()</code> function to help us do the calculation</p>
+<pre><code class="language-r">data = c(1000, 400, 700, 2100, 3200, 1000)
+expgroup = as.factor(c(&quot;control&quot;,&quot;control&quot;,&quot;control&quot;,&quot;treatment&quot;,&quot;treatment&quot;,&quot;treatment&quot; )) 
+ 
+
+neg_loglikelihood_simple = function(params){
+  mu = params[1] # intercept
+  r = params[2] # dispersion
+  
+  # define the log likelihood of each patient
+  # patient 1-3 received placebo, therefore mu = b0
+  loglikelihood1 = log(dnbinom(data[1], size = r, mu = mu))
+  loglikelihood2 = log(dnbinom(data[2], size = r, mu = mu))
+  loglikelihood3 = log(dnbinom(data[3], size = r, mu = mu))
+  
+  # patient 4-6 received medication, therefore mu = b0 + b1
+  loglikelihood4 = log(dnbinom(data[4], size = r, mu = mu))
+  loglikelihood5 = log(dnbinom(data[5], size = r, mu = mu))
+  loglikelihood6 = log(dnbinom(data[6], size = r, mu = mu))
+
+  # summation of log, equivalent to log product.
+  # optim function finds the minimum, we maximize the loglikelihood, which is equivalent to minimize neg_loglikelihood
+  return(- (loglikelihood1 + loglikelihood2 + loglikelihood3 + loglikelihood4 + loglikelihood5 + loglikelihood6))
+}
+
+optim(c(20,3), neg_loglikelihood_simple)
+
+</code></pre>
+<p>We found
+$$
+\hat \mu = 1400, \hat r = 2.31 \\
+ln (\mathcal{L}_m (\mu, r | data)) = -48.5
+$$</p>
+<p> <br>
+ </p>
+<h4 id="step-4-find-the-log-maximum-likelihood-for-the-fancy-model">Step 4: Find the log maximum likelihood for the fancy model</h4>
+<pre><code class="language-r">neg_loglikelihood_fancy = function(params){
+  b0 = params[1] # intercept
+  b1 = params[2] # coefficient
+  r = params[3] # dispersion
+  
+  # define the log likelihood of each patient
+  # patient 1-3 received placebo, therefore mu = b0
+  loglikelihood1 = log(dnbinom(data[1], size = r, mu = exp(b0)))
+  loglikelihood2 = log(dnbinom(data[2], size = r, mu = exp(b0)))
+  loglikelihood3 = log(dnbinom(data[3], size = r, mu = exp(b0)))
+  
+  # patient 4-6 received medication, therefore mu = b0 + b1
+  loglikelihood4 = log(dnbinom(data[4], size = r, mu = exp(b0 + b1)))
+  loglikelihood5 = log(dnbinom(data[5], size = r, mu = exp(b0 + b1)))
+  loglikelihood6 = log(dnbinom(data[6], size = r, mu = exp(b0 + b1)))
+
+  # summation of log, equivalent to log product.
+  # optim function finds the minimum, we maximize the loglikelihood, which is equivalent to minimize neg_loglikelihood
+  return(- (loglikelihood1 + loglikelihood2 + loglikelihood3 + loglikelihood4 + loglikelihood5 + loglikelihood6))
+}
+
+
+optim(c(5,2,3), neg_loglikelihood_fancy)
+
+</code></pre>
+<p>We found
+$$
+\hat b_0 = 6.55, \hat b_1 = 1.09, \hat r = 5.92 \\
+ln (\mathcal{L}_m (b_0, b_1, r | data)) = -45.4
+$$</p>
+<p> <br>
+ </p>
+<h4 id="step-5-calculate-lambda-and-p">Step 5: Calculate <code>\(\lambda\)</code> and p</h4>
+<p>$$
+<code>\begin{aligned} \lambda  &amp; = -2 \cdot (ln (\mathcal{L}_m (\mu, r | data)) - ln (\mathcal{L}_m (b_0, b_1, r | data))) \\\\  &amp; = -2 \cdot (−48.5 - -45.4) \\\\  &amp; = 6.2 \end{aligned}</code>
+$$</p>
+<p>Plug into <code>\(\chi^2\)</code> distribution with <code>\(df = 1\)</code>, we calculate the p value:</p>
+<pre><code class="language-r">pchisq(6.2, df = 1, lower.tail = F)
+</code></pre>
+<p>We have
+$$
+p = 0.013
+$$</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<p>You may use the <code>lmtest::lrtest()</code> function to confirm the calculation:</p>
+<pre><code class="language-r">library(MASS)
+library(lmtest)
+## Loading required package: zoo
+## 
+## Attaching package: 'zoo'
+## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+data = c(1000, 400, 700, 2100, 3200, 1000)
+expgroup = as.factor(c(&quot;control&quot;,&quot;control&quot;,&quot;control&quot;,&quot;treatment&quot;,&quot;treatment&quot;,&quot;treatment&quot; ))
+
+# build a simple model and a fancy model
+model_simple = glm.nb(data ~ 1)
+model_fancy = glm.nb(data ~ expgroup)
+
+# perform test
+lrtest(model_simple, model_fancy)
+## Likelihood ratio test
+## 
+## Model 1: data ~ 1
+## Model 2: data ~ expgroup
+##   #Df  LogLik Df  Chisq Pr(&gt;Chisq)  
+## 1   2 -48.500                       
+## 2   3 -45.444  1 6.1123    0.01342 *
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+</code></pre>
+<p>You should find the results to be the same!</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="summary">Summary</h2>
+<p>In this post, we explored the likelihood ratio test, and found <code>\(p = 0.013\)</code>, which is sufficient to reject the null hypothesis if we set <code>\(\alpha = 0.05\)</code>.</p>
+<p>I should reinforce the interpretation of the p value, regardless what statistical tests we are using:</p>
+<p><strong>CORRECT INTERPRETATION:</strong> P value is the probability of observing the events or more extreme events, given the null hypothesis is true.</p>
+<p><strong>WRONG INTERPRETATION:</strong> P value is the probability of making a mistake.</p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="reference">Reference:</h2>
+<p>Wiki likelihood ratio test: <a href="https://en.wikipedia.org/wiki/Likelihood-ratio_test#cite_note-2">https://en.wikipedia.org/wiki/Likelihood-ratio_test#cite_note-2</a></p>
+<p>Statquest: <a href="https://www.youtube.com/watch?v=NF5_btOaCig">https://www.youtube.com/watch?v=NF5_btOaCig</a></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

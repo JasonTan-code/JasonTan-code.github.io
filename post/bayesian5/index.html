@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Dive into Bayesian statistics (5): Intro to PyMC3 - A Hugo website</title>
+<meta property="og:title" content="Dive into Bayesian statistics (5): Intro to PyMC3 - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title">Dive into Bayesian statistics (5): Intro to PyMC3</h1>
+
+    
+    <span class="article-date">2021-11-22</span>
+    
+
+    <div class="article-content">
+      
+      <p>In <a href="/post/bayesian3/">our previous post</a>, we manually implemented the Markov Chain Monte Carlo (MCMC) algorithm, specifically Metropolis-Hastings, to draw samples from the posterior distribution. The code isn’t particularly difficult to understand, but it’s also not very intuitive to read or write. Besides the challenges of implementation, algorithm performance (i.e., speed) is a major consideration in more realistic applications. Fortunately, well-optimized tools are available to address these obstacles, namely Stan and PyMC3.</p>
+<p>Subjectively speaking, Stan is not my cup of tea. I remember spending an entire afternoon trying to install RStan, only to fail. To make matters worse, Stan has its own specialized language, adding another layer of complexity. In contrast, PyMC3 is much easier to install. The documentation and tutorials are well-written, and anyone with a basic understanding of Bayesian statistics should be able to follow them without much trouble. In this post—and future posts—I will stick with PyMC3.</p>
+<p> <br>
+ 
+ </p>
+<h3 id="import-modules">Import modules</h3>
+<pre><code class="language-py"># if you haven't installed PyMC3 yet, simply do
+# pip install pymc3
+import matplotlib.pyplot as plt
+import numpy as np
+import pymc3 as pm
+from pymc3 import *
+import seaborn as sns
+</code></pre>
+<p> <br>
+ 
+ </p>
+<h3 id="data">Data</h3>
+<p>This is the data we have been using so far.</p>
+<pre><code class="language-py">x = np.array([5,3,4,6])
+</code></pre>
+<p> <br>
+ 
+ </p>
+<h3 id="build-the-model-sampling-from-the-posterior-distribution">Build the model, Sampling from the posterior distribution</h3>
+<pre><code class="language-py">with Model() as model:  
+    # Define priors
+    Poiss_lambda = Gamma(&quot;Poiss_lambda&quot;, alpha=2, beta=2)
+
+    # Define likelihood
+    likelihood = Poisson(&quot;x&quot;, mu =  Poiss_lambda, observed=x)
+
+    # Inference
+    trace = sample(3000, cores=2)  # draw 3000 posterior samples
+</code></pre>
+<p> <br>
+ 
+ </p>
+<h3 id="plot">Plot</h3>
+<pre><code class="language-py">plt.figure(figsize=(7, 7))
+plot_trace(trace)
+plt.tight_layout();
+</code></pre>
+<p><img src="/images/Bayesian5/mcmc.png" alt="bayesian5"></p>
+<p>Notice that the picture is almost identical as <a href="/post/bayesian3/">what I drew before</a>. On the left side, you see the density plot (which could be interpreted as a smooth histogram), where we can find the peak when <code>\(\lambda \approx 3.2\)</code>. The right-hand side picture is simply a random walk of <code>\(\lambda\)</code>, which can be used to determine if the sampling is stable.</p>
+<p> <br>
+ 
+ </p>
+<h3 id="maximum-a-posteriori">Maximum A Posteriori</h3>
+<p>Of course we can use <strong>PyMC3</strong> to find the parameters that give the maximum posteriori. The code is simple:</p>
+<pre><code class="language-py">pm.find_MAP(model=model)
+</code></pre>
+<p>Unsurprisingly, we get:</p>
+<p><code>{'Poiss_lambda_log__': array(1.15267951), 'Poiss_lambda': array(3.16666667)}</code></p>
+<p>,which is the same as what we have calculated <a href="/post/bayesian1/">here</a></p>
+<p> <br>
+ 
+ </p>
+<h3 id="posterior-predictive-distribution">Posterior Predictive Distribution</h3>
+<p>To sample the posterior predictive distribution, type</p>
+<pre><code class="language-py"># sampling 
+with model:
+    ppc = pm.fast_sample_posterior_predictive(trace,var_names =[&quot;x&quot;])
+    
+# draw histogram
+sns.histplot(x=ppc[&quot;x&quot;].flatten(), binwidth = 1)
+</code></pre>
+<div style="text-align: center;">
+  <img src="/images/Bayesian5/hist.png" alt="bayesian5" width="50%" />
+</div>
+<p>Again, the shape of the histogram is what we have seen before, which further validated our results.</p>
+<p> <br>
+ 
+ </p>
+<h2 id="summary">Summary</h2>
+<p>So far we have covered the fundamentals of Bayesian inference, which includes topics like:</p>
+<ul>
+<li><a href="/post/bayesian1/">Maximum A Posteriori</a></li>
+<li><a href="/post/bayesian2/">Solve the denominator &amp; Conjugate Prior</a></li>
+<li><a href="/post/bayesian3/">Markov Chain Monte Carlo</a></li>
+<li><a href="/post/bayesian4/">Posterior Predictive Distribution</a></li>
+<li><a href="/post/bayesian5/">Probabilistic Programming - PyMC3</a></li>
+</ul>
+<p>In the next few posts, I will switch gears and cover some other interesting topics like Hidden Markov Chain, Singular Value Decomposition, etc.</p>
+<p>It will be fun, and stay tuned.</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

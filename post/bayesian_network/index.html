@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>An Intuitive Explanation of Bayesian Network - A Hugo website</title>
+<meta property="og:title" content="An Intuitive Explanation of Bayesian Network - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">An Intuitive Explanation of Bayesian Network</h1>
+
+    
+    <span class="article-date">2021-11-27</span>
+    
+
+    <div class="article-content">
+      
+      <h2 id="introduction">Introduction</h2>
+<p>Bayesian network, a probabilistic model that represents the causal relationship between variables, has gain its popularity in various fields. In biology, for example, people start to use this model to infer genetic regulatory network (GRN) due to its nice property of being directional. The aim of this blog post is to provide a gentle and less-mathematical introduction to Bayesian network.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="an-example">An example</h2>
+<p>Suppose we are going to take a math exam next week. The outcome of the exam heavily depends on two factors: <strong>sleep</strong> and <strong>study</strong>. If we study and sleep well, chances are high that we will do a good job in the exam. Also, <strong>sleep</strong> can affect our attention and therefore influence our <strong>study</strong> quality. Since the world is probabilistic, we need to define the probability of each action (<strong>sleep</strong>, <strong>study</strong> and <strong>exam</strong>):</p>
+<p><img src="/images/Bayesian_Net/BayesianNet.png" alt="Bayesian Network"></p>
+<p>The graph is easy to interpret: for example, the probability that we have a good sleep is 80%; the probability of we study well given that we slept well is 70%; the probability of we perform well in the exam, given we slept well and studied well is 90%, etc&hellip; Notice that each column should sum up to 1 to make sure the probability is valid.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="inference">Inference</h2>
+<p>Suppose we have finished the exam and we Aced it! Your teacher looked at your grade, and asked a question: did you sleep well recently? Equivalently, our teacher asked what is <code>$$P (\text{Sleep = good}|\text{Exam = good})$$</code></p>
+<p>In this section, we will try to answer this question by carefully examine each term, and calculate the probability based on the graph above.</p>
+<p> </p>
+<p>To answer this question, we can list all possible combinations of <code>\((\text{Sleep, Study})\)</code> when we did well in our exam. Here is the calculation:</p>
+<p>For example, to calculate the probability of Sleep well, Study well, and Exam well, we have
+$$
+<code>\begin{aligned} &amp; P(\text{Sleep = G, Study = G, Exam = G}) \\\\  &amp;= P(\text{Sleep = G}) \times P(\text{Study = G | Sleep = G}) \times P(\text{Exam = G | Sleep = G, Study = G}) \\\\  &amp;=0.8 \times 0.7 \times 0.9 \\\\  &amp;= 0.504 \end{aligned}</code>
+$$</p>
+<p>Similarly, we can calculate the probability of other combination of Sleep and Exam, when we did well in our exam</p>
+<p><code>\(P(\text{Sleep = G, Study = B, Exam = G}) = 0.8 \times 0.3 \times 0.5 = 0.12\)</code>
+<code>\(P(\text{Sleep = B, Study = G, Exam = G}) = 0.2 \times 0.6 \times 0.8 = 0.096\)</code>
+<code>\(P(\text{Sleep = B, Study = B, Exam = G}) = 0.2 \times 0.4 \times 0.4 = 0.032\)</code></p>
+<p> </p>
+<p>According to conditional probability formula, we have:<br>
+$$
+P (\text{Sleep = G}|\text{Exam = G}) = \frac{P (\text{Sleep = G} \cap \text{Exam = G})}{P (\text{Exam = G})}
+$$</p>
+<p> <br>
+  <br>
+We have already listed all possible combinations of <code>\(P (\text{Exam = G})\)</code> above, so the denominator is:</p>
+<p><code>$$P (\text{Exam = G}) = 0.504 + 0.12 + 0.096 + 0.032 = 0.752$$</code></p>
+<p> <br>
+ </p>
+<p>To calculate <code>\(P (\text{Sleep = G} \cap \text{Exam = G})\)</code>, we have two different scenarios:</p>
+<p>$$
+P(\text{Sleep = G, Study = G, Exam = G}) + P(\text{Sleep = G, Study = B, Exam = G}) \\
+= 0.504 + 0.12 = 0.624
+$$</p>
+<p> <br>
+ </p>
+<p>The final answer is <code>\(P (\text{Sleep = good}|\text{Exam = good}) = \frac{0.624}{0.752} = 0.83\)</code></p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="inference-by-sampling">Inference by sampling</h2>
+<p>So far the calculation isn&rsquo;t crazy, but many times the Bayesian network can have hundreds of nodes and edges. Calculating the exact conditional probability for a large network is often unmanageable. In fact, it has been proven that Bayesian network inference is a <strong>NP</strong> problem, meaning the complexity grows exponentially.</p>
+<p> </p>
+<p>A more feasible way of inferring bayesian network is to draw samples from the network, and we estimate the conditional probability based on our samples.</p>
+<p> </p>
+<p>Here I provide some R code that can simulate this network, and the answer should be very close to the above result:</p>
+<pre><code class="language-r"># define a function that simulate the Bayesian network
+
+Simulate = function(){
+  # define probability of sleep
+  SLEEP = rbinom(1, size = 1, prob = 0.8)
+  
+  # define conditional probability of study
+  if (SLEEP == 1){
+    STUDY = rbinom(1, size = 1, prob = 0.7)
+  }else{
+    STUDY = rbinom(1, size = 1, prob = 0.6)
+  }
+  
+  # define conditional probability of exam
+  if (SLEEP == 1 &amp; STUDY == 1){
+    EXAM = rbinom(1, size = 1, prob = 0.9)
+  } else if (SLEEP == 1 &amp; STUDY == 0){
+    EXAM = rbinom(1, size = 1, prob = 0.5)
+  } else if (SLEEP == 0 &amp; STUDY == 1){
+    EXAM = rbinom(1, size = 1, prob = 0.8)
+  } else if (SLEEP == 0 &amp; STUDY == 0){
+    EXAM = rbinom(1, size = 1, prob = 0.4)
+  }
+
+  return(c(SLEEP, STUDY, EXAM))
+}
+
+# create an empty table to store results
+Simulate_res = matrix(nrow = 0, ncol = 3)
+
+# simulate 100000 times; this process takes about 1 minute.
+for (i in 1:100000){
+  Simulate_res = rbind(Simulate_res, Simulate())
+}
+
+# calculate the conditional probability
+sum((Simulate_res[,3] == 1) &amp; (Simulate_res[,1] == 1))/ sum(Simulate_res[,3] == 1)
+</code></pre>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="an-r-package-for-bayesian-network">An R package for Bayesian network</h2>
+<p>Here I also provide some code that I adapted from the <a href="https://bookdown.org/robertness/causalml/docs/tutorial-probabilistic-modeling-with-bayesian-networks-and-bnlearn.html#understanding-the-directed-acyclic-graph-representation">tutorial</a> of <code>\(bnlearn\)</code> package. I constructed the Bayesian network and defined the probability distribution for each node. <code>\(bnlearn\)</code> can make the inference process much easier. It also provide functionalities that enables us to learn from data (hopefully I can cover this topic in the future).</p>
+<pre><code class="language-r">library(bnlearn)
+
+# define the structure of the network
+dag &lt;- empty.graph(nodes = c(&quot;Sleep&quot;,&quot;Study&quot;, &quot;Exam&quot;))
+arc.set &lt;- matrix(c(&quot;Sleep&quot;, &quot;Study&quot;,
+                    &quot;Sleep&quot;, &quot;Exam&quot;,
+                    &quot;Study&quot;, &quot;Exam&quot;),
+                  byrow = TRUE, ncol = 2,
+                  dimnames = list(NULL, c(&quot;from&quot;, &quot;to&quot;)))
+
+arcs(dag) &lt;- arc.set
+
+# plot the network
+graphviz.plot(dag, layout = &quot;dot&quot;)
+
+# define the probability for each node
+Sleep.lv &lt;- c(&quot;good&quot;, &quot;bad&quot;)
+Study.lv &lt;- c(&quot;good&quot;, &quot;bad&quot;)
+Exam.lv &lt;- c(&quot;good&quot;, &quot;bad&quot;)
+
+Sleep.prob = array(c(0.8,0.2), dim = 2, dimnames = list(Sleep = Sleep.lv))
+Study.prob = array(c(0.7,0.3,0.6,0.4), dim = c(2,2), dimnames = list(Study = Study.lv, Sleep = Sleep.lv))
+Exam.prob = array(c(0.9,0.1,0.5,0.5, 0.8, 0.2, 0.4, 0.6), dim = c(2,2,2), dimnames = list(Exam = Exam.lv, Study = Study.lv, Sleep= Sleep.lv))
+cpt &lt;- list(Sleep = Sleep.prob, Study = Study.prob, Exam = Exam.prob)
+
+# build the network
+bn &lt;- custom.fit(dag, cpt)
+
+# inference
+cpquery(bn, event = (Sleep == &quot;good&quot;), evidence = (Exam == &quot;good&quot;))
+</code></pre>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

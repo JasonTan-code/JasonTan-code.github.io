@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Dive into Bayesian statistics (1): Maximum A Posteriori - A Hugo website</title>
+<meta property="og:title" content="Dive into Bayesian statistics (1): Maximum A Posteriori - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">Dive into Bayesian statistics (1): Maximum A Posteriori</h1>
+
+    
+    <span class="article-date">2021-11-22</span>
+    
+
+    <div class="article-content">
+      
+      <p>Before you read this post, I assume you are already familiar with basic probability theories, maximum likelihood estimation and bayes theorem. I encourage you to read my previous post that discussed <a href="/post/mle/">MLE</a>, and we are going to use the same dataset in this post.</p>
+<p>Okay, let&rsquo;s get started.</p>
+<p> <br>
+ 
+ <br>
+ </p>
+<h2 id="1-bayes-theorem">1. Bayes theorem</h2>
+<p>In inferential statistics, our goal is to <strong>infer the population parameters</strong>. That is, we observe the data, and from the data we guess the most likely population parameters. There are, in general, two ways to approach this goal.</p>
+<h3 id="frequentist-approach">Frequentist approach:</h3>
+<p>A typical method applied by frequentist is maximum likelihood estimation, where we define the likelihood function as <code>\(P( \text{data} | \text{params})\)</code>. Our goal is to find a set of parameters that best fit our data.</p>
+<p>In my previous <a href="/post/mle/">MLE</a> post, we observe the number of visitors (samples) per hour, and we are trying to estimate the population (estimate <code>\(\lambda\)</code>). From the data we have collected, the most likely <code>\(\lambda = 4.5\)</code>, which is a fixed number.</p>
+<h3 id="bayesian-approach">Bayesian approach:</h3>
+<p>Bayesian statisticians treat unknown parameters as a random variables. That means, the population parameter <code>\(\lambda\)</code> could be any number. If we use the Bayesian framework to analyze the same problem above, we will end up with a <strong>probability distribution</strong> of <code>\(\lambda\)</code>, instead of a point estimate ( <code>\(\lambda = 4.5\)</code>, in our case).</p>
+<p>p.s. This is true in general, but in this post we are going to discuss Maximum A Posteriori, and this is an exception.</p>
+<p>Okay, that&rsquo;s enough dry words. Let&rsquo;s look at the math.</p>
+<p>Bayes theorem states that:
+$$
+P(A | B) = \frac{P(B | A) \cdot P(A)}{P(B)}
+$$</p>
+<p>This theorem was adapted to solve inferential statistics problems, where we have:
+$$
+P(\text{params} | \text{data}) = \frac{P(\text{data} | \text{params}) \cdot P(\text{params})}{P(\text{data})}
+$$</p>
+<p>Before we move forward, I want to clarify some terminologies:</p>
+<ul>
+<li>
+<p><code>\(P(\text{params} | \text{data})\)</code><br>
+Posterior distribution, This is what we are aiming to solve</p>
+</li>
+<li>
+<p><code>\(P(\text{data} | \text{params})\)</code><br>
+Likelihood function. We have already discussed the likelihood function <a href="/post/mle/">here</a>. Briefly, it means the the probability of observing the data, given a set of parameters.</p>
+</li>
+<li>
+<p><code>\(P(\text{params})\)</code><br>
+Prior distribution. We need to define this beforehand based on our prior knowledge. This is what makes Bayesian statistics powerful and controversial.</p>
+</li>
+<li>
+<p><code>\(P(\text{data})\)</code><br>
+A scaling factor, also called marginal likelihood. This quantity is to make sure that <code>\(\int_{- \infty}^{\infty} P(\text{params} | \text{data}) = 1\)</code>. Many times we can ignore it.</p>
+</li>
+</ul>
+<p> <br>
+ 
+ <br>
+ </p>
+<h2 id="2-work-with-an-example">2. Work with an example</h2>
+<p>We will use the same dataset I used in <a href="/post/mle/">MLE</a>. Here is how it looks like:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Time</th>
+          <th style="text-align: right">Number of visitors</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">8:am - 9:am</td>
+          <td style="text-align: right">5</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">9:am - 10:am</td>
+          <td style="text-align: right">3</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">10:am - 11:am</td>
+          <td style="text-align: right">4</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11:am - 12:am</td>
+          <td style="text-align: right">6</td>
+      </tr>
+  </tbody>
+</table>
+<p>Again, we are going to model the data with a poisson distribution. But, we will add a prior distribution, since we are doing Bayesian inference.</p>
+<p>Choosing prior distribution is somewhat subjective. Here I decided to use a <a href="https://en.wikipedia.org/wiki/Gamma_distribution">gamma distribution</a> with <code>\(\alpha = 2, \beta = 2\)</code>.
+$$
+\lambda \sim Gamma (2, 2)
+$$</p>
+<p>Therefore, our Bayes formula becomes:
+$$
+P(\lambda | \text{data}) = \frac{\text{Poisson}( \text{data}| \lambda) \cdot  \text{Gamma(2,2)}}{P(\text{data})}
+$$</p>
+<p>For simplicity, I will skip the calculation here and only show you the result. But you can find all the steps in the appendix.</p>
+<p>$$
+P(\lambda | \text{data}) = c \cdot \lambda^{19} e^{- 6 \lambda} \quad \text{, where <code>\(c\)</code> is a constant.}
+$$</p>
+<p> </p>
+<p>The last step is try to find <code>\(\lambda_0\)</code>, so that <code>\(P(\lambda_0 | \text{data})\)</code> reaches its maximum.</p>
+<p>Again, I drew a picture to show you the shape of  <code>\(P(\lambda | \text{data})\)</code></p>
+<p><img src="/images/Bayesian1/Bayesian1.png" alt="bayesian1" title="Prior, likelihood function, and posterior"></p>
+<p>Note: The prior and likelihood were rescaled for plotting.</p>
+<p> </p>
+<p>As you can see, the prior Gamma distribution has a peak when <code>\(\lambda \approx 0.5\)</code>. The likelihood reaches its peak when <code>\(\lambda = 4.5\)</code>. After combining prior and likelihood function, our posterior reaches its peak when <code>\(\lambda \approx 3.17\)</code>.</p>
+<p> </p>
+<p>This is why sometimes Bayesian inference is also called <strong>shrinkage method</strong>. Using MLE, we would have got our result <code>\(\lambda = 4.5\)</code>. But adding a prior distribution forces <code>\(\lambda\)</code> to shift toward the prior, and the posterior distribution eventually sits somewhere between the prior and the likelihood.</p>
+<p> </p>
+<p>That&rsquo;s the end of this blog. Thanks for reading!</p>
+<p> <br>
+ 
+ <br>
+ 
+ <br>
+ 
+ <br>
+ </p>
+<h2 id="appendix">Appendix</h2>
+<h4 id="prior-distribution">Prior distribution</h4>
+<p>Gamma distribution is defined as
+$$
+f(\lambda) = \frac{\beta^{\alpha}}{ (\alpha - 1)! } \cdot \lambda^{\alpha - 1} \cdot e^{- \beta \lambda}
+$$</p>
+<p>Plug <code>\(\alpha = 2, \beta = 2\)</code>, we get our prior distribution:</p>
+<p>$$
+f(\lambda) =4  \lambda \cdot e^{- 2 \lambda}
+$$</p>
+<p> <br>
+ </p>
+<h4 id="likelihood-function">Likelihood function</h4>
+<p>We have already calculated the likelihood function <a href="https://jasontan-code.github.io/blog/mle/">here</a>:</p>
+<p>$$
+P(\text{data} | \lambda) = \frac{\lambda^5 e^{- \lambda}}{5 !} \times \frac{\lambda^3 e^{- \lambda}}{3 !} \times \frac{\lambda^4 e^{- \lambda}}{4 !} \times \frac{\lambda^6 e^{- \lambda}}{6 !}
+$$</p>
+<p> <br>
+ </p>
+<h4 id="combine-prior-and-likelihood">Combine prior and likelihood</h4>
+<p>$$
+\begin{aligned} P(\text{data} | \lambda) \cdot P(\lambda) &amp;=\frac{\lambda^5 e^{- \lambda}}{5 !} \times \frac{\lambda^3 e^{- \lambda}}{3 !} \times \frac{\lambda^4 e^{- \lambda}}{4 !} \times \frac{\lambda^6 e^{- \lambda}}{6 !} \times  4  \lambda \cdot e^{- 2 \lambda}  \\
+&amp;= \frac{4}{5! \cdot 3! \cdot 4! \cdot 6! } \cdot \lambda^{19} e^{- 6 \lambda} \end{aligned}
+$$</p>
+<p>As I mentioned before, the denominator of the equation is a scaling factor/constant, therefore we can write our posterior probability as:</p>
+<p>$$
+P(\lambda | \text{data}) = c \cdot \lambda^{19} e^{- 6 \lambda}
+$$</p>
+<p> <br>
+ 
+ <br>
+ 
+ <br>
+ 
+ <br>
+ </p>
+<h2 id="reference">Reference</h2>
+<p>Wiki-Conjugate_prior : <a href="https://en.wikipedia.org/wiki/Conjugate_prior">https://en.wikipedia.org/wiki/Conjugate_prior</a></p>
+<p>Wiki-Gamma_distribution: <a href="https://en.wikipedia.org/wiki/Gamma_distribution">https://en.wikipedia.org/wiki/Gamma_distribution</a></p>
+<p>Wiki-Poisson_distribution: <a href="https://en.wikipedia.org/wiki/Poisson_distribution">https://en.wikipedia.org/wiki/Poisson_distribution</a></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Dive into Bayesian statistics (2): Solve the nasty denominator! - A Hugo website</title>
+<meta property="og:title" content="Dive into Bayesian statistics (2): Solve the nasty denominator! - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Dive into Bayesian statistics (2): Solve the nasty denominator!</h1>
+
+    
+    <span class="article-date">2021-11-22</span>
+    
+
+    <div class="article-content">
+      
+      <p>In the <a href="/post/bayesian1/">last post</a>, we tried to use a Bayesian framework to model the number of visitors per hour. After concatenating a Poisson distribution with a Gamma prior, we get something like:
+$$
+P(\lambda | \text{data}) = c \cdot \lambda^{19} e^{-6\lambda}
+$$</p>
+<p>Since we are interested to find <code>\(\lambda_0\)</code> that gives the maximum value of <code>\(P(\lambda | \text{data})\)</code> (a.k.a. <strong>Maximum A Posteriori</strong>), we don&rsquo;t need to worry too much about a constant <code>\(c\)</code>. But in this post, we are going to solve <code>\(c\)</code>, and consolidate our understanding of Bayesian inference.</p>
+<p> <br>
+ <br>
+ </p>
+<h2 id="interpretation-the-denominator">Interpretation the denominator</h2>
+<p>Recall our Bayesian framework states:
+$$
+P(\lambda | \text{data}) = \frac{P(\text{data} | \lambda) \cdot P(\lambda)}{P(\text{data})}
+$$</p>
+<p>I wrote detailed explanations of the <code>\(P(\text{data} | \text{params})\)</code> and <code>\(P(\text{params})\)</code> in the <a href="/post/bayesian1/">last post</a>, but the denominator <code>\(P(\text{data})\)</code> is still unclear. How can we interpret the probability of data? What does that even mean?</p>
+<p> <br>
+ </p>
+<p>Well, let&rsquo;s first take look at a bivariate discrete random variables:</p>
+<p>$$
+\begin{array}{c|lcr}&amp; X_1 &amp; X_2 &amp; X_3 \\ \hline
+Y_1 &amp; 0.3 &amp; 0.2 &amp; 0.1  \\
+Y_2 &amp; 0.1 &amp; 0.1 &amp; 0.2  \end{array}
+$$</p>
+<p>The question is: what is <code>\(P(Y_1)\)</code>?</p>
+<p>The answer is simple, we simply have <code>\(P(Y_1) = 0.3 + 0.2 + 0.1 = 0.6\)</code></p>
+<p>But the point is, we can write</p>
+<p>$$
+\begin{aligned}
+P(Y_1) &amp; =  P(X_1 \cap Y_1) + P(X_2 \cap Y_1) + P(X_3 \cap Y_1) \\
+&amp; = P(Y_1 | X_1)\cdot P(X_1) + P(Y_1 | X_2)\cdot P(X_2)  + P(Y_1 | X_3)\cdot P(X_3)
+\end{aligned}
+$$</p>
+<p> <br>
+ </p>
+<p>Now, we can apply this idea of calculating the marginal probability to our Bayesian framework, where we have</p>
+<p>$$
+\begin{aligned}
+P( \text{data}) &amp; = P( \text{data} \cap \lambda_1) + P( \text{data} \cap \lambda_2) + &hellip; \\
+&amp; = P( \text{data} | \lambda_1) \cdot P(\lambda_1) + P( \text{data} | \lambda_2) \cdot P(\lambda_2) &hellip;
+\end{aligned}
+$$</p>
+<p>Since <code>\(\lambda\)</code> is a continuous variable, it&rsquo;s more appropriate to write the above formula as:</p>
+<p>$$
+P( \text{data}) = \int P( \text{data} | \lambda) P(\lambda)  \cdot  d \lambda
+$$</p>
+<p> <br>
+ </p>
+<p>Now, let&rsquo;s plug the denominator into the Bayes theorem:</p>
+<p>$$
+P(\lambda | \text{data}) = \frac{P(\text{data} | \lambda) P(\lambda)}{\int P( \text{data} | \lambda) P(\lambda)  \cdot  d \lambda}
+$$</p>
+<p><strong>Notice that the denominator is just the integral of the numerator.</strong></p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="back-to-our-problem">Back to our problem</h2>
+<p>In the appendix of my <a href="/post/bayesian1/">last post</a>, we solved the numerator, which is</p>
+<p>$$
+P(\text{data} | \lambda) \cdot P(\lambda)  =  \frac{4}{5! \cdot 3! \cdot 4! \cdot 6! } \cdot \lambda^{19} e^{- 6 \lambda}
+$$</p>
+<p>As we discussed, the denominator is just the integral of the numerator. We have</p>
+<p>$$
+\begin{aligned}
+P( \text{data}) &amp; =  \int P( \text{data} | \lambda) P(\lambda)  \cdot  d \lambda\\.
+&amp; = \int_0^{\infty} \frac{4}{5! \cdot 3! \cdot 4! \cdot 6! } \cdot \lambda^{19} e^{- 6 \lambda} d \lambda \\
+&amp; = 1.07 \times 10^{-5}
+\end{aligned}
+$$</p>
+<p>Now we can finalize our calculation by plug in the numerator and the denominator:</p>
+<p>$$
+\begin{aligned}
+P( \lambda  |\text{data}) &amp; =  \frac{P(\text{data} | \lambda) \cdot P(\lambda)}{P(\text{data})}\\
+&amp; = 0.03 \cdot \lambda^{19} e^{- 6 \lambda}
+\end{aligned}
+$$</p>
+<p><strong>We finally solved our posterior distribudtion!!!</strong></p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="conjugate-prior">Conjugate prior</h2>
+<p>Now, let me introduce a concept called conjugate prior. If you choose a prior distribution carefully, you may get a posterior distribution that is in the same distribution family as the prior distribution.</p>
+<p>In our case, gamma distribution is indeed a conjugate prior of poisson distribution. From <a href="https://en.wikipedia.org/wiki/Gamma_distribution">Wikipedias</a>, The posterior distribution is
+<code>$$\text{Gamma}(\alpha + \sum_i x_i , \beta + n)$$</code></p>
+<p>In our case, we have
+$$
+\begin{aligned}
+P(\lambda |\text{data}) &amp; \sim \text{Gamma}(2+ 5 + 3 + 4 + 6 , 2 + 4) \\
+&amp; =\text{Gamma}(20, 6)
+\end{aligned}
+$$</p>
+<p> </p>
+<p>Let&rsquo;s plug <code>\(\alpha' = 20, \beta' = 6\)</code> into the formula of Gamma distribution:
+$$
+\begin{aligned}
+f(\lambda)_{\alpha&rsquo; = 20, \beta&rsquo; = 6} &amp; = \frac{6^{20}}{19!}\lambda^{19}e^{-6\lambda} \\
+&amp; = 0.03 \cdot \lambda^{19} e^{- 6 \lambda}
+\end{aligned}
+$$</p>
+<p>, which is exactly the same as the result achieved by integration.</p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="summary">Summary</h2>
+<p>In summary, we showed two ways of calculating the posterior probability (a.k.a. find the denominator) in this post.</p>
+<p><strong>Method 1: Integrate the numerator</strong></p>
+<p>This method, in principle, can solve all the problems. But as you can see in this post, solving a one dimensional problem isn&rsquo;t easy. In real world application, you can easily encounter <code>\(&gt; 5\)</code> dimension problems, and the integration would be a nightmare for any mathematicians. Imagine you need to solve something like <code>$$\int \int \int \int \int ... dx \cdot dy \cdot dz \cdot dw \cdot dq$$</code>
+Solving this integration might be the worst thing of the universe :(</p>
+<p><strong>Method 2: Conjugate prior</strong></p>
+<p>The calculation is easy enough. In our case, you just need to follow the formula and plug in the numbers, and you will get a beautiful posterior distribution. But the drawback is that it&rsquo;s not guaranteed that your prior is always conjugate with your likelihood function. Therefore, you need to carefully choose the prior distribution according to <a href="https://en.wikipedia.org/wiki/Conjugate_prior#Table_of_conjugate_distributions">this table</a>, if you want to utilize this nice property.</p>
+<p> <br>
+ </p>
+<p>All right, thanks for reading this post. In the next few posts, I will introduce Markov chain Monte Carlo (MCMC), which solve the drawbacks we talked about. Stay tuned!</p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

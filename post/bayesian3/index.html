@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Dive into Bayesian statistics (3): Markov Chain Monte Carlo - A Hugo website</title>
+<meta property="og:title" content="Dive into Bayesian statistics (3): Markov Chain Monte Carlo - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Dive into Bayesian statistics (3): Markov Chain Monte Carlo</h1>
+
+    
+    <span class="article-date">2021-11-22</span>
+    
+
+    <div class="article-content">
+      
+      <p>In this post, I will continue to use the same example that I used before (<a href="/post/bayesian1/">Bayesian: MAP</a> and <a href="/post/bayesian2/">Bayesian: solve denominator</a>. Also, it will be very helpful to first understand accept-reject sampling that I discussed in <a href="/post/monte_carlo/">this post</a></p>
+<p> <br>
+ <br>
+ </p>
+<p>Now let&rsquo;s get started!</p>
+<p>As we discussed at the end of <a href="/post/bayesian2/">this post</a>, solving the denominator is a non-trivial work, especially when you have many parameters to estimate. One way to overcome this obstacle is to use a method called Markov Chain Monte Carlo (MCMC).</p>
+<p><strong>The high level idea of MCMC is that although calculating the denominator is often unfeasible, we can still draw samples from the target distribution, even though we do not know the denominator (similar to the idea of accept reject sampling we discussed <a href="/post/monte_carlo/">here</a>.</strong></p>
+<p>In this post, I will introduce a popular method of MCMC called Metropolis-Hastings algorithm. The goal of this post is to show you the steps of Metropolis-Hastings algorithm, and to implement the algorithm in R. I won&rsquo;t discuss the mathematical proof of why this algorithm works (because I do not understand neither), but show you the algorithm step by step.</p>
+<p> <br>
+ <br>
+ </p>
+<h2 id="metropolis-algorithm">Metropolis algorithm</h2>
+<p><strong>Step1:</strong>  Choose a distribution that is easy to sample from. Here we choose a normal distribution (set <code>\(\sigma = 1\)</code>).</p>
+<p><strong>Step2:</strong>  Draw a sample <code>\(x_i\)</code> form the normal distribution with <code>\(\mu = x_{i -1}, \sigma = 1\)</code>. Let&rsquo;s call this sample &ldquo;proposed sample&rdquo;</p>
+<p><strong>Step3:</strong>   Calculate the probability of acceptance <code>\(p = \frac{f(x_i)}{f(x_{i - 1})}\)</code>, where <code>\(f(x)\)</code> is the target distribution (without knowing the denominator).</p>
+<p><strong>Step4:</strong> If <code>\(p &gt; 1\)</code>, simply accept the proposed distribution.</p>
+<p><strong>Step5:</strong></p>
+<blockquote>
+<p><strong>Step5.1:</strong>  If <code>\(p &lt; 1\)</code>, flip an unfair coin with probability of heads to be <code>\(p\)</code>.</p>
+</blockquote>
+<blockquote>
+<p><strong>Step5.2:</strong> If we get a head from the coin, we accept the proposed sample.</p>
+</blockquote>
+<blockquote>
+<p><strong>Step5.3:</strong> If we get a tail from the coin, we reject the proposed sample, but we duplicate the last accepted sample.</p>
+</blockquote>
+<p><strong>Step6:</strong>  Repeat this process many many times.</p>
+<p> <br>
+ <br>
+ </p>
+<h2 id="r-code-implementation">R code implementation</h2>
+<p>If you are like me, reading all those words might not make any sense. So let&rsquo;s take a look the implementation. Again we will use the posterior distribution we calculated <a href="/post/bayesian1/">here</a></p>
+<p>$$
+P(\lambda | \text{data}) = c \cdot \lambda^{19} e^{- 6 \lambda} \quad \text{, where <code>\(c\)</code> is a constant.}
+$$</p>
+<p>First, we need to express the posterior in R code. Notice when <code>\(\lambda &lt; 0\)</code>, we explicitly set <code>\(f(\lambda) = 0\)</code>. Also, we ignored the constant <code>\(c\)</code> in our expressions.</p>
+<p><strong>Again, this is our target distribution <code>\(f(x)\)</code>, and the goal is to draw samples from this distribution</strong></p>
+<p> </p>
+<pre><code class="language-r"># define the posterior distribution
+posterior &lt;- function(lambda){
+  if (lambda &gt; 0){
+    return(lambda^19 * exp(-6*lambda))
+  } else {
+    return(0)
+  }
+}
+</code></pre>
+<p> <br>
+ </p>
+<p>Now let&rsquo;s implement the Metropolis algorithm. Notice I use a vector called <code>bag</code> to collect all the samples:</p>
+<p> </p>
+<pre><code class="language-r"># we need a place to start with, I set 8
+bag = c(8)
+
+# Metropolis algorithm
+for(i in 2:5000){
+  proposed = rnorm(1, mean= bag[i-1])    # propose a sample from the standard distribution
+  prob = posterior(proposed)/posterior(bag[i-1])    # calculate the probability of acceptance 
+  
+  if (prob &gt; 1){
+    bag[i] = proposed     # if probability is greater than 1, we accept the proposed sample
+  } else {
+    coin = rbinom(1, size = 1, prob = prob)  # flip an unfair coin  
+    if (coin == 1){
+      bag[i] = proposed    # if the coin turned out to be head, we accept the proposed sample
+    } else {
+      bag[i] = bag[i-1]    # if the coin turned out to be tail, we duplicated the last accepted sample
+    }
+  }
+}
+</code></pre>
+<p> <br>
+ </p>
+<p>Here is what the result looks like.</p>
+<p><img src="/images/Bayesian3/MCMC.png" alt="bayesian3"></p>
+<p>On the right hand side plot, we simply connect all the dots in the vector <code>bag</code>. I used ggplot to draw this, but you can also draw this with <code>plot(accept, &quot;l&quot;)</code>.</p>
+<p>Notice at the very beginning, our samples have large values (6~8), but then it drops to a smaller value and stay relatively stable. The samples we collected at the beginning is called &ldquo;burn in period&rdquo;, which means the Markov Chain hasn&rsquo;t reached to a steady state, and these samples aren&rsquo;t representative and should be discarded.</p>
+<p> <br>
+On the left hand side plot, I threw away the first 200 &ldquo;burn in&rdquo; samples, and drew a density histogram for the rest of my samples (you can draw this by tying   <code>hist(accept[201:5000])</code>). The red line is the density line from our data. The green line is the theoretical probability density function of <code>\(\text{Gamma}(\alpha = 20, \beta = 6)\)</code>.</p>
+<p>You can see the density line is very similar to our ground truth (the green line, which we have calculated <a href="/post/bayesian2/">here</a>, which proves that our Metropolis algorithm indeed works.</p>
+<p> <br>
+ </p>
+<h2 id="summary">Summary:</h2>
+<p>In this series of posts, we started from Maximum likelihood estimation, then incorporate a Gamma prior distribution and use various methods (integration, conjugate prior, and MCMC) to infer the posterior distribution. I hope this series of posts really helps you step into the door of Bayesian inference.</p>
+<p> <br>
+ 
+ </p>
+<h3 id="reference">Reference:</h3>
+<p>ritvikmath: <a href="https://www.youtube.com/watch?v=yApmR-c_hKU">https://www.youtube.com/watch?v=yApmR-c_hKU</a></p>
+<p>ritvikmath: <a href="https://www.youtube.com/watch?v=yCv2N7wGDCw">https://www.youtube.com/watch?v=yCv2N7wGDCw</a></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

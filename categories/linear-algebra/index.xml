@@ -6,8 +6,15 @@
     <description>Recent content in Linear Algebra on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 21 Nov 2021 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 22 Nov 2021 21:18:26 -0600</lastBuildDate>
     <atom:link href="/categories/linear-algebra/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Calculate SVD by hand (and decompose Spongebob)</title>
+      <link>/post/svd/</link>
+      <pubDate>Mon, 22 Nov 2021 21:18:26 -0600</pubDate>
+      <guid>/post/svd/</guid>
+      <description>&lt;p&gt;In my &lt;a href=&#34;/post/pca1/&#34;&gt;previous post&lt;/a&gt;, I have manually implemented PCA by finding the eigenvectors and eigenvalues of a covariance matrix. In this post, let&amp;rsquo;s try to perform PCA using a different approach called Singular Value Decomposition. Then we are going to decompose SPONGEBOB!&lt;/p&gt;&#xA;&lt;p&gt;Note: you might find this &lt;a href=&#34;/post/pca1/&#34;&gt;post&lt;/a&gt; to be useful, if you are new to PCA.&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;algorithm&#34;&gt;Algorithm&lt;/h2&gt;&#xA;&lt;p&gt;Again, we are going to use the same dataset we have used before.&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;\mathbf{ M} =&#xA;\begin{bmatrix}&#xA;1 &amp;amp; 0 \\&#xA;0 &amp;amp; 1 \\&#xA;-1 &amp;amp; -1&#xA;\end{bmatrix}&#xA;$$&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Calculate PCA by hand (via eigen-decomposition)</title>
       <link>/post/pca1/</link>

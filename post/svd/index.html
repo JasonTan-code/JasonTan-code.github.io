@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Calculate SVD by hand (and decompose Spongebob) - A Hugo website</title>
+<meta property="og:title" content="Calculate SVD by hand (and decompose Spongebob) - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">8 min read</span>
+    
+
+    <h1 class="article-title">Calculate SVD by hand (and decompose Spongebob)</h1>
+
+    
+    <span class="article-date">2021-11-22</span>
+    
+
+    <div class="article-content">
+      
+      <p>In my <a href="/post/pca1/">previous post</a>, I have manually implemented PCA by finding the eigenvectors and eigenvalues of a covariance matrix. In this post, let&rsquo;s try to perform PCA using a different approach called Singular Value Decomposition. Then we are going to decompose SPONGEBOB!</p>
+<p>Note: you might find this <a href="/post/pca1/">post</a> to be useful, if you are new to PCA.
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="algorithm">Algorithm</h2>
+<p>Again, we are going to use the same dataset we have used before.</p>
+<p>$$
+\mathbf{ M} =
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1
+\end{bmatrix}
+$$</p>
+<p>The formula of SVD stands:</p>
+<p>$$
+\mathbf{ M}  = \mathbf{ U \cdot \Sigma \cdot V ^{T}}
+$$</p>
+<p><code>\(\mathbf{ U }\)</code> is the eigenvectors of <code>\(\mathbf{ M \cdot M^T}\)</code>,</p>
+<p><code>\(\mathbf{ V }\)</code> is the eigenvectors of <code>\(\mathbf{ M^T \cdot M}\)</code>.</p>
+<p><code>\(\mathbf{ \Sigma }\)</code> is a diagonal matrix with singular values (a.k.a square root of eigenvalues) of <code>\(\mathbf{ M^T \cdot M}\)</code>.</p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="calculation">Calculation:</h2>
+<p>(Note: I have discussed how to find eigenvectors and eigenvalues for a matrix in this <a href="https://jasontan-code.github.io/blog/calculate_pca/">post</a>, and I will skip the steps for simplicity)</p>
+<p> </p>
+<h4 id="1-calculate-mathbf-u-">1. Calculate <code>\(\mathbf{ U }\)</code></h4>
+<p>$$
+\mathbf{ M \cdot M^T} =
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1
+\end{bmatrix} \cdot \begin{bmatrix}
+1 &amp; 0 &amp; -1 \\
+0 &amp; 1 &amp; -1
+\end{bmatrix} =   \begin{bmatrix}
+1 &amp; 0 &amp; -1 \\
+0 &amp; 1 &amp; -1 \\
+-1 &amp; -1 &amp; 2
+\end{bmatrix}
+$$</p>
+<p>We then find the eigenvectors of $ \mathbf{ M \cdot M^T}$, and get</p>
+<p>$$
+\lambda_1 = 3, \mathbf{v_1} = [-0.408, -0.408, 0.816] \\
+\lambda_2 = 1, \mathbf{v_2} = [0.707, -0.707, 0] \\
+\lambda_3 = 0, \mathbf{v_3} = [0.577, 0.577, 0.577]
+$$</p>
+<p>We write the eigenvectors into a matrix, with each column to be a eigenvector. Therefore, we have
+$$
+\mathbf{U} = \begin{bmatrix}
+-0.408 &amp; 0.707 &amp; 0.577 \\
+-0.408 &amp; -0.707 &amp; 0.577 \\
+0.816 &amp; 0 &amp; 0.577
+\end{bmatrix}
+$$</p>
+<p> </p>
+<h4 id="2-calculate-mathbf-v-">2. Calculate <code>\(\mathbf{ V }\)</code></h4>
+<p>The calculation is almost identical, we simply find the eigenvectors and eigenvalues of $ \mathbf{ M^T \cdot M}$</p>
+<p>$$
+\mathbf{ M^T \cdot M} =
+\begin{bmatrix}
+1 &amp; 0 &amp; -1 \\
+0 &amp; 1 &amp; -1
+\end{bmatrix} \cdot \begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1 \end{bmatrix}  = \begin{bmatrix}
+2 &amp; 1 \\
+1 &amp; 2 \end{bmatrix}
+$$</p>
+<p>Find the eigenvectors of $ \mathbf{ M^T \cdot M}$, we have</p>
+<p>$$
+\lambda_1 = 3, \mathbf{v_1} = [-0.707, -0.707]  \\
+\lambda_2 = 1, \mathbf{v_1} = [0.707, -0.707]
+$$</p>
+<p>Again, we write the eigenvectors into a matrix, which gives us <code>\(\mathbf{V}\)</code>:</p>
+<p>$$
+\mathbf{V} = \begin{bmatrix}
+-0.707 &amp; 0.707  \\
+-0.707 &amp; -0.707
+\end{bmatrix}
+$$</p>
+<p> </p>
+<h4 id="3-calculate-mathbf-sigma-">3. Calculate <code>\(\mathbf{ \Sigma }\)</code></h4>
+<p>In fact, we have already solved <code>\(\mathbf{ \Sigma }\)</code>. As I said, <code>\(\mathbf{ \Sigma }\)</code> is a diagonal matrix with values to be the square root of eigenvalues we have already calculated.</p>
+<p>Also, you might have noticed that we ended up with the same list of eigenvalues from <code>\(\mathbf{ M^T \cdot M}\)</code> and <code>\(\mathbf{ M \cdot M^T}\)</code>, except $ \mathbf{ M^T \cdot M}$ has an additional eigenvector <code>\(\lambda_3 = 0\)</code>. This has been proved to be true in general, since <a href="https://en.wikipedia.org/wiki/Invertible_matrix">singular matrices</a> must have at least one eigenvalue to be 0.</p>
+<p>Therefore, we have
+$$
+\mathbf{\Sigma} = \begin{bmatrix}
+\sqrt{3} &amp; 0  \\
+0 &amp; \sqrt{1}
+\end{bmatrix} = \begin{bmatrix}
+1.732 &amp; 0  \\
+0 &amp; 1
+\end{bmatrix}
+$$</p>
+<p>Since $ \mathbf{ U}$ is a <code>\(3 \times 3\)</code> matrix and $ \mathbf{ V^T}$ is a <code>\(2 \times 2\)</code> matrix, we have to make $ \mathbf{ \Sigma}$ to be a <code>\(3 \times 2\)</code> matrix so that we can conduct the matrix multiplication. To do this, we simply append 0 to the last row of <code>\(\mathbf{\Sigma}\)</code>, which gives us</p>
+<p>$$
+\mathbf{\Sigma} =
+\begin{bmatrix}
+1.732 &amp; 0  \\
+0 &amp; 1 \\
+0 &amp; 0
+\end{bmatrix}
+$$</p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="put-them-together">Put them together</h2>
+<p>Okay, we have find all the ingredients of SVD, now it&rsquo;s the time to check if the following equation actually holds.</p>
+<p>$$
+\mathbf{ M}  = \mathbf{ U \cdot \Sigma \cdot V ^{T}}
+$$</p>
+<p>On the right hand side, we have
+$$
+\begin{aligned}
+\mathbf{ U \cdot \Sigma \cdot V ^{T}} &amp; = \begin{bmatrix}
+-0.408 &amp; 0.707 &amp; 0.577 \\
+-0.408 &amp; -0.707 &amp; 0.577 \\
+0.816 &amp; 0 &amp; 0.577
+\end{bmatrix} \cdot \begin{bmatrix}
+1.732 &amp; 0  \\
+0 &amp; 1 \\
+0 &amp; 0
+\end{bmatrix} \cdot \begin{bmatrix}
+-0.707 &amp; 0.707  \\
+-0.707 &amp; -0.707
+\end{bmatrix}^T \\
+&amp; = \begin{bmatrix}
+-0.707 &amp; 0.707 \\
+-0.707 &amp; -0.707 \\
+1.414 &amp; 0
+\end{bmatrix} \cdot \begin{bmatrix}
+-0.707 &amp; -0.707  \\
+0.707 &amp; -0.707
+\end{bmatrix} \\
+&amp; = \begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1
+\end{bmatrix}
+\end{aligned}
+$$</p>
+<p>Incredible! We have showed that SVD really works!</p>
+<p>(Note: there are some really interesting geometric interpretations. But for the sake of conciseness, I won&rsquo;t discuss here)</p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="reduced-svd">Reduced SVD</h2>
+<p>It&rsquo;s worth mentioning that in practice, we tend not to calculate the full format of <code>\(\mathbf{U}\)</code>. In our case, it is sufficient to only calculate the first two columns of <code>\(\mathbf{U}\)</code>:</p>
+<p>$$
+\mathbf{U} = \begin{bmatrix}
+-0.408 &amp; 0.707  \\
+-0.408 &amp; -0.707  \\
+0.816 &amp; 0
+\end{bmatrix}
+$$</p>
+<p>Correspondingly, we no longer need to append an additional row to <code>\(\mathbf{\Sigma}\)</code>, and we have
+$$
+\mathbf{\Sigma} =  \begin{bmatrix}
+1.732 &amp; 0  \\
+0 &amp; 1
+\end{bmatrix}
+$$</p>
+<p>It turns out that the result is exactly the same as what we have calculated before.</p>
+<p>$$
+\begin{aligned}
+\mathbf{ U \cdot \Sigma \cdot V ^{T}} &amp; = \begin{bmatrix}
+-0.408 &amp; 0.707 \\
+-0.408 &amp; -0.707  \\
+0.816 &amp; 0
+\end{bmatrix} \cdot \begin{bmatrix}
+1.732 &amp; 0  \\
+0 &amp; 1
+\end{bmatrix} \cdot \begin{bmatrix}
+-0.707 &amp; 0.707  \\
+-0.707 &amp; -0.707
+\end{bmatrix}^T \\
+&amp; = \begin{bmatrix}
+-0.707 &amp; 0.707 \\
+-0.707 &amp; -0.707 \\
+1.414 &amp; 0
+\end{bmatrix} \cdot \begin{bmatrix}
+-0.707 &amp; -0.707  \\
+0.707 &amp; -0.707
+\end{bmatrix} \\
+&amp; = \begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1 \\
+-1 &amp; -1
+\end{bmatrix}
+\end{aligned}
+$$</p>
+<p> <br>
+ </p>
+<p>In fact, one can re-construct the original matrix by selecting the first n dimensions. With n gets larger, the reconstructed matrix tends to be more similar to the original matrix. Here, if we use only one dimension to approximate the original matrix, we will have:</p>
+<p>$$
+\begin{aligned}
+\mathbf{ U \cdot \Sigma \cdot V ^{T}} &amp; = \begin{bmatrix}
+-0.408  \\
+-0.408   \\
+0.816
+\end{bmatrix} \cdot \begin{bmatrix}
+1.732
+\end{bmatrix} \cdot \begin{bmatrix}
+-0.707 \\
+-0.707
+\end{bmatrix}^T \\
+&amp; = \begin{bmatrix}
+0.5 &amp; 0.5 \\
+0.5 &amp; 0.5 \\
+-1 &amp; -1
+\end{bmatrix}
+\end{aligned}
+$$</p>
+<p>This reconstruction process will be more clear later in this post, as we are going to reconstruct Spongebob.</p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="relationship-with-pca">Relationship with PCA</h2>
+<p>In <a href="/post/pca1/">the PCA post</a>, we discussed how to project the original dataset onto the PC space. The calculation is trivial. We simply do a matrix multiplication between the original dataset and PCs.</p>
+<p>It turns out SVD is even simpler! To get the transformed dataset, we simply do <code>\(\mathbf{U \cdot \Sigma}\)</code></p>
+<p>$$
+\begin{aligned}
+\mathbf{ U \cdot \Sigma } &amp; = \begin{bmatrix}
+-0.408 &amp; 0.707 \\
+-0.408 &amp; -0.707  \\
+0.816 &amp; 0
+\end{bmatrix} \cdot \begin{bmatrix}
+1.732 &amp; 0  \\
+0 &amp; 1
+\end{bmatrix} \\
+&amp; = \begin{bmatrix}
+-0.707 &amp; 0.707 \\
+-0.707 &amp; -0.707 \\
+1.414 &amp; 0
+\end{bmatrix}
+\end{aligned}
+$$</p>
+<p>The result is slightly different from what we have get in <a href="/post/pca1/">this post</a>. This is because the choice of eigenvector directions is arbitrary. However, the relative distances between each datapoint should be identical.</p>
+<p> <br>
+ </p>
+<p>It&rsquo;s also possible to re-construct the covariance matrix from SVD. The formula states that
+$$
+\mathbf{Cov} = \mathbf{V} \cdot \frac{ \mathbf{S^2}}{n -1 } \cdot  \mathbf{V^T}
+$$</p>
+<p>Let&rsquo;s try that
+$$
+\begin{aligned}
+\mathbf{V} \cdot \frac{ \mathbf{S^2}}{n -1 } \cdot  \mathbf{V^T} &amp; = \begin{bmatrix}
+-0.707 &amp; 0.707  \\
+-0.707 &amp; -0.707
+\end{bmatrix} \cdot \Bigg( \frac{1}{3 - 1} \cdot
+\begin{bmatrix}
+1.732^2 &amp; 0  \\
+0 &amp; 1^2
+\end{bmatrix} \Bigg) \cdot \begin{bmatrix}
+-0.707 &amp; -0.707  \\
+0.707 &amp; -0.707
+\end{bmatrix} \\
+&amp; = \begin{bmatrix}
+-0.707 &amp; 0.707  \\
+-0.707 &amp; -0.707
+\end{bmatrix} \cdot
+\begin{bmatrix}
+1.5 &amp; 0  \\
+0 &amp; 0.5
+\end{bmatrix}  \cdot \begin{bmatrix}
+-0.707 &amp; -0.707  \\
+0.707 &amp; -0.707
+\end{bmatrix} \\
+&amp; = \begin{bmatrix}
+1 &amp; 0.5  \\
+0.5 &amp; 1
+\end{bmatrix}
+\end{aligned}
+$$</p>
+<p>Here you go! This is exactly the same as what <a href="/post/pca1/">we have calculated before</a>!</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="decompose-spongebob">Decompose SPONGEBOB</h2>
+<p>Okay, plenty of dirty math. It&rsquo;s time to decompose Spongebob and Patrick.</p>
+<p><img src="/images/SVD_by_hand/spongebob.jpeg" alt=""></p>
+<p><a href="https://www.buzzfeed.com/staceygrant91/15-stages-of-waiting-in-line-for-a-roller-coaster-xpfm?utm_term=.laeDM4YjN&amp;epik=dj0yJnU9ejBTaU1veGRvNW91RE9iM3ljaWRDOUY2TGJMVFV2SHUmcD0wJm49dGRGY2hRR3NkZjNMaUdidkVlc2dOdyZ0PUFBQUFBR0RySWJR#.ol5J4vZW0">Source</a></p>
+<p>The first thing we need to do is to decolorize this picture, since a black-and-white picture could be represented as a matrix of numbers. Each number represents brightness of a pixel.</p>
+<pre><code class="language-r"># load imager for plot pictures 
+library(imager)
+
+# load the picture, you may right click and save the picture to your local disc, if you want to follow the process
+spongebob = load.image(&quot;spongebob.jpeg&quot;) 
+
+# make spongebob grey
+greyspongebob = grayscale(spongebob)
+
+plot(greyspongebob)
+</code></pre>
+<p><img src="/images/SVD_by_hand/grepspongebob.png" alt=""></p>
+<p> </p>
+<p>Now we can convert the grey picture into a matrix, which has a dimension of 625 * 415</p>
+<pre><code class="language-r">greyspongebob_mat = as.matrix(greyspongebob)
+dim(greyspongebob_mat)
+</code></pre>
+<p> </p>
+<p>Time to decompose!</p>
+<pre><code class="language-r"># use built-in function svd()
+greyspongebob_svd = svd(greyspongebob_mat)
+</code></pre>
+<p>The result is a list with three elements:</p>
+<p><code>greyspongebob_svd$u</code> contains the matrix <code>\(\mathbf{U}\)</code></p>
+<p><code>greyspongebob_svd$v</code> contains the matrix <code>\(\mathbf{V}\)</code></p>
+<p><code>greyspongebob_svd$d</code> contains a vector of singular values, but you can easily convert them to <code>\(\mathbf{\Sigma}\)</code> by calling the function <code>diag(greyspongebob_svd$d)</code></p>
+<p> <br>
+ </p>
+<p>Now let&rsquo;s re-construct the picture by selecting top-n dimensions. We write a function to make the job easier.</p>
+<pre><code class="language-r">Reconstruct_Spongebob = function(dim){
+  # reconstruct the matrix with top n dimentions
+  mat = greyspongebob_svd$u[,1:dim] %*% diag(greyspongebob_svd$d[1:dim]) %*% t(greyspongebob_svd$v[,1:dim])
+  
+  # use imager package to redraw the picture
+  mat %&gt;% as.cimg(dim=dim(mat)) %&gt;% plot(main=paste(dim, &quot;Dimentions&quot;))
+}
+</code></pre>
+<p> </p>
+<p>Plot!</p>
+<pre><code class="language-r">par(mfrow=c(2,2))
+Reconstruct_Spongebob(2)
+Reconstruct_Spongebob(5)
+Reconstruct_Spongebob(20)
+plot(greyspongebob, main = &quot;Original picture&quot;)
+</code></pre>
+<p><img src="/images/SVD_by_hand/recreate.png" alt=""></p>
+<p>As you can see, with 20 dimensions, we can reconstruct the picture reasonably well.</p>
+<p>But think about how many space we need to use.
+$$
+dim( \mathbf{U}) = 625 \times 20 = 12500 \\
+dim( \mathbf{\Sigma}) = 20 \times 1 = 20  \\
+dim( \mathbf{V}) = 415 \times 20 = 8300$$`</p>
+<p>In total, we need <code>\(12500 + 20 + 8300 = 20820\)</code> numbers to represent the reduced picture.</p>
+<p>However, we need <code>\(625 \times 415 = 259375\)</code> numbers to represent the original picture! This is <code>\(10\times\)</code> more than the reduced picture!</p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+<h2 id="reference">Reference:</h2>
+<p>Spongebob picture: <a href="https://www.pinterest.com/pin/848998967250483701/">https://www.pinterest.com/pin/848998967250483701/</a></p>
+<p>SVD wiki: <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition">https://en.wikipedia.org/wiki/Singular_value_decomposition</a></p>
+<p>Stack Exchange @amoeba <a href="https://stats.stackexchange.com/questions/134282/relationship-between-svd-and-pca-how-to-use-svd-to-perform-pca">https://stats.stackexchange.com/questions/134282/relationship-between-svd-and-pca-how-to-use-svd-to-perform-pca</a></p>
+<p> <br>
+ <br>
+ <br>
+ <br>
+ <br>
+ </p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

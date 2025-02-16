@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Linear Algebra on A Hugo website</title>
-    <link>//localhost:4321/tags/linear-algebra/</link>
+    <link>/tags/linear-algebra/</link>
     <description>Recent content in Linear Algebra on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 21 Nov 2021 15:18:26 -0600</lastBuildDate>
-    <atom:link href="//localhost:4321/tags/linear-algebra/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 22 Nov 2021 21:18:26 -0600</lastBuildDate>
+    <atom:link href="/tags/linear-algebra/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Calculate PCA by hand</title>
-      <link>//localhost:4321/post/pca1/calculate_pca/</link>
-      <pubDate>Sun, 21 Nov 2021 15:18:26 -0600</pubDate>
-      <guid>//localhost:4321/post/pca1/calculate_pca/</guid>
-      <description>&lt;p&gt;Here I am going to show you how to calculate PCA by hand!&lt;/p&gt;&#xA;&lt;p&gt;But before we dive deep into PCA, there are two prerequisite concepts we need to understand:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;Variance/Covariance&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;Find eigenvectors and eigenvalues&lt;/strong&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;If you already understand those two concepts, you can skip this part.&lt;/p&gt;&#xA;&lt;p&gt; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;prerequisite-1-variancecovariance&#34;&gt;Prerequisite 1: Variance/Covariance&lt;/h2&gt;&#xA;&lt;blockquote&gt;&#xA;&lt;h3 id=&#34;variance&#34;&gt;Variance&lt;/h3&gt;&#xA;&lt;p&gt;Variance measures how far a set of numbers is spread out from their average value. The sample variance is defined as&#xA;$$&#xA;s^2 = \frac{\sum(x_i - \bar x)^2}{n - 1}&#xA;$$&lt;/p&gt;</description>
+      <title>Calculate SVD by hand (and decompose Spongebob)</title>
+      <link>/post/svd/</link>
+      <pubDate>Mon, 22 Nov 2021 21:18:26 -0600</pubDate>
+      <guid>/post/svd/</guid>
+      <description>&lt;p&gt;In my &lt;a href=&#34;/post/pca1/&#34;&gt;previous post&lt;/a&gt;, I have manually implemented PCA by finding the eigenvectors and eigenvalues of a covariance matrix. In this post, let&amp;rsquo;s try to perform PCA using a different approach called Singular Value Decomposition. Then we are going to decompose SPONGEBOB!&lt;/p&gt;&#xA;&lt;p&gt;Note: you might find this &lt;a href=&#34;/post/pca1/&#34;&gt;post&lt;/a&gt; to be useful, if you are new to PCA.&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;br&gt;&#xA; &lt;/p&gt;&#xA;&lt;h2 id=&#34;algorithm&#34;&gt;Algorithm&lt;/h2&gt;&#xA;&lt;p&gt;Again, we are going to use the same dataset we have used before.&lt;/p&gt;&#xA;&lt;p&gt;$$&#xA;\mathbf{ M} =&#xA;\begin{bmatrix}&#xA;1 &amp;amp; 0 \\&#xA;0 &amp;amp; 1 \\&#xA;-1 &amp;amp; -1&#xA;\end{bmatrix}&#xA;$$&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

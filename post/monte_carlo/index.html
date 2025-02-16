@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>How to draw sample from a generic distribution? - A Hugo website</title>
+<meta property="og:title" content="How to draw sample from a generic distribution? - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">How to draw sample from a generic distribution?</h1>
+
+    
+    <span class="article-date">2021-11-22</span>
+    
+
+    <div class="article-content">
+      
+      <p>In this post, I am going to show two methods to draw samples from a generic distribution.</p>
+<p>But before we get started, we should define what do I mean generic distribution. Here is one example:</p>
+<p>$$
+f(x)= \begin{cases}
+0 &amp; \text{if <code>\(x\)</code> &lt; 0} \\
+c \cdot \sqrt{x} &amp; \text{if  $0 &lt; x &lt; 1 $} \\
+0 &amp; \text{if <code>\(x &gt; 1\)</code>} \end{cases}
+$$</p>
+<p>First, let&rsquo;s take a look at the probability density function (pdf):<br>
+ </p>
+<div style="text-align: center;">
+  <img src="/images/Monte_Carlo/pdf2.png" alt="Monte_Carlo" width="50%" />
+</div>
+&nbsp;  
+<p>Obviously, this is not any type of distribution we have learned before (not Gaussian, not Poisson, not uniform etc), and therefore, we wouldn&rsquo;t be able to use build-in functions to draw samples from (in R programming language, we have <code>rnorm()</code>, <code>rpois()</code>, <code>runif()</code>).</p>
+<p>Despite the limitations, there are still ways to draw samples from, which I will discuss below:</p>
+<p> <br>
+ 
+ <br>
+ 
+ <br>
+ </p>
+<h2 id="method-1-inverse-transform-sampling">Method 1: inverse transform sampling</h2>
+<p>You may have noticed that our function has a constant <code>\(c\)</code>. In order for this curve to be a legit probability density function, we have to make sure that the area under the curve is 1. In mathematical notation, we have
+$$
+\int_{0}^{1} c \sqrt{x} = 1
+$$</p>
+<p>Finding the integral isn&rsquo;t difficult. We have
+$$
+F = \frac{2c}{3} \cdot x^{1.5}
+$$</p>
+<p>We have to make sure <code>\(F |_{0}^{1} = 1\)</code>, therefore we solve <code>\(c = 1.5\)</code></p>
+<p> </p>
+<p>Plug <code>\(c = 1.5\)</code> into our pdf and cdf, we pdf:</p>
+<p>$$
+f(x)= \begin{cases}
+0 &amp; \text{if <code>\(x\)</code> &lt; 0} \\
+1.5 \cdot \sqrt{x} &amp; \text{if  $0 &lt; x &lt; 1 $} \\
+0 &amp; \text{if <code>\(x &gt; 1\)</code>} \end{cases}
+$$</p>
+<p>And we have cdf:</p>
+<p>$$
+cdf(x)= \begin{cases}
+0 &amp; \text{if <code>\(x\)</code> &lt; 0} \\
+x^{1.5} &amp; \text{if  $0 &lt; x &lt; 1 $} \\
+1 &amp; \text{if <code>\(x &gt; 1\)</code>} \end{cases}
+$$</p>
+<p> 
+ </p>
+<p>The steps I described above are pretty standard and boring, but here comes to the interesting part that allows us to sample from this generic distribution.</p>
+<h4 id="step1-inverse-the-cdf">Step1: Inverse the cdf</h4>
+<p>We first find the inverse of cumulative density function. <code>\(x = y^{2/3}\)</code></p>
+<h4 id="step2-sampling">Step2: Sampling</h4>
+<p>We draw sample y from a uniform distribution, then raise this sample to the power of <code>\(2/3\)</code>, and we will get a customized sampler!</p>
+<pre><code class="language-r">Sampler &lt;- function(n = 1){
+     y = runif(n, min = 0, max = 1)
+     x = y ^(2/3)
+     return(x)
+}
+
+# draw one sample 
+Sampler()
+## [1] 0.6835192
+
+
+# draw 10000 samples
+hist(Sampler(10000), probability = T, main = &quot;Histogram, inverse transform sampling&quot;)
+lines(seq(0,1, 0.01), 1.5 * sqrt(seq(0,1, 0.01)), col = &quot;red&quot; )
+</code></pre>
+<img src="/post/monte_carlo/index_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+<p>The red line represents the theoretical pdf, and it perfectly matches this histogram!</p>
+<p> <br>
+ 
+ <br>
+ </p>
+<h2 id="method-2-accept-reject-sampling">Method 2: accept-reject sampling.</h2>
+<p>This is a trick that allows you to draw samples without explicitly calculating <code>\(c\)</code>. It is particularly useful if it&rsquo;s difficult to normalize the probability (e.g. Bayesian statistics).</p>
+<p>Here are the steps involved:</p>
+<ul>
+<li>
+<p>Step1: Find an easy-to-sample distribution <code>\(g(x)\)</code> (normal, uniform, etc) and multiply by a constant <code>\(k\)</code>, so that <code>\(k \times g(x)\)</code> is always greater than our customized distribution <code>\(f(x)\)</code>.</p>
+</li>
+<li>
+<p>Step2: Draw a sample from <code>\(g(x)\)</code></p>
+</li>
+<li>
+<p>Step3: Calculate the probability of acceptance: <code>\(p (accept) = \frac{f(x)}{k \cdot g(x)}\)</code></p>
+</li>
+<li>
+<p>Step4: Collect samples. The bag of your collected samples will have a distribution of <code>\(f(x)\)</code>.</p>
+</li>
+</ul>
+<p><strong>Notice that you don&rsquo;t need the full format of f(x). In our case, you can ignore <code>\(c\)</code>, and set <code>\(f(x) = \sqrt x\)</code></strong></p>
+<pre><code class="language-r"># our collecting bag
+accept = c()
+
+# draw 100000 samples from a uniform distribution
+samples = runif(100000, 0, 1)
+
+# iterate all the samples
+for (sample in samples){
+   accpt_prob = sqrt(sample)/(2 * 1)           # calculate the probability of acceptance
+    if (rbinom(n = 1, size = 1, prob = accpt_prob) == 1){ # flip a unfair coin with probability we just calculated. If head up, we accept.
+        accept = c(accept, sample)               # add the accepted samples to our bag
+    }
+}
+
+# draw 10000 samples
+hist(accept, probability = T, main = &quot;Histogram, accept-reject sampling.&quot;)
+lines(seq(0,1, 0.01), 1.5 * sqrt(seq(0,1, 0.01)), col = &quot;red&quot; )
+</code></pre>
+<img src="/post/monte_carlo/index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
+<pre><code class="language-r">
+# proportion of samples accepted
+length(accept)/100000
+## [1] 0.33196
+</code></pre>
+<p>Notice here, I chose the constant <code>\(k = 2\)</code>. We are sure that <code>\(2 \times U(0, 1)\)</code> is always larger than our customized pdf.</p>
+<p>Also, notice in my code, I use <code>\(f(x) = \sqrt x\)</code>, but not <code>\(f(x) = 1.5 \sqrt x\)</code>, although either way works.</p>
+<p>You might find that I drew 100000 samples, but only a small proportion of samples are accepted. This is one of a big disadvantage of accept-reject sampling!</p>
+<p><strong>Being able to draw samples without knowing its full format is very advantageous. This accept-reject sampling is a core foundation of MCMC sampling, which I will demonstrate in the next few posts</strong></p>
+<p> <br>
+ 
+ <br>
+ </p>
+<h2 id="summary">Summary</h2>
+<p>In this post, we learned two ways of drawing samples form a customized distribution. Either one has its pros and cons.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Method</th>
+          <th style="text-align: left">Advantage</th>
+          <th style="text-align: left">Disadvantage</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Inverse Transform Sampling:</td>
+          <td style="text-align: left">Utilizes all the samples</td>
+          <td style="text-align: left">Need to calculate cdf; Inverse cdf sometimes could be very difficult</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Accept Reject Sampling:</td>
+          <td style="text-align: left">Do not require full format of pdf, easy to implement</td>
+          <td style="text-align: left">Waste samples</td>
+      </tr>
+  </tbody>
+</table>
+<p> <br>
+ 
+ <br>
+ 
+ </p>
+<h3 id="reference">Reference:</h3>
+<p>ritvikmath: <a href="https://www.youtube.com/watch?v=OXDqjdVVePY">https://www.youtube.com/watch?v=OXDqjdVVePY</a><br>
+Ben Lambert: <a href="https://www.youtube.com/watch?v=rnBbYsysPaU">https://www.youtube.com/watch?v=rnBbYsysPaU</a></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

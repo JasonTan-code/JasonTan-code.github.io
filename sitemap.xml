@@ -38,19 +38,52 @@
     <loc>/categories/hmm/</loc>
     <lastmod>2021-11-29T00:00:00+00:00</lastmod>
   </url><url>
+    <loc>/post/bayesian_network/</loc>
+    <lastmod>2021-11-27T15:19:26-06:00</lastmod>
+  </url><url>
     <loc>/tags/inference/</loc>
-    <lastmod>2021-11-22T00:00:00+00:00</lastmod>
+    <lastmod>2021-11-27T15:19:26-06:00</lastmod>
+  </url><url>
+    <loc>/categories/statistics/</loc>
+    <lastmod>2021-11-27T15:19:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/gene_exp2/</loc>
+    <lastmod>2021-11-23T15:19:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/gene_exp1/</loc>
+    <lastmod>2021-11-23T15:18:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/svd/</loc>
+    <lastmod>2021-11-22T21:18:26-06:00</lastmod>
+  </url><url>
+    <loc>/tags/linear-algebra/</loc>
+    <lastmod>2021-11-22T21:18:26-06:00</lastmod>
+  </url><url>
+    <loc>/categories/linear-algebra/</loc>
+    <lastmod>2021-11-22T21:18:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/bayesian5/</loc>
+    <lastmod>2021-11-22T20:19:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/bayesian4/</loc>
+    <lastmod>2021-11-22T20:18:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/bayesian3/</loc>
+    <lastmod>2021-11-22T19:18:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/bayesian2/</loc>
+    <lastmod>2021-11-22T18:18:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/bayesian1/</loc>
+    <lastmod>2021-11-22T17:18:26-06:00</lastmod>
+  </url><url>
+    <loc>/post/monte_carlo/</loc>
+    <lastmod>2021-11-22T16:18:26-06:00</lastmod>
   </url><url>
     <loc>/post/mle/</loc>
     <lastmod>2021-11-22T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>/categories/statistics/</loc>
-    <lastmod>2021-11-22T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>/post/pca1/</loc>
-    <lastmod>2021-11-21T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>/categories/linear-algebra/</loc>
     <lastmod>2021-11-21T00:00:00+00:00</lastmod>
   </url><url>
     <loc>/tags/pca/</loc>

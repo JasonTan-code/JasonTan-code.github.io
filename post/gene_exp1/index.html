@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Model the Gene Expression (1): A GLM framework - A Hugo website</title>
+<meta property="og:title" content="Model the Gene Expression (1): A GLM framework - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">8 min read</span>
+    
+
+    <h1 class="article-title">Model the Gene Expression (1): A GLM framework</h1>
+
+    
+    <span class="article-date">2021-11-23</span>
+    
+
+    <div class="article-content">
+      
+      <p>Before you start reading this post, please familiarize yourself with <a href="/post/mle/">MLE</a> and linear model.</p>
+<p> <br>
+ </p>
+<h2 id="background">Background</h2>
+<p>In transcriptomic research, we often want to determine if genes are unregulated or down-regulated under a particular perturbation. For example, we have a medication that may cure type 2 diabetes. In our experiment, 6 patients are split into two groups, with 3 patients taking the medication, and 3 patients taking the placebo. The patients&rsquo; blood samples are then collected to measure the transcriptomic profile (mRNA abundance level for each gene) using NGS technology (<a href="https://en.wikipedia.org/wiki/RNA-Seq">RNA seq</a>). The mRNA abundance levels are quantified by the number of <a href="https://en.wikipedia.org/wiki/Read_(biology)">reads</a> that were mapped to the reference genome. Finally, we use statistical tests to determine if the level of change is big enough to be considered as a DEG (differentially expressed gene).</p>
+<p> </p>
+<p>A typical RNA-seq experiment dataset (read counts) looks like:</p>
+<p><img src="/images/Gene_expression1/exp1.png" alt="exp1"></p>
+<p><strong>In this post, we will only focus on one gene.</strong></p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="negative-binomial-distribution">Negative Binomial Distribution</h2>
+<p>You might have noticed that in the table above, all the data is discrete counts. It is therefore inappropriate to use a normal distribution (a continuous distribution) to model the read counts. It is more common to use a <strong>Poisson distribution</strong> or a <strong>negative binomial distribution</strong> to model the gene expression in RNA-seq. For a Poisson distribution, it is assumed that the mean is equal to its variance, which isn&rsquo;t true in most cases. The most accepted distribution among bioinformatics/biostatistics community is to use a negative binomial distribution, which allows us to model the data when its variance is much greater than its mean.</p>
+<p> </p>
+<p>You might have seen that negative binomial distribution is formulated as:
+$$
+\text{P(x = k)} = {k + n -1 \choose k}\cdot p^k \cdot (1-p)^n
+$$</p>
+<p>This parameterization is advantageous when you want to model the number of failures before the experiment is stopped (e.g. how many times you need to flip a coin until you get 3 heads).</p>
+<p> </p>
+<p>However, we would like to interpret our model in a more straightforward way. An alternative parameterization of negative binomial distribution is to use a mean parameter <code>\(\mu\)</code>, and a dispersion parameter <code>\(r\)</code>:
+$$
+\text{P(x = k)} = \frac{\Gamma(r + k)}{k! \Gamma(r)} \cdot \Bigg( \frac{r}{r + \mu} \Bigg)^r \Bigg( \frac{\mu}{r + \mu} \Bigg)^k
+$$</p>
+<p>, where the dispersion parameter <code>\(r = \frac{\mu^2}{\sigma^2 - \mu}\)</code>.</p>
+<p>(Notice: in DESeq2, the dispersion parameter is written as <code>\(\alpha = \frac{\sigma^2 - \mu}{\mu^2}\)</code>, which is simply the reciprocal of <code>\(r\)</code>. We will stick with <code>\(r\)</code>, since the formula looks cleaner)</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="warm-up-fit-a-simple-model">Warm up: fit a simple model</h2>
+<p>Let&rsquo;s try to model the <strong>Gene1</strong> expression level of <strong>patient1, patient2, patient3</strong></p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Patient</th>
+          <th style="text-align: right">Gene1 Expression</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">patient1</td>
+          <td style="text-align: right">1000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient2</td>
+          <td style="text-align: right">400</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient3</td>
+          <td style="text-align: right">700</td>
+      </tr>
+  </tbody>
+</table>
+<p> </p>
+<p>Technically, we should use <a href="https://jasontan-code.github.io/posts/mle/">Maximum Likelihood Estimation</a> to estimate the parameters <code>\(r\)</code>, and <code>\(\mu\)</code>. The steps involve constructing a (log) likelihood function, taking the derivative, and finding <code>\(argmax\)</code>.</p>
+<p>$$
+\text{argmax}_{\mu, r} log \Bigg( P(y = 1000 |\mu, r) \cdot P(y = 400 |\mu, r) \cdot P(y = 700 |\mu, r) \Bigg)
+$$</p>
+<p>,where $P(y_i |\mu, r) = \frac{\Gamma(r + y_i )}{y_i ! \Gamma(r)} \cdot \Big( \frac{r}{r + \mu} \Big)^r \Big( \frac{\mu}{r + \mu} \Big)^{y_i} $</p>
+<p>(Note: the math could be very messy, and it&rsquo;s impossible to find the analytical solution of the dispersion parameter <code>\(r\)</code>. We have to approximate <code>\(r\)</code> by optimization approach like gradient descent)</p>
+<p> </p>
+<p>Here is the R code implementation:</p>
+<pre><code class="language-r">data = c(1000, 400, 700)
+neg_loglikelihood = function(params){
+  mu = params[1]
+  r = params[2] # dispersion
+  
+  # define the log likelihood of each patient
+  # patient 1-3 received placebo, therefore mu = b0
+  loglikelihood1 = log(dnbinom(data[1], size = r, mu = mu))
+  loglikelihood2 = log(dnbinom(data[2], size = r, mu = mu))
+  loglikelihood3 = log(dnbinom(data[3], size = r, mu = mu))
+  
+
+  # summation of log, equivalent to log product.
+  # optim function finds the minimum, we maximize the loglikelihood, which is equivalent to minimize neg_loglikelihood
+  return(- (loglikelihood1 + loglikelihood2 + loglikelihood3))
+}
+
+# use optim to find argmin
+optim(c(10,3), neg_loglikelihood)
+</code></pre>
+<p>You should get
+$$
+\hat \mu = 700.444007 \\
+\hat r =  7.635268
+$$</p>
+<p> </p>
+<p>Here, I drew a 3D graph that shows you the relationship between log-likelihood, dispersion <code>\(r\)</code> and mean <code>\(\mu\)</code>.</p>
+<p><img src="/images/Gene_expression1/loglikelihood.png" alt=""></p>
+<p>We can roughly tell that when <code>\(\hat \mu = 700\)</code>, <code>\(\hat r = 7.6\)</code>, the log likelihood function reach its maximum. These two values are so-called &ldquo;population parameters&rdquo;. Now, if we plug the estimated parameters into the formula, we have:
+$$
+\text{P(x = k)} = \frac{\Gamma(7.6 + k)}{k! \Gamma(7.6)} \cdot \Bigg( \frac{7.6}{7.6 + 700} \Bigg)^{7.6} \Bigg( \frac{700}{7.6 + 700} \Bigg)^k
+$$</p>
+<p>, and this is our fitted model.</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="generalized-linear-model">Generalized Linear model</h2>
+<p>Now we need to take the effect of medication into our consideration. Keep in mind the independent variable is the medication/placebo, and the dependent variable is the expression level of Gene1.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Patient</th>
+          <th style="text-align: right">Treatment</th>
+          <th style="text-align: right">Gene1 Expression</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">patient1</td>
+          <td style="text-align: right">placebo (0)</td>
+          <td style="text-align: right">1000</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient2</td>
+          <td style="text-align: right">placebo (0)</td>
+          <td style="text-align: right">400</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient3</td>
+          <td style="text-align: right">placebo (0)</td>
+          <td style="text-align: right">700</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient4</td>
+          <td style="text-align: right">medication (1)</td>
+          <td style="text-align: right">2100</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient5</td>
+          <td style="text-align: right">medication (1)</td>
+          <td style="text-align: right">3200</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">patient6</td>
+          <td style="text-align: right">medication (1)</td>
+          <td style="text-align: right">1000</td>
+      </tr>
+  </tbody>
+</table>
+<p>We will treat placebo as <code>\(0\)</code>, and medication as <code>\(1\)</code>.</p>
+<p>We model the gene expression as</p>
+<p>$$
+y \sim NB(\mu, r) \\
+log( \mu )= b_1 x + b_0
+$$</p>
+<p>It&rsquo;s worth noticing that <code>\(b_1, b_0\)</code>, and <code>\(r\)</code> are unknown, and the goal is to estimate them from our data.</p>
+<p> </p>
+<p>The formula is confusing, isn&rsquo;t it? Let&rsquo;s plug in some numbers to see if the expression makes sense.
+Take patient1 as an example, we know patients 1 didn&rsquo;t receive any medication, so we have <code>\(x_1 = 0\)</code>.
+$$
+log(\mu_1) = b_1 \times 0 + b_0 \\
+\mu_1 = e^{b_0}
+$$</p>
+<p>Then we plug <code>\(\mu_1\)</code> into the formula of negative binomial distribution:
+$$
+NB(e^{b_0}, r )
+$$</p>
+<p>We observed the gene1 expression level for <strong>patient1</strong>, so we can formulate the likelihood function for patient1 as:
+$$
+P(y_1 = 1000 |e^{b_0}, r ) =  \frac{\Gamma(r + 1000)}{1000! \Gamma(r)} \cdot \Bigg( \frac{r}{r + e^{b_0}} \Bigg)^r \Bigg( \frac{e^{b_0}}{r + e^{b_0}} \Bigg)^{1000}
+$$</p>
+<p> <br>
+ </p>
+<p>Similarly, we can express the likelihood function of all the patients:</p>
+<p><img src="/images/Gene_expression1/likelihood2.png" alt=""></p>
+<p>Since samples (patients) are independently and identically distribution, the likelihood of <strong>observing all the patients</strong> is the product of the last column of the table above.
+$$
+f(r, b_0, b_1) = \prod_{i = 1}^3 P(y_i |e^{b_0}, r ) \cdot \prod_{i = 4}^6 P(y_i |e^{b_0 + b1}, r )
+$$</p>
+<p>Notice the likelihood function <code>\(f(r, b_0, b_1)\)</code> is a function of <code>\(r, b_0, b_1\)</code>, and we could use the same approach to find a set of parameters <code>\(\hat r, \hat b_0, \hat b_1\)</code> that maximizes <code>\(f(r, b_0, b_1)\)</code>. Again, the actual calculation is tedious and unmanageable, and we should use <code>optim()</code> function to help us.</p>
+<pre><code class="language-r"># observed data
+data = c(1000, 400, 700, 2100, 3200, 1000)
+
+
+neg_loglikelihood = function(params){
+  b0 = params[1] # intercept
+  b1 = params[2] # coefficient
+  r = params[3] # dispersion
+  
+  # define the log likelihood of each patient
+  # patient 1-3 received placebo, therefore mu = b0
+  loglikelihood1 = log(dnbinom(data[1], size = r, mu = exp(b0)))
+  loglikelihood2 = log(dnbinom(data[2], size = r, mu = exp(b0)))
+  loglikelihood3 = log(dnbinom(data[3], size = r, mu = exp(b0)))
+  
+  # patient 4-6 received medication, therefore mu = b0 + b1
+  loglikelihood4 = log(dnbinom(data[4], size = r, mu = exp(b0 + b1)))
+  loglikelihood5 = log(dnbinom(data[5], size = r, mu = exp(b0 + b1)))
+  loglikelihood6 = log(dnbinom(data[6], size = r, mu = exp(b0 + b1)))
+
+  # summation of log, equivalent to log product.
+  # optim function finds the minimum, we maximize the loglikelihood, which is equivalent to minimize neg_loglikelihood
+  return(- (loglikelihood1 + loglikelihood2 + loglikelihood3 + loglikelihood4 + loglikelihood5 + loglikelihood6))
+}
+
+
+optim(c(5,2,3), neg_loglikelihood)
+</code></pre>
+<p>The <code>optim</code> function helped us find a set of parameters that maximize the loglikelihood function: <code>$$\hat b_0 = 6.6 \\\\\\ \hat b_1 =1.1 \\\\\\ \hat r = 5.9$$</code></p>
+<p> <br>
+ </p>
+<p>You might want to use <code>glm.nb()</code> function from the <code>MASS</code> package to fit the model. It should give us the same results</p>
+<pre><code class="language-r">library(MASS)
+
+# write data
+data = c(1000, 400, 700, 2100, 3200, 1000)
+
+# define group
+expgroup = as.factor(c(&quot;control&quot;,&quot;control&quot;,&quot;control&quot;,&quot;treatment&quot;,&quot;treatment&quot;,&quot;treatment&quot; ))
+
+# build model
+summary.glm(glm.nb(data ~ expgroup))
+## 
+## Call:
+## glm.nb(formula = data ~ expgroup, init.theta = 5.918455084, link = log)
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)         6.5511     0.2768  23.670 1.89e-05 ***
+## expgrouptreatment   1.0986     0.3909   2.811   0.0483 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for Negative Binomial(5.9185) family taken to be 1.348635)
+## 
+##     Null deviance: 16.3297  on 5  degrees of freedom
+## Residual deviance:  6.1637  on 4  degrees of freedom
+## AIC: 96.888
+## 
+## Number of Fisher Scoring iterations: 1
+</code></pre>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="summary">Summary</h2>
+<p>Generalized linear model is a very powerful approach that gives us more flexibility when linearity and normality don&rsquo;t hold. Besides modeling the gene expression, GLM could also be used as a classification algorithm (logistic regression), which is something I will cover in the future.</p>
+<p>Maximum likelihood estimation plays a critical role in GLM. It gives us a framework of estimating the population parameters, and helps us think probabilistically. In the next post, we will use MLE to perform hypothesis testing (likelihood ratio test). Stay tuned!</p>
+<p> <br>
+ <br>
+ <br>
+ </p>
+<h2 id="reference">Reference</h2>
+<p>Wiki: <a href="https://en.wikipedia.org/wiki/Negative_binomial_distribution">https://en.wikipedia.org/wiki/Negative_binomial_distribution</a></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

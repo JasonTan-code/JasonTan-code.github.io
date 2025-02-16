@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Dive into Bayesian statistics (4): Markov Chain Monte Carlo - A Hugo website</title>
+<meta property="og:title" content="Dive into Bayesian statistics (4): Markov Chain Monte Carlo - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">4 min read</span>
+    
+
+    <h1 class="article-title">Dive into Bayesian statistics (4): Markov Chain Monte Carlo</h1>
+
+    
+    <span class="article-date">2021-11-22</span>
+    
+
+    <div class="article-content">
+      
+      <p>In the last few posts, we tried three methods (<a href="/post/bayesian2/">Integration, Conjugate Prior</a> and <a href="/post/bayesian3/">MCMC</a> to infer the posterior distribution <code>\(P(\lambda | \text{data})\)</code>, which gave us</p>
+<p><code>$$\lambda \sim \text{Gamma}(\alpha = 20, \beta = 6)$$</code></p>
+<p>In this post, we are going to see 1) how to use Bayesian model to make prediction; 2) the internal relationship between a Poisson distribution, a Gamma distribution and a Negative binomial distribution.</p>
+<p> <br>
+ 
+ </p>
+<h2 id="question">Question:</h2>
+<p>Here is the data we have worked so far:</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Time</th>
+          <th style="text-align: right">Number of visitors</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">8:am - 9:am</td>
+          <td style="text-align: right">5</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">9:am - 10:am</td>
+          <td style="text-align: right">3</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">10:am - 11:am</td>
+          <td style="text-align: right">4</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11:am - 12:pm</td>
+          <td style="text-align: right">6</td>
+      </tr>
+  </tbody>
+</table>
+<p>In this post, we will try to answer a question:  <strong>What is the probability that my website has no visitors in the next hour?</strong></p>
+<p>The question might look a little strange at the first glance. How am I supposed to know the number of visitors in the future? In this post, we are going to address this question in two different manners: <strong>a frequentist framework</strong>, and <strong>a Bayesian framework</strong></p>
+<p> <br>
+ <br>
+ 
+ </p>
+<h2 id="a-frequentist-framework">A Frequentist Framework:</h2>
+<p>As what I have discussed in <a href="/post/mle/">this post</a>, we assumed that the data has a Poisson distribution, and used Maximum Likelihood Estimation to figure out the most likely <code>\(\lambda = 4.5\)</code>. Now, we can simply plug <code>\(\lambda = 4.5\)</code> into the Poisson distribution formula, which becomes our inferred population now:
+$$
+f(x) = \frac{4.5^x e^{-4.5}}{x!}
+$$</p>
+<p>To answer the question above, we simply plug in <code>\(x = 0\)</code>, and get:
+$$
+f(0) = \frac{4.5^0 e^{-4.5}}{0!} = 0.011
+$$</p>
+<p>So, under a frequentist framework, our answer is 0.011</p>
+<p> <br>
+ <br>
+ 
+ </p>
+<h2 id="a-bayesian-framework">A Bayesian Framework:</h2>
+<p>Now let&rsquo;s try to answer the question using a Bayesian framework. We have already derived the posterior distribution:</p>
+<p><code>$$\lambda \sim \text{Gamma}(\alpha = 20, \beta = 6)$$</code></p>
+<p>Then we also have the distribution of the data:</p>
+<p><code>$$x \sim \text{Poisson}(\lambda)$$</code></p>
+<p>Let&rsquo;s try to concatenate the gamma distribution (which is the pdf of <code>\(\lambda\)</code>), and the poisson distribution (which is the pdf of data). This should gives us the <strong>probability distribution of the predictive data</strong>.</p>
+<p>$$
+<code>\begin{aligned} f(x; \alpha = 20, \beta = 6) &amp; = \int_0^{+ \infty} \frac{\lambda^x e^{-\lambda}}{x!} \cdot \frac{6^{20}}{19!} \lambda^{19} e^{-6\lambda} \cdot d\lambda \\\\  &amp; = \frac{6^{20}}{19! \cdot x!} \int_{0}^{+\infty} \lambda^{19 + x} e^{-7 \lambda} d\lambda \\\\  &amp; \stackrel{\dagger}{=} \frac{6^{20}}{19! \cdot x!}  \cdot \frac{\Gamma{(20 + x)}}{7^{20 + x}} \\\\  &amp; = \frac{\Gamma (20 + x)}{19 ! \cdot x!} \cdot (\frac{6}{7})^{20} \cdot (\frac{1}{7})^x \\\\  &amp; = \frac{\Gamma (20 + x)}{\Gamma (20) \cdot \Gamma (x + 1)} \cdot (\frac{6}{7})^{20} \cdot (\frac{1}{7})^x \\\\  &amp; =  {x + 19 \choose x}\cdot (\frac{6}{7})^{20} \cdot (\frac{1}{7})^x \end{aligned}</code>
+$$</p>
+<p>Note: step <code>\(\dagger\)</code> holds because
+$$
+\int_0^{+\infty} x^a e^{-bx} dx = \frac{ \Gamma(a + 1)}{b ^{a + 1}} \text{      ,where } a, b \text{ are integers}
+$$</p>
+<p><strong>Therefore, we can make the conclusion that the posterior predictive distribution has a negative binomial distribution with <code>\(p = 6/7, r = 20\)</code></strong></p>
+<p>From the posterior predictive distribution, we can easily calculate the probability of having no visitors in the next hour:</p>
+<p>$$
+f(0) = {19 \choose 0}\cdot (\frac{6}{7})^{20} \cdot (\frac{1}{7})^0 = 0.046
+$$</p>
+<p> 
+ <br>
+ 
+ <br>
+ </p>
+<h2 id="sampling-of-posterior-predictive">Sampling of posterior predictive</h2>
+<p>Lastly, let&rsquo;s do a little bit of sampling to verify our result. Again, there are two ways:
+ <br>
+ </p>
+<h4 id="method-1">Method 1:</h4>
+<p>Draw <code>\(\lambda\)</code> from a gamma distribution, then use this lambda in a Poisson distribution:</p>
+<pre><code class="language-r">library(ggplot2)
+bag1 = c()
+
+for (i in 1:100000){
+  lambda = rgamma(1, shape = 20, rate = 6)
+  bag1[i] = rpois(1, lambda = lambda)
+}
+# draw a histogram
+ggplot(data.frame(bag1), aes(bag1)) + geom_bar()
+</code></pre>
+<p>This gave us:</p>
+<p><img src="/images/Bayesian4/bag1.png" alt="bayesian4"></p>
+<p> 
+ </p>
+<h4 id="method-2">Method 2:</h4>
+<p>Draw samples from the negative binomial distribution directly:</p>
+<pre><code class="language-r">bag2 = rnbinom(n = 100000, size = 20, prob = 6/7)
+# draw a histogram
+ggplot(data.frame(bag2), aes(bag2)) + geom_bar()
+</code></pre>
+<p>This gave us:</p>
+<p><img src="/images/Bayesian4/bag2.png" alt="bayesian4"></p>
+<p>,which is almost identical as method 1</p>
+<p> 
+ <br>
+ 
+ <br>
+ 
+ </p>
+<h2 id="summary">Summary:</h2>
+<p>In this post, we saw two completely different frameworks of inferring the data.</p>
+<p> 
+ </p>
+<p>The frequentist approach assumes the <strong>parameters are fixed</strong> and <strong>data are random</strong>, and we use MLE to estimate the most likely parameters. Here is how it works:</p>
+<div style="text-align: center;">
+  <img src="/images/Bayesian4/freq.png" alt="frequentist" width="50%" />
+</div>
+<p> 
+ <br>
+ </p>
+<p>Whereas under the Bayesian framework, not only the <strong>data are random</strong>, but the <strong>parameters are also random</strong>. By adding a prior distribution, we can infer a parameter distribution. To generate data, we will first draw random parameters, and from those random parameters, we then draw random data. Here is a graphic demonstration:</p>
+<div style="text-align: center;">
+  <img src="/images/Bayesian4/bayesian.png" alt="bayesian" width="50%" />
+</div>
+<p> 
+ <br>
+ </p>
+<p>Besides all that, we also learned that the concatenation of a Gamma distribution and a Poisson distribution is a Negative Binomial distribution.</p>
+<p> <br>
+ </p>
+<p>Thanks for reading this post. If like the content, don&rsquo;t hesitate to leave comments and drop a thumb up.</p>
+<p> <br>
+ 
+ <br>
+ <br>
+ 
+ <br>
+ 
+ </p>
+<h2 id="reference">Reference:</h2>
+<p>Angina Seng @ Stack Exchange: <a href="https://math.stackexchange.com/a/3407923/938478">link</a></p>
+<p>Wiki Negative binomial: <a href="https://en.wikipedia.org/wiki/Negative_binomial_distribution#Gamma%E2%80%93Poisson_mixture">link</a></p>
+<p>Wiki Conjugate prior: <a href="https://en.wikipedia.org/wiki/Conjugate_prior#Table_of_conjugate_distributions">link</a></p>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
