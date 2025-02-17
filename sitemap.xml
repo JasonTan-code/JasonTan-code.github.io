@@ -3,28 +3,34 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>/</loc>
-    <lastmod>2025-02-16T00:00:00+00:00</lastmod>
+    <lastmod>2025-02-16T15:19:26-09:00</lastmod>
   </url><url>
     <loc>/categories/</loc>
-    <lastmod>2025-02-16T00:00:00+00:00</lastmod>
+    <lastmod>2025-02-16T15:19:26-09:00</lastmod>
   </url><url>
     <loc>/tags/genetics/</loc>
-    <lastmod>2025-02-16T00:00:00+00:00</lastmod>
+    <lastmod>2025-02-16T15:19:26-09:00</lastmod>
   </url><url>
     <loc>/categories/genetics/</loc>
-    <lastmod>2025-02-16T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>/post/gwas/</loc>
-    <lastmod>2025-02-16T00:00:00+00:00</lastmod>
+    <lastmod>2025-02-16T15:19:26-09:00</lastmod>
   </url><url>
     <loc>/post/</loc>
-    <lastmod>2025-02-16T00:00:00+00:00</lastmod>
+    <lastmod>2025-02-16T15:19:26-09:00</lastmod>
   </url><url>
     <loc>/tags/</loc>
-    <lastmod>2025-02-16T00:00:00+00:00</lastmod>
+    <lastmod>2025-02-16T15:19:26-09:00</lastmod>
+  </url><url>
+    <loc>/post/twas/</loc>
+    <lastmod>2025-02-16T15:19:26-09:00</lastmod>
+  </url><url>
+    <loc>/post/prs/</loc>
+    <lastmod>2025-02-16T15:19:26-06:00</lastmod>
   </url><url>
     <loc>/post/ldsc/</loc>
-    <lastmod>2025-01-05T00:00:00+00:00</lastmod>
+    <lastmod>2025-02-16T15:19:26-04:00</lastmod>
+  </url><url>
+    <loc>/post/gwas/</loc>
+    <lastmod>2025-02-16T15:19:26-03:00</lastmod>
   </url><url>
     <loc>/post/hmm1/</loc>
     <lastmod>2021-11-29T00:00:00+00:00</lastmod>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Transcriptome-wide association studies - A Hugo website</title>
+<meta property="og:title" content="Transcriptome-wide association studies - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">Transcriptome-wide association studies</h1>
+
+    
+    <span class="article-date">2025-02-16</span>
+    
+
+    <div class="article-content">
+      
+      <h2 id="instrument-variable--twas">Instrument variable &amp; TWAS</h2>
+<p>Transcriptome-wide association studies (TWAS) aim to identify associations between gene expression and traits of interest. In an ideal world where we have both RNA-seq and trait data for tens of thousands of individuals, performing a TWAS analysis would be straightforward: simply regress the trait on gene expression. However, GTEx, the largest collection of expression data, has only ~700 RNA-seq samples, and it does not include trait values. This limitation precludes a direct association test between expression and traits.</p>
+<p>Despite this constraint, GTEx has collected genetic data from all participants and trained models to predict gene expression levels from genetic variants across multiple tissues. Variants that are strongly associated with gene expression are referred to as expression quantitative trait loci (eQTLs).</p>
+<p>For a given cohort with only genetic and phenotype data, we can first imputed/predicted RNA expression from genetics data, then regress the phenotype on the predicted RNA expressions. Let&rsquo;s define some additional notations:</p>
+<p>$$
+<code>\begin{split} \hat x_k: &amp;\text{ standardized imputed RNA expression for gene k} \\ \hat w_k: &amp;\text{ pre-trained weights from GTEx to predict gene k} \end{split}</code>
+$$</p>
+<p>For a new dataset with genotype and phenotype information, we can first impute gene expression using <code>\(\hat x_k = G \hat w_k\)</code>. When predicting expression levels, we typically restrict the analysis to a small genomic region known as cis-eQTLs. We then regress the phenotype on the predicted expression to estimate the effect size and p-value for each gene.</p>
+<p>TWAS employs a two-stage least squares regression and is theoretically robust to confounding between expression and trait. The model is conceptually identical to Mendelian randomization, where gene expression is treated as an exposure. With individual-level genotype and phenotype data, we can perform TWAS as follows:</p>
+<p>$$
+<code>\begin{split} \hat \beta^{TWAS}_k &amp;= \frac{\mathbb{C}ov[\hat x_k, y]}{\mathbb{V}ar[\hat x_k]} \\ &amp;= \frac{\hat x_k^T  y}{\hat x_k^T \hat x_k} \\ &amp;= \frac{\hat w_k^T G^T y}{\hat w_k^T G^T G \hat w_k} \end{split}</code>
+$$</p>
+<p>Notice we have <code>\(\hat \beta = G^T y/N\)</code>, and <code>\(R = G^TG/N\)</code>, this allows us to further compress the expression to:
+$$
+\hat \beta^{TWAS}_k = \frac{w_k^T \hat \beta}{\hat w_k^TR w_k} = \frac{w_k^T z}{\sqrt{N} \hat w_k^TR w_k}
+$$</p>
+<p>As the phenotypical variance explained by a single locus is so small, the GWAS marginal effect size is distributed as <code>\(\hat \beta \sim MVN(R\lambda, \frac{1}{N}R)\)</code>. According to <a href="https://statproofbook.github.io/P/mvn-ltt.html">linear transformation</a> of a multi-variate Gaussian random variable, we have:
+$$
+<code>\begin{split} \hat \beta^{TWAS}_k &amp;\sim MVN(\frac{w_k^T R \lambda}{\hat w_k^TR w_k}, \frac{1}{N \hat w_k^TR w_k})\\ s.e &amp;= \frac{1}{\sqrt{N \hat w_k^TR w_k}} \\ z &amp;= \frac{ \beta^{TWAS}_k}{s.e} = \frac{\sqrt{N} \hat w^T \hat \beta}{(\hat w_k^TR w_k)^\frac{1}{2}} \end{split}</code>
+$$</p>
+<p>The above expression is convenient, as it allows for TWAS analysis with only GWAS summary statistics and a matched LD panel. The expression seems consistent with <a href="https://www.youtube.com/watch?v=cfEGf6ezR-c&amp;t=1660s">Sasha Gusev&rsquo;s presentation</a>. I also attached some simulation to demonstrate this quantity.</p>
+<p> 
+ 
+ </p>
+<h2 id="simulation">Simulation</h2>
+<pre><code class="language-r">path = &quot;https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/APOE_1000G_FIN_74SNPS.&quot;
+haps = read.table(paste0(path,&quot;txt&quot;))
+info = read.table(paste0(path,&quot;legend.txt&quot;),header = T, as.is = T)
+
+
+### Consider this is GTEx data
+n1 = 1000
+G1 = as.matrix(haps[sample(1:nrow(haps), size = n1, repl = T),1:10] + 
+                haps[sample(1:nrow(haps), size = n1, repl = T),1:10])
+row.names(G1) = NULL
+colnames(G1) = NULL
+
+G1_ = scale(G1)
+M = ncol(G1_)
+lambda = c(0, 0, 0, 0.3, 0, 0, 0, 0, 0, 0) # a very strong eQTL 
+
+x1 = G1_ %*% lambda + rnorm(n1, mean = 0, sd = sqrt(1 - var(G1_ %*% lambda)))
+x1_ = scale(x1)
+# the expression model uses all the SNPs, might need to add regularization term in realistic analysis
+w = solve(t(G1_) %*% G1_) %*% t(G1_) %*% x1_
+
+### Consider this is my own data with genotype and trait
+n2 = 6000
+G2 = as.matrix(haps[sample(1:nrow(haps), size = n2, repl = T),1:10] + 
+                haps[sample(1:nrow(haps), size = n2, repl = T),1:10])
+
+row.names(G2) = NULL
+colnames(G2) = NULL
+G2_ = scale(G2)
+R = cor(G2_)
+beta_twas = 0.6
+
+# x2 is not unknown, but we generate the true expression data 
+x2 = G2_ %*% lambda + rnorm(n2, mean = 0, sd = sqrt(1 - var(G2_ %*% lambda)))
+x2_ = scale(x2)
+
+y2 = x2_ %*% beta_twas + rnorm(n2, mean = 0, sd = sqrt(1 - var(x2_ %*% beta_twas)))
+y2_ = scale(y2)
+
+# with individual level data
+beta_twas_hat_method1 = cov(y2_, G2_ %*% w)/var(G2_ %*% w)
+# a GWAS effect size is pre-computed
+beta_hat = 1/n2 * (t(G2_) %*% y2_)
+
+# with sumstats level data and LD
+beta_twas_hat_method2 = t(w) %*% beta_hat / (t(w) %*% R %*% w)
+# z score
+z_twas_method2 = sqrt(n2) *  t(w) %*% beta_hat / sqrt(t(w) %*% R %*% w)
+</code></pre>
+<p>A few remarks about TWAS:</p>
+<ol>
+<li>
+<p>TWAS can be interpreted as a special usage of Mendelian randomization. One might think TWAS can identify gene expressions that causally affect the phenotype, as MR does. But due to complications such as co-expression, this is generally not true.</p>
+</li>
+<li>
+<p>Standard TWAS analysis ignored the variability of the imputed expression data, which might induce inflated False positives. <a href="https://pubmed.ncbi.nlm.nih.gov/31821608/">Xue et al.</a> examnined this query, and concludes that it is mostly fine.</p>
+</li>
+<li>
+<p>The weights for predicting gene expression are often obtained from GTEx, but would these weights as predictive across different ancestries? <a href="https://www.nature.com/articles/s41588-022-01282-x">Chen et al.</a> presented a method that integrate multiple GWAS results to perform TWAS. But I think there are rooms for more methodology development.</p>
+</li>
+</ol>
+<p> 
+ 
+ </p>
+<h2 id="reference">Reference:</h2>
+<ol>
+<li>FUSION paper, Gusev et al. 2016 <em>Nat Gen</em> <a href="https://www.nature.com/articles/ng.3506">link</a></li>
+</ol>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

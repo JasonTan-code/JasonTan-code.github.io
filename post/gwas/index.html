@@ -193,17 +193,17 @@ abline(h = -log10(5e-8), col = &quot;grey&quot;, lty = 2)
 </ol>
 <p>By regressing the phenotype with each variants, we can nominate trait-associated variants. Additionally, these summary statistics allows us to estimate the heritability of a trait. One way is to apply <code>\(\hat h^2 = \hat \beta^T R^{-1} \hat \beta\)</code>, but this approach relies on inverting the LD matrix, which is practically impossible. Another practical approach is to use the variants with the most significant p value to estimate <code>\(h^2\)</code>.</p>
 <pre><code class="language-r">h2 # real h2
-##          [,1]
-## [1,] 0.136635
+##           [,1]
+## [1,] 0.1355976
 </code></pre>
 <pre><code class="language-r">const = 1e-6
 t(beta_hat) %*% solve(R + const* diag(p)) %*% beta_hat # estimated h2 using all variants 
-##          [,1]
-## [1,] 0.175638
+##           [,1]
+## [1,] 0.2054077
 </code></pre>
 <pre><code class="language-r">top_var = order(pval)[1]
 var(G_[,top_var] * beta_hat[top_var]) # estimated h2 using the top variant
-## [1] 0.1032919
+## [1] 0.1210901
 </code></pre>
 <p> <br>
  <br>

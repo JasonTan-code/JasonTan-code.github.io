@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=4321&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title> - A Hugo website</title>
+<meta property="og:title" content=" - A Hugo website">
+
+
+  <link href='//localhost:4321/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">3 min read</span>
+    
+
+    <h1 class="article-title"></h1>
+
+    
+    <span class="article-date">0001-01-01</span>
+    
+
+    <div class="article-content">
+      
+      <div id="ldsc-derivation" class="section level2" number="0.1">
+<h2><span class="header-section-number">0.1</span> LDSC derivation</h2>
+<p>We discussed how to perform [GWAS with scaled genotypes &amp; phenotype]({{&lt; relref “/post/GWAS.md” &gt;}}). In this blog post, I present an important piece of result: Linkage Disequilibrium Score Regression (LDSC)</p>
+<p>LDSC was proposed in <a href="https://www.nature.com/articles/ng.3211">this</a> landmark paper, in which it described how LD affect the probability of a variant being significant. Under infinitesimal model, LDSC states <span class="math inline">\(\mathbb{E}[\chi_j^2] = \frac{Nh^2}{M} l_j + 1\)</span>, where <span class="math inline">\(l_j \equiv \sum_{k = 1}^M r_{jk}^2\)</span> is the LD score. To carry out the derivation, one must treat the effect size as random: <span class="math inline">\(\lambda_j \sim N(0, \frac{h^2}{M})\)</span>.</p>
+<p>In GWAS, the marginal effect size estimates (condition on true marginal effect size) is normally distributed: <span class="math inline">\(\hat \beta_j | \beta_j \sim N(\beta_j, \frac{1}{N})\)</span>. Equivalently, <span class="math inline">\(\hat \beta_j | \lambda \sim N(\sum_{k = 1}^{M} r_{jk} \lambda_k, \frac{1}{N})\)</span>.</p>
+<p>I first state some quantities that will be useful for the derivations. Those quantities should be easy to varify:
+<span class="math display">\[
+\begin{split}
+\mathbb{E}[\lambda_j] &amp;= 0 \\
+\mathbb{E}[\lambda_j^2] &amp;= \frac{h^2}{M} \\
+\mathbb{E}[\hat \beta_j | \lambda_j] &amp;= \sum_{k = 1}^{M} r_{jk} \lambda_k \\
+\mathbb{V}ar[\hat \beta_j | \lambda_j] &amp;= \frac{1}{N} \\
+\mathbb{E}[\hat \beta_j^2 | \lambda_j] &amp;= \mathbb{V}ar[\hat \beta_j | \lambda_j] + \mathbb{E}^2[\hat \beta_j | \lambda_j] = \frac{1}{N} + (\sum_{k = 1}^{M} r_{jk} \lambda_k )^2
+\end{split}
+\]</span></p>
+<p>Before we investigate <span class="math inline">\(\mathbb{E}[\chi_j^2]\)</span>, let’s express <span class="math inline">\(\mathbb{E}[\hat \beta_j^2]\)</span>:
+<span class="math display">\[
+\begin{split}
+\mathbb{E}[\hat \beta_j^2] &amp;= \mathbb{E}[ \mathbb{E}[\hat \beta_j^2 \mid \lambda]] \\
+&amp;= \mathbb{E}[\frac{1}{N} + (\sum_{k = 1}^{M} r_{jk} \lambda_k )^2] \\
+&amp;= \frac{1}{N} + \mathbb{E}[ (\sum_{k = 1}^M r_{jk} \lambda_k)^2  ] \\
+&amp;= \frac{1}{N} + \mathbb{E}[ (r_{j1} \lambda_1 + r_{j2} \lambda_2 +  ...)^2 ] \\
+&amp;= \frac{1}{N} + \mathbb{E}[ \sum_{k = 1}^{M} (r_{jk} \lambda_k )^2 + 2 \cdot \sum_{p \neq q} r_{jp} r_{jq} \lambda_p  \lambda_q ] \\
+&amp;= \frac{1}{N} + \sum_{k = 1}^M r_{jk}^2 \cdot \frac{h^2}{M} \\ 
+&amp;= \frac{h^2}{M} l_j + \frac{1}{N} 
+\end{split}
+\]</span></p>
+<p>Further,</p>
+<p><span class="math display">\[
+\begin{split}
+\mathbb{E}[\chi_j^2]  &amp; = \mathbb{E}[(\frac{\hat \beta_j}{1/ \sqrt{N}})^2] \\
+&amp;= N \mathbb{E}[\hat \beta_j^2] \\
+&amp;= \frac{Nh^2}{M} l_j + 1
+\end{split}
+\]</span></p>
+<p>The derivation took the insight that only marginal effect size are observed. Therefore, we investigate the statistical property of the <strong>marginal distribution of marginal effect sizes</strong> (a.k.a <span class="math inline">\(p(\hat \beta)\)</span>, but not the conditional distribution <span class="math inline">\(p(\hat \beta \mid \lambda)\)</span>). Biologically, if one variant has more LD friends, then it is more likely to be significant. LDSC has been further extended to study binary traits, partition heritability, and genetic correlation between traits.</p>
+<p> 
+ 
+ </p>
+</div>
+<div id="simulation" class="section level2" number="0.2">
+<h2><span class="header-section-number">0.2</span> Simulation</h2>
+<p>Here is a simulation I have (with some code borrowed from <a href="https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/">Matti Pirinen’s</a> incredible tutorial).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>path <span class="ot">=</span> <span class="st">&quot;https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/APOE_1000G_FIN_74SNPS.&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>haps <span class="ot">=</span> <span class="fu">read.table</span>(<span class="fu">paste0</span>(path,<span class="st">&quot;txt&quot;</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>info <span class="ot">=</span> <span class="fu">read.table</span>(<span class="fu">paste0</span>(path,<span class="st">&quot;legend.txt&quot;</span>),<span class="at">header =</span> T, <span class="at">as.is =</span> T)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>n <span class="ot">=</span> <span class="dv">1000</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>G <span class="ot">=</span> <span class="fu">as.matrix</span>(haps[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(haps), <span class="at">size =</span> n, <span class="at">repl =</span> T),] <span class="sc">+</span> haps[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(haps), <span class="at">size =</span> n, <span class="at">repl =</span> T),])</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">row.names</span>(G) <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">colnames</span>(G) <span class="ot">=</span> <span class="cn">NULL</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>G_ <span class="ot">=</span> <span class="fu">scale</span>(G)</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>h2 <span class="ot">=</span> <span class="fl">0.05</span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>R <span class="ot">=</span> <span class="fu">t</span>(G_) <span class="sc">%*%</span> G_ <span class="sc">/</span>n <span class="co"># LD matrix </span></span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>get_chi2<span class="ot">&lt;-</span> <span class="cf">function</span>(G_, h2, R){</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>  lambda <span class="ot">=</span> <span class="fu">rnorm</span>(<span class="fu">ncol</span>(G_), <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(h2<span class="sc">/</span><span class="fu">ncol</span>(G_)))</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>  err <span class="ot">=</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> h2))</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>  </span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>  y <span class="ot">=</span> G_ <span class="sc">%*%</span> lambda <span class="sc">+</span> err</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>  y_ <span class="ot">=</span> <span class="fu">scale</span>(y)</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>  </span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>  <span class="do">## </span></span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>  beta_hat <span class="ot">=</span> <span class="fu">t</span>(G_) <span class="sc">%*%</span> y <span class="sc">/</span> n</span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>  chi2 <span class="ot">=</span> n <span class="sc">*</span> beta_hat<span class="sc">^</span><span class="dv">2</span>  </span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">as.vector</span>(chi2))</span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>}</span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a><span class="co"># do this 300 times, and average them to get the expectation </span></span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>chi2_simulations <span class="ot">=</span> <span class="fu">replicate</span>(<span class="at">n =</span> <span class="dv">300</span>, <span class="fu">get_chi2</span>(G_, h2, R))</span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a>exp_chi2 <span class="ot">=</span> <span class="fu">rowMeans</span>(chi2_simulations)</span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>ldsc <span class="ot">=</span> <span class="fu">rowSums</span>(R<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a><span class="fu">plot</span>(ldsc, exp_chi2)</span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a><span class="fu">abline</span>(<span class="fu">lm</span>(exp_chi2 <span class="sc">~</span> ldsc), <span class="at">col =</span> <span class="st">&quot;red&quot;</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> (n <span class="sc">*</span> h2 <span class="sc">/</span> <span class="fu">ncol</span>(G)), <span class="at">col =</span> <span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a><span class="fu">legend</span>(<span class="dv">4</span>, <span class="dv">10</span>, <span class="at">legend=</span><span class="fu">c</span>(<span class="st">&quot;Fitted line&quot;</span>, <span class="st">&quot;Predicted line&quot;</span>),  </span>
+<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="st">&quot;red&quot;</span>,<span class="st">&quot;blue&quot;</span>))</span></code></pre></div>
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p> 
+ 
+ </p>
+</div>
+<div id="reference" class="section level2" number="0.3">
+<h2><span class="header-section-number">0.3</span> Reference:</h2>
+<ol style="list-style-type: decimal">
+<li><p>LDSC paper, Bulik-Sullivan et al. 2015, <em>Nat Gen</em> <a href="https://www.nature.com/articles/ng.3211#citeas">link</a></p></li>
+<li><p>Matti Pirinen’s derivation <a href="https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/GWAS8.html">link</a></p></li>
+</ol>
+<p>I also thank Arslan Zaidi’s comment to correct my simulations</p>
+</div>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+

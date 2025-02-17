@@ -6,21 +6,35 @@
     <description>Recent content in Posts on A Hugo website</description>
     <generator>Hugo</generator>
     <language>en-US</language>
-    <lastBuildDate>Sun, 16 Feb 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 16 Feb 2025 15:19:26 -0900</lastBuildDate>
     <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Genome-wide association studies</title>
-      <link>/post/gwas/</link>
-      <pubDate>Sun, 16 Feb 2025 00:00:00 +0000</pubDate>
-      <guid>/post/gwas/</guid>
-      <description>&lt;h2 id=&#34;variants-trait-association&#34;&gt;Variants-trait association&lt;/h2&gt;&#xA;&lt;p&gt;The core objective of genetic studies is to identify which genetic variants contribute to disease risk. While establishing direct causation is challenging, we can detect statistical associations between genetic variants and traits by analyzing large-scale genomic data.&lt;/p&gt;&#xA;&lt;p&gt;Large biobanks (such as the UK Biobank) have collected genomic data from hundreds of thousands of samples. To study variant-trait associations, one approach is to apply linear or logistic regression for each genetic variant, treating genotypes as independent variables and the trait as the dependent variable.&lt;/p&gt;</description>
+      <title>Transcriptome-wide association studies</title>
+      <link>/post/twas/</link>
+      <pubDate>Sun, 16 Feb 2025 15:19:26 -0900</pubDate>
+      <guid>/post/twas/</guid>
+      <description>&lt;h2 id=&#34;instrument-variable--twas&#34;&gt;Instrument variable &amp;amp; TWAS&lt;/h2&gt;&#xA;&lt;p&gt;Transcriptome-wide association studies (TWAS) aim to identify associations between gene expression and traits of interest. In an ideal world where we have both RNA-seq and trait data for tens of thousands of individuals, performing a TWAS analysis would be straightforward: simply regress the trait on gene expression. However, GTEx, the largest collection of expression data, has only ~700 RNA-seq samples, and it does not include trait values. This limitation precludes a direct association test between expression and traits.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Polygenic Risk Score</title>
+      <link>/post/prs/</link>
+      <pubDate>Sun, 16 Feb 2025 15:19:26 -0600</pubDate>
+      <guid>/post/prs/</guid>
+      <description>&lt;h2 id=&#34;bayesian-regression-method-for-polygenic-score&#34;&gt;Bayesian regression method for polygenic score&lt;/h2&gt;&#xA;&lt;p&gt;Polygenic score (PRS) investigates the genetic liability of certain diseases. Given the training data, we might compute the polygenic score as &lt;code&gt;\(PRS_i = \sum_{j = 1}^{M} \hat \beta_j G_{ij}\)&lt;/code&gt; for the testing cohort. Most of the PRS methods paper, such as &lt;a href=&#34;https://www.nature.com/articles/s41467-019-09718-5&#34;&gt;PRS-CS&lt;/a&gt;, &lt;a href=&#34;https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4596916/&#34;&gt;LDPred&lt;/a&gt; aim to recover causal effects &lt;code&gt;\(\lambda\)&lt;/code&gt; from the observed marginal effect size estimates &lt;code&gt;\(\hat \beta_j\)&lt;/code&gt;. Here let&amp;rsquo;s consider a infinitesimal model (LDpred-inf).&lt;/p&gt;&#xA;&lt;p&gt;We assume the causal effect size &lt;code&gt;\(\lambda \sim MVN(0, \frac{h^2}{M}I)\)&lt;/code&gt; (called infinitesimal model). From &lt;a href=&#34;/post/gwas/&#34;&gt;this post&lt;/a&gt;, we also have &lt;code&gt;\(\hat \beta | \lambda \sim MVN(R \lambda, \frac{1 - h^2}{N}R)\)&lt;/code&gt;. The Bayesian inference recipe with conjugate prior normal distribution gives us (according to this &lt;a href=&#34;https://gregorygundersen.com/blog/2020/11/18/bayesian-mvn/&#34;&gt;document&lt;/a&gt; ):&#xA;$$&#xA;&lt;code&gt;\begin{split} p(\lambda \mid \hat \beta) &amp;amp;\propto f(\hat \beta \mid \lambda) \cdot f(\lambda) \\ &amp;amp;\propto \exp \{ - \frac{1}{2} (\hat \beta - R\lambda )^T (\frac{1 - h^2}{N}R)^{-1} (\hat \beta - R\lambda ) \} \cdot exp \{ - \frac{1}{2}\lambda^T (\frac{h^2}{M})^{-1} \lambda \} \\ &amp;amp;\propto \exp\{ - \frac{1}{2}[\frac{N}{1 - h^2}\cdot (\hat \beta - R\lambda )^T R^{-1}(\hat \beta - R\lambda ) +\frac{M}{h^2} \lambda^T \lambda ] \} \\ &amp;amp;\propto \exp \{- \frac{1}{2} [\frac{N}{1 - h^2} \cdot (\hat \beta^T R^{-1} \hat \beta - \hat  \beta^T R^{-1} R \lambda -\lambda^T R R^{-1}\hat \beta + \lambda^T RR^{-1}R\lambda) + \frac{M}{h^2} \lambda^T \lambda] \} \\ &amp;amp;\propto \exp \{- \frac{1}{2} [\lambda^T(\frac{N}{1 - h^2}R + \frac{M}{h^2} I)\lambda - 2 \frac{N}{1 - h^2} \hat \beta^T \lambda  ] \}  \end{split}&lt;/code&gt;&#xA;$$&lt;/p&gt;</description>
     </item>
     <item>
       <title>Linkage Disequilibrium Score Regression</title>
       <link>/post/ldsc/</link>
-      <pubDate>Sun, 05 Jan 2025 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 16 Feb 2025 15:19:26 -0400</pubDate>
       <guid>/post/ldsc/</guid>
       <description>&lt;h2 id=&#34;ldsc-derivation&#34;&gt;LDSC derivation&lt;/h2&gt;&#xA;&lt;p&gt;We discussed how to perform &lt;a href=&#34;/post/gwas/&#34;&gt;GWAS with scaled genotypes &amp;amp; phenotype&lt;/a&gt;. In this blog post, I present an important piece of result: Linkage Disequilibrium Score Regression (LDSC)&lt;/p&gt;&#xA;&lt;p&gt;LDSC was proposed in &lt;a href=&#34;https://www.nature.com/articles/ng.3211&#34;&gt;this&lt;/a&gt; landmark paper, in which it described how LD affect the probability of a variant being significant. Under infinitesimal model, LDSC states &lt;code&gt;\(\mathbb{E}[\chi_j^2] = \frac{Nh^2}{M} l_j + 1\)&lt;/code&gt;, where &lt;code&gt;\(l_j \equiv \sum_{k = 1}^M r_{jk}^2\)&lt;/code&gt; is the LD score. To carry out the derivation, one must treat the effect size as random: &lt;code&gt;\(\lambda_j \sim N(0, \frac{h^2}{M})\)&lt;/code&gt;.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Genome-wide association studies</title>
+      <link>/post/gwas/</link>
+      <pubDate>Sun, 16 Feb 2025 15:19:26 -0300</pubDate>
+      <guid>/post/gwas/</guid>
+      <description>&lt;h2 id=&#34;variants-trait-association&#34;&gt;Variants-trait association&lt;/h2&gt;&#xA;&lt;p&gt;The core objective of genetic studies is to identify which genetic variants contribute to disease risk. While establishing direct causation is challenging, we can detect statistical associations between genetic variants and traits by analyzing large-scale genomic data.&lt;/p&gt;&#xA;&lt;p&gt;Large biobanks (such as the UK Biobank) have collected genomic data from hundreds of thousands of samples. To study variant-trait associations, one approach is to apply linear or logistic regression for each genetic variant, treating genotypes as independent variables and the trait as the dependent variable.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Hidden Markov Model (1) - Markov Chain</title>

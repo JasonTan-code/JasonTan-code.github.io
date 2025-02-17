@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Hugo 0.140.2">
+
+
+<title>Polygenic Risk Score - A Hugo website</title>
+<meta property="og:title" content="Polygenic Risk Score - A Hugo website">
+
+
+  <link href='/favicon.ico' rel='icon' type='image/x-icon'/>
+
+
+
+  
+
+
+
+
+
+
+
+
+<link href='//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css' rel='stylesheet' type='text/css' />
+
+
+
+<link rel="stylesheet" href="/css/fonts.css" media="all">
+<link rel="stylesheet" href="/css/main.css" media="all">
+
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <nav class="nav">
+  <a href="/" class="nav-logo">
+    <img src="/images/logo.png"
+         width="50"
+         height="50"
+         alt="Logo">
+  </a>
+
+  <ul class="nav-links">
+    
+    <li><a href="/about/">About</a></li>
+    
+    <li><a href="/category/">Category</a></li>
+    
+  </ul>
+</nav>
+
+      </header>
+
+
+<main class="content" role="main">
+
+  <article class="article">
+    
+    <span class="article-duration">5 min read</span>
+    
+
+    <h1 class="article-title">Polygenic Risk Score</h1>
+
+    
+    <span class="article-date">2025-02-16</span>
+    
+
+    <div class="article-content">
+      
+      <h2 id="bayesian-regression-method-for-polygenic-score">Bayesian regression method for polygenic score</h2>
+<p>Polygenic score (PRS) investigates the genetic liability of certain diseases. Given the training data, we might compute the polygenic score as <code>\(PRS_i = \sum_{j = 1}^{M} \hat \beta_j G_{ij}\)</code> for the testing cohort. Most of the PRS methods paper, such as <a href="https://www.nature.com/articles/s41467-019-09718-5">PRS-CS</a>, <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4596916/">LDPred</a> aim to recover causal effects <code>\(\lambda\)</code> from the observed marginal effect size estimates <code>\(\hat \beta_j\)</code>. Here let&rsquo;s consider a infinitesimal model (LDpred-inf).</p>
+<p>We assume the causal effect size <code>\(\lambda \sim MVN(0, \frac{h^2}{M}I)\)</code> (called infinitesimal model). From <a href="/post/gwas/">this post</a>, we also have <code>\(\hat \beta | \lambda \sim MVN(R \lambda, \frac{1 - h^2}{N}R)\)</code>. The Bayesian inference recipe with conjugate prior normal distribution gives us (according to this <a href="https://gregorygundersen.com/blog/2020/11/18/bayesian-mvn/">document</a> ):
+$$
+<code>\begin{split} p(\lambda \mid \hat \beta) &amp;\propto f(\hat \beta \mid \lambda) \cdot f(\lambda) \\ &amp;\propto \exp \{ - \frac{1}{2} (\hat \beta - R\lambda )^T (\frac{1 - h^2}{N}R)^{-1} (\hat \beta - R\lambda ) \} \cdot exp \{ - \frac{1}{2}\lambda^T (\frac{h^2}{M})^{-1} \lambda \} \\ &amp;\propto \exp\{ - \frac{1}{2}[\frac{N}{1 - h^2}\cdot (\hat \beta - R\lambda )^T R^{-1}(\hat \beta - R\lambda ) +\frac{M}{h^2} \lambda^T \lambda ] \} \\ &amp;\propto \exp \{- \frac{1}{2} [\frac{N}{1 - h^2} \cdot (\hat \beta^T R^{-1} \hat \beta - \hat  \beta^T R^{-1} R \lambda -\lambda^T R R^{-1}\hat \beta + \lambda^T RR^{-1}R\lambda) + \frac{M}{h^2} \lambda^T \lambda] \} \\ &amp;\propto \exp \{- \frac{1}{2} [\lambda^T(\frac{N}{1 - h^2}R + \frac{M}{h^2} I)\lambda - 2 \frac{N}{1 - h^2} \hat \beta^T \lambda  ] \}  \end{split}</code>
+$$</p>
+<p>Let <code>\(K = \frac{N}{1 - h^2}R + \frac{M}{h^2} I\)</code>, <code>\(b = \frac{N}{1 - h^2}  \hat \beta\)</code>, and use the &ldquo;Completing the square&rdquo; <a href="https://gregorygundersen.com/blog/2019/09/18/completing-the-square/">technique</a>, we have:</p>
+<p>$$
+<code>\begin{split} p(\lambda \mid \hat \beta) &amp;\propto f(\hat \beta \mid \lambda) \cdot f(\lambda) \\ &amp;\propto exp \{ (\lambda -K^{-1}b)^T K  (\lambda -K^{-1}b)  \} \end{split}</code>
+$$</p>
+<p>Therefore, the posterior distribution of the causal effect size is
+$$
+<code>\begin{split} \lambda \mid \hat \beta &amp;\sim MVN(K^{-1}b, K^{-1})  \\ &amp;\sim MVN((R + \frac{M(1 - h^2)}{Nh^2} I)^{-1} \hat\beta, [\frac{N}{1 - h^2}R + \frac{M}{h^2} I]^{-1}) \end{split}</code>
+$$</p>
+<p>One might claim that the heritability of a region is small enough, such that <code>\(1 - h^2 \approx 1\)</code>, Therefore, we can further simplify the expression, and obtain the mean and variance of the posterior causal effect size:</p>
+<p>$$
+<code>\begin{split} \mathbb{E}[\lambda \mid \hat \beta ] &amp;= (R + \frac{M}{Nh^2} I)^{-1} \hat\beta \\ \mathbb{V}ar[\lambda \mid \hat \beta ] &amp;= [NR + \frac{M}{h^2} I]^{-1} \end{split}</code>
+$$</p>
+<p>This expression is identical to what&rsquo;s mentioned in <a href="https://www.nature.com/articles/s41467-019-09718-5">PRS-CS paper</a> (equation 13).  But I have a few more remarks about this model:</p>
+<ol>
+<li>
+<p>In both PRS-CS and LDpred manuscript, they have an additional subscript to denote a small region of the genome (in PRS-CS, LD is denoted as <code>\(D_l\)</code> to indicate the <code>\(l\)</code>-th region). This is because LD panel is pre-computed in blocks realistically.</p>
+</li>
+<li>
+<p>This approach attempts to solve a Bayesian inference problem <em>without</em> looking at individual-level data.</p>
+</li>
+<li>
+<p>This infinitesimal Bayesian regression approach is identical to Ridge regression.</p>
+</li>
+<li>
+<p>The heritability <code>\(h^2\)</code> is treated as a parameter for the prior distribution, which must be specified according to domain knowledge before we run this analysis. This is not always trivial in realistic PRS analysis. Therefore, when we don&rsquo;t have any prior information about a disease, we might try grid search to find the best <code>\(h^2\)</code>. In machine learning lingo, this is referred as &ldquo;hyper-parameter&rdquo; tunning.</p>
+</li>
+</ol>
+<p>The framework can be further extended to multi-ancestry setting. Let&rsquo;s assume that we have the same causal effect sizes <code>\(\lambda\)</code> across ancestries. For each ancestry <code>\(k\)</code>, we have <code>\(\hat \beta_{k} | \lambda \sim MVN(R_k \lambda, \frac{1}{N}R_k)\)</code>. We might infer the posterior effect size <code>\(f(\lambda\mid \hat \beta_1, \hat\beta_2, ...)\)</code>:
+$$
+<code>\begin{split} f(\lambda\mid \hat \beta_1, \hat\beta_2, ...) &amp;\propto f(\beta_1, \hat\beta_2, ... \mid \lambda) \cdot f(\lambda) \\ &amp;\propto \prod_{k = 1} f(\hat \beta_k \mid \lambda) \cdot f(\lambda)  \end{split}</code>
+$$</p>
+<p>It&rsquo;s possible to expand the equation to find the posterior mean of <code>\(\lambda \mid \hat \beta_1, \hat \beta_2...\)</code>, which would be a function of the prior distribution of <code>\(\lambda\)</code>, observed effect sizes, and LD panel for each ancestry. However, this might not be a reasonable assumption about the prior distribution of <code>\(\lambda\)</code>, as it might be different across populations (or heritability might be different, which implies different amount of regularization). <a href="https://www.nature.com/articles/s41588-022-01054-7">PRS-CSx</a> instead infers the posterior effect size for each ancestry.</p>
+<p> 
+ 
+ </p>
+<h2 id="simulation">Simulation</h2>
+<pre><code class="language-r">path = &quot;https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/APOE_1000G_FIN_74SNPS.&quot;
+haps = read.table(paste0(path,&quot;txt&quot;))
+info = read.table(paste0(path,&quot;legend.txt&quot;),header = T, as.is = T)
+
+n = 1000
+G = as.matrix(haps[sample(1:nrow(haps), size = n, repl = T),] + haps[sample(1:nrow(haps), size = n, repl = T),])
+row.names(G) = NULL
+colnames(G) = NULL
+
+G_ = scale(G)
+h2 = 0.05
+M = ncol(G_)
+lambda = rnorm(ncol(G_), mean = 0, sd = sqrt(h2/M))
+
+err = rnorm(n, mean = 0, sd = sqrt(1 - h2))
+
+
+y = G_ %*% lambda + err
+y_ = scale(y)
+
+## 
+beta_hat = t(G_) %*% y / n
+R = t(G_) %*% G_ /n # LD matrix 
+
+
+lambda_posterior = solve(R + M/(n *h2) * diag(M)) %*% beta_hat
+plot(beta_hat, lambda_posterior, main = &quot;GWAS effect sizes vs posterior effect sizes&quot;, 
+     xlim = c(-0.1, 0.1), ylim = c(-0.05, 0.05), xlab = &quot;GWAS effect size (marginal)&quot;, ylab = &quot;Posterior mean of lambda&quot;)
+abline(a = 0, b = 1, col = &quot;red&quot;)
+</code></pre>
+<img src="/post/prs/index_files/figure-html/unnamed-chunk-1-1.png" width="672" />
+<p>Clearly, there is a strong shrinkage of the marginal effect size.</p>
+<p> 
+ 
+ </p>
+<h2 id="reference">Reference:</h2>
+<ol>
+<li>
+<p>LD-pred paper, Vilhjálmsson et al. 2015. <em>Am J Hum Genet</em> <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4596916/">link</a></p>
+</li>
+<li>
+<p>PRS-CS paper, Ge et al. 2019. <em>Nat Commun</em> <a href="https://pubmed.ncbi.nlm.nih.gov/30992449/">link</a></p>
+</li>
+</ol>
+
+    </div>
+  </article>
+
+  
+
+
+</main>
+
+      <footer class="footer">
+        <ul class="footer-links">
+          
+          <li>
+            <a href="https://gohugo.io/" class="footer-links-kudos">Made with <img src="/images/hugo-logo.png" alt="Img link to Hugo website" width="22" height="22"></a>
+          </li>
+        </ul>
+      </footer>
+
+    </div>
+    
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+    
+<script src="/js/math-code.js"></script>
+<script async src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
+    
+  </body>
+</html>
+
